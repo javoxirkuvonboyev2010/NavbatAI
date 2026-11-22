@@ -1836,6 +1836,7 @@
         const isOpen = fac.status !== "closed";
         return { fac, distKm, live, isOpen };
       });
+    }
 
       withMeta.sort((a, b) => {
         if (sortMode === "alpha") {
@@ -2222,7 +2223,7 @@ function renderYandexMarkersOnly() {
             </div>
           </div>`;
       }).join("");
-      }
+    }
 
     function setFuelFilter(fuel) {
       selectedFuelFilter = fuel;
