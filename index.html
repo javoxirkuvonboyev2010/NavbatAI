@@ -509,7 +509,19 @@
 
           <div class="px-4 pt-3">
             <div class="flex items-center justify-between mb-2.5">
-              <h2 id="listTitle" class="text-sm font-bold text-white">Jizzaxdagi muassasalar</h2>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+              <h2 id="listTitle" class="text-sm font-bold text-white truncate">Jizzaxdagi muassasalar</h2>
+              <div class="flex items-center gap-2 shrink-0">
+                <select id="listSortSelect" onchange="renderFacilitiesAndMarkers()"
+                  class="bg-[#151517] border border-white/[0.1] rounded-xl px-2.5 py-1 text-[11px] font-semibold text-[#E2C2FF] focus:outline-none cursor-pointer">
+                  <option value="nearest" class="bg-[#151517] text-white">📍 Eng yaqin</option>
+                  <option value="open_nearest" class="bg-[#151517] text-white">🟢 Ochiq va yaqin</option>
+                  <option value="fastest" class="bg-[#151517] text-white">⚡ Kam navbat</option>
+                  <option value="alpha" class="bg-[#151517] text-white">🔤 A–Z</option>
+                </select>
+                <span id="facilityCount" class="text-xs text-[#8E8E93]">0 ta joy</span>
+              </div>
+            </div>
               <span id="facilityCount" class="text-xs text-[#8E8E93]">0 ta joy</span>
             </div>
             <div id="facilityList" class="space-y-2.5"></div>
@@ -1810,14 +1822,59 @@
         if (selectedCategory !== "all" && f.type !== selectedCategory) return false;
         return smartMatchFacility(f, rawQuery);
       });
+    } 
+    let userLocationCoords = null;
+
+    function getSortedFacilities() {
+      const regKey = currentUser.region || "jizzax";
+      const baseCenter = userLocationCoords || REGIONS[regKey].center;
+      const sortMode = document.getElementById("listSortSelect")?.value || "nearest";
+
+      const withMeta = getFilteredFacilities().map(fac => {
+        const distKm = calcDistanceKm(baseCenter[0], baseCenter[1], fac.lat, fac.lng);
+        const live = getFacilityLiveWait(fac);
+        const isOpen = fac.status !== "closed";
+        return { fac, distKm, live, isOpen };
+      });
+
+      withMeta.sort((a, b) => {
+        if (sortMode === "alpha") {
+          return a.fac.name.localeCompare(b.fac.name, "uz");
+        }
+        if (sortMode === "fastest") {
+          if (a.isOpen !== b.isOpen) return a.isOpen ? -1 : 1;
+          if (a.live.minWait !== b.live.minWait) return a.live.minWait - b.live.minWait;
+          return a.distKm - b.distKm;
+        }
+        if (sortMode === "open_nearest") {
+          if (a.isOpen !== b.isOpen) return a.isOpen ? -1 : 1;
+          return a.distKm - b.distKm;
+        }
+        // default: nearest
+        return a.distKm - b.distKm;
+      });
+
+      return withMeta;
     }
 
 function renderYandexMarkersOnly() {
       if (!ymap || !ymapCollection || typeof ymaps === "undefined") return;
-      const list = getFilteredFacilities();
+      const rawList = getFilteredFacilities();
       const z = ymap.getZoom();
       const showLabels = z >= 14;
-      document.getElementById("zoomHintBadge").textContent = showLabels ? `Zoom ${z} • Nomlar faol` : `Yaqinlashtirsangiz nomlar chiqadi`;
+      document.getElementById("zoomHintBadge").textContent = showLabels
+        ? `Zoom ${Math.round(z)} • Nomlar faol`
+
+      // Bir xil turdagi juda yaqin (< ~35m) dublikat pinlarni ustma-ust chiqarmaslik
+      const list = [];
+      rawList.forEach(fac => {
+        const isTooCloseDuplicate = list.some(existing =>
+          existing.type === fac.type &&
+          Math.abs(existing.lat - fac.lat) < 0.00035 &&
+          Math.abs(existing.lng - fac.lng) < 0.00035
+        );
+        if (!isTooCloseDuplicate) list.push(fac);
+      });
 
       function getTypeGlyphSvg(type) {
         if (type === "shifoxona") {
@@ -1858,7 +1915,7 @@ function renderYandexMarkersOnly() {
         else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
 
         const isClosed = fac.status === "closed";
-        const shortName = fac.name.length > 26 ? fac.name.slice(0, 25) + "…" : fac.name;
+        const shortName = fac.name.length > 24 ? fac.name.slice(0, 23) + "…" : fac.name;
         const live = getFacilityLiveWait(fac);
 
         const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
@@ -1876,7 +1933,9 @@ function renderYandexMarkersOnly() {
           iconLayout: "default#image",
           iconImageHref: makePinDataUrl(fac.type, color),
           iconImageSize: [32, 39],
-          iconImageOffset: [-16, -39]
+          iconImageOffset: [-16, -39],
+          iconCaptionLayout: "default#caption",
+          iconCaptionMaxWidth: "150"
         });
 
         ymapCollection.add(placemark);
@@ -2124,23 +2183,23 @@ function renderYandexMarkersOnly() {
       const rawQuery = document.getElementById("searchInput").value || "";
       document.getElementById("clearSearchBtn").classList.toggle("hidden", !rawQuery.trim());
 
-      const list = getFilteredFacilities();
+      const sortedItems = getSortedFacilities();
       document.getElementById("listTitle").textContent = `${REGIONS[regKey].name}dagi muassasalar`;
-      document.getElementById("facilityCount").textContent = `${list.length} ta joy`;
+      document.getElementById("facilityCount").textContent = `${sortedItems.length} ta joy`;
       renderYandexMarkersOnly();
 
       const container = document.getElementById("facilityList");
-      if (list.length === 0) {
+      if (sortedItems.length === 0) {
         container.innerHTML = `<div class="oled-card p-6 text-center text-xs text-[#8E8E93]">Mos muassasa topilmadi. Yuqoridagi «Hududdan barcha obyektlarni yuklash» tugmasini bosing.</div>`;
         return;
       }
 
-      container.innerHTML = list.map(fac => {
-        const isClosed = fac.status === "closed";
+      container.innerHTML = sortedItems.map(({ fac, distKm, live, isOpen }) => {
+        const isClosed = !isOpen;
         const badgeClass = fac.type === "shifoxona" ? "pastel-mint" : fac.type === "bank" ? "pastel-sky" : fac.type === "dxm" ? "pastel-lavender" : "pastel-yellow";
         const icon = fac.type === "shifoxona" ? "🏥" : fac.type === "bank" ? "🏦" : fac.type === "dxm" ? "🏛" : "⛽";
         const typeLabel = fac.type === "shifoxona" ? "Shifoxona" : fac.type === "bank" ? "Bank" : fac.type === "dxm" ? "DXM" : "AYOQSH";
-        const live = getFacilityLiveWait(fac);
+        const distText = distKm < 1 ? `${Math.round(distKm * 1000)} m` : `${distKm.toFixed(1)} km`;
 
         return `
           <div onclick="${isClosed ? `showToast('Bu AYOQSH hozir yopiq!', true)` : `openBookingSheet('${fac.id}')`}"
@@ -2149,6 +2208,7 @@ function renderYandexMarkersOnly() {
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
                 <span class="text-[10px] font-bold text-[#8E8E93] uppercase tracking-wide">${typeLabel}</span>
+                <span class="text-[10px] font-bold text-[#E2C2FF]">• ${distText}</span>
                 ${fac.type === "ayoqsh" ? `<span class="text-[10px] font-bold ${isClosed ? 'text-[#F87171]' : 'text-[#22C55E]'}">• ${isClosed ? 'Yopiq' : 'Ochiq'}</span>` : ''}
               </div>
               <h3 class="text-sm font-bold text-white leading-snug truncate">${fac.name}</h3>
@@ -2162,7 +2222,7 @@ function renderYandexMarkersOnly() {
             </div>
           </div>`;
       }).join("");
-    }
+      }
 
     function setFuelFilter(fuel) {
       selectedFuelFilter = fuel;
