@@ -1343,8 +1343,22 @@
 
     let booking = { facility: null, depts: [], step: 1, step2Tab: "ai", dept: null, specialist: null, service: null, qty: 1 };
 
-    function safeGet(key, fallback = null) {
-      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+    function loadAllData() {
+      const cfg = safeGet(CONFIG_KEY, null);
+      if (cfg && cfg.firebaseUrl && cfg.firebaseUrl.includes("europe-west1.firebasedatabase.app")) {
+        APP_CONFIG = { ...APP_CONFIG, ...cfg };
+      } else {
+        APP_CONFIG.firebaseUrl = "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app";
+        safeSet(CONFIG_KEY, APP_CONFIG);
+      }
+      const savedFac = safeGet(FACILITIES_KEY, null);
+      if (Array.isArray(savedFac) && savedFac.length > 0) {
+        FACILITIES = savedFac;
+      } else {
+        FACILITIES = JSON.parse(JSON.stringify(DEFAULT_FACILITIES));
+        safeSet(FACILITIES_KEY, FACILITIES);
+      }
+      GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
     function safeSet(key, val) {
       try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
