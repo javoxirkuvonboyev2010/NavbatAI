@@ -13,15 +13,10 @@
   <link rel="apple-touch-icon" href="./logo.png" />
   <link rel="manifest" href="./manifest.json" />
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Yandex Maps JS API v2.1 -->
   <script src="https://api-maps.yandex.ru/2.1/?apikey=f52d4a0f-ec20-4b1b-b4e5-9527bcd56aa8&lang=uz_UZ" type="text/javascript"></script>
 
   <script>
@@ -49,7 +44,7 @@
 
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::*webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9999px; }
 
     .oled-card {
       background-color: #151517;
@@ -161,7 +156,7 @@
 
   <div class="max-w-[480px] mx-auto min-h-screen bg-black flex flex-col relative sm:border-x sm:border-white/[0.06]">
 
-    <!-- Floating Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[3200] max-w-[430px] w-[92%] pointer-events-none opacity-0 -translate-y-2 transition-all duration-300">
       <div class="bg-[#1C1C1E]/95 border border-white/15 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs sm:text-sm font-medium flex items-center gap-2.5 backdrop-blur-xl">
         <span id="toastDot" class="w-2.5 h-2.5 rounded-full bg-[#22C55E] shrink-0"></span>
@@ -169,7 +164,7 @@
       </div>
     </div>
 
-    <!-- Simulated SMS / Email OTP Inbox Banner -->
+    <!-- OTP Banner -->
     <div id="otpInboxBanner" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-[3100] max-w-[430px] w-[92%]">
       <div class="bg-[#151517]/95 border border-[#E2C2FF]/45 rounded-2xl p-3.5 shadow-2xl backdrop-blur-xl flex items-center justify-between gap-3">
         <div class="min-w-0">
@@ -193,7 +188,6 @@
         <p class="text-xs text-[#8E8E93] mt-1">Shifoxona, Bank, DXM va AYOQSH uchun aqlli navbat</p>
       </div>
 
-      <!-- STEP A: LOGIN / REGISTER CARD -->
       <div id="authMainCard" class="oled-card p-5 shadow-2xl">
         <div class="grid grid-cols-2 gap-1.5 bg-black p-1 rounded-2xl border border-white/[0.07] mb-5">
           <button type="button" id="authTabLogin" onclick="setAuthMode('login')"
@@ -284,44 +278,37 @@
         </div>
       </div>
 
-      <!-- STEP B: OTP VERIFICATION CARD -->
+      <!-- STEP B: OTP -->
       <div id="authOtpCard" class="hidden oled-card p-5 shadow-2xl space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-extrabold text-white">🔐 Tasdiqlash kodi</h2>
           <button type="button" onclick="cancelPendingRegistration()" class="text-xs text-[#8E8E93] hover:text-white cursor-pointer">← Orqaga</button>
         </div>
         <p id="regOtpDesc" class="text-xs text-[#8E8E93] leading-relaxed">6 xonali tasdiqlash kodi yuborildi.</p>
-
         <input id="regOtpInput" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
           class="w-full bg-[#1C1C1E] border border-white/[0.1] rounded-2xl px-4 py-3.5 text-center text-xl font-extrabold tracking-[0.4em] text-[#E2C2FF] focus:outline-none focus:border-[#E2C2FF]" />
-
         <div id="regOtpError" class="hidden text-xs text-[#F87171]">Kod noto‘g‘ri! Qayta tekshiring.</div>
-
         <button type="button" onclick="verifyRegistrationOtp()"
           class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
           Tasdiqlash va davom etish
         </button>
-
         <button type="button" onclick="resendRegistrationOtp()"
           class="w-full py-2 text-xs text-[#8E8E93] hover:text-[#E2C2FF] cursor-pointer">
           Kodni qayta yuborish
         </button>
       </div>
 
-      <!-- STEP C: OPTIONAL PROFILE PHOTO UPLOAD -->
+      <!-- STEP C: PHOTO -->
       <div id="authPhotoCard" class="hidden oled-card p-5 shadow-2xl space-y-4 text-center">
         <h2 class="text-base font-extrabold text-white">📸 Profil rasmini qo‘shish</h2>
         <p class="text-xs text-[#8E8E93]">Xohlasangiz o‘z rasmingizni yuklang yoki hozircha o‘tkazib yuboring.</p>
-
         <div id="regPhotoPreview" class="w-24 h-24 mx-auto rounded-full bg-[#1C1C1E] border-2 border-dashed border-[#E2C2FF]/50 flex items-center justify-center text-3xl overflow-hidden">
           👤
         </div>
-
         <label class="block w-full py-3 rounded-2xl bg-[#1C1C1E] hover:bg-[#262629] border border-white/10 text-xs font-bold text-[#E2C2FF] cursor-pointer transition">
           🖼 Galereyadan rasm tanlash
           <input type="file" accept="image/*" onchange="handleRegPhotoSelect(event)" class="hidden" />
         </label>
-
         <div class="grid grid-cols-2 gap-2.5 pt-1">
           <button type="button" onclick="finishRegistrationPhoto(true)"
             class="py-3 rounded-2xl bg-[#1C1C1E] hover:bg-[#262629] border border-white/[0.08] text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer">
@@ -335,7 +322,7 @@
       </div>
     </section>
 
-    <!-- ================= FORGOT PASSWORD MODAL ================= -->
+    <!-- FORGOT PASSWORD MODAL -->
     <div id="forgotModal" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-4">
       <div onclick="closeForgotPasswordModal()" class="absolute inset-0 bg-black/85 backdrop-blur-sm"></div>
       <div class="relative w-full max-w-[400px] oled-card p-5 shadow-2xl space-y-4">
@@ -343,9 +330,8 @@
           <h3 class="text-base font-extrabold text-white">🔑 Parolni tiklash</h3>
           <button type="button" onclick="closeForgotPasswordModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white cursor-pointer">✕</button>
         </div>
-
         <div id="fpStep1" class="space-y-3">
-          <p class="text-xs text-[#8E8E93]">Ro‘yxatdan o‘tgan telefon raqamingizni kiriting. Raqam o‘zingizniki ekanligini tasdiqlash uchun SMS yoki ulangan Emailga kod yuboramiz.</p>
+          <p class="text-xs text-[#8E8E93]">Ro‘yxatdan o‘tgan telefon raqamingizni kiriting.</p>
           <div>
             <label class="block text-xs text-[#8E8E93] mb-1">Telefon raqam</label>
             <input id="fpPhone" type="tel" value="+998 " placeholder="+998 90 123 45 67"
@@ -367,7 +353,6 @@
             Tasdiqlash kodini yuborish
           </button>
         </div>
-
         <div id="fpStep2" class="hidden space-y-3">
           <p id="fpSentInfo" class="text-xs text-[#22C55E] font-medium"></p>
           <div>
@@ -392,7 +377,6 @@
     <!-- ================= 2. MAIN APP SHELL ================= -->
     <div id="appShell" class="hidden flex-1 flex flex-col bg-black">
 
-      <!-- Clean Top Header -->
       <header class="sticky top-0 z-[500] bg-black/90 backdrop-blur-xl border-b border-white/[0.07] px-4 py-3 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="headerAvatarWrap" class="w-9 h-9 rounded-full bg-[#E9D5FF] text-[#111114] flex items-center justify-center font-extrabold text-sm shrink-0 overflow-hidden">
@@ -415,10 +399,9 @@
         </button>
       </header>
 
-      <!-- MAIN VIEWS -->
       <main class="flex-1 pb-28">
 
-        <!-- VIEW 1: XARITA (YANDEX MAPS) -->
+        <!-- VIEW 1: XARITA -->
         <section id="viewMap" class="block">
           <div class="px-4 pt-3">
             <div class="relative">
@@ -709,7 +692,7 @@
 
       </main>
 
-      <!-- ================= PROFILE EDIT MODAL ================= -->
+      <!-- PROFILE EDIT MODAL -->
       <div id="profileEditModal" class="fixed inset-0 z-[1700] hidden flex items-center justify-center p-4">
         <div onclick="closeProfileEditModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         <div class="relative w-full max-w-[380px] oled-card p-5 shadow-2xl space-y-3.5">
@@ -729,7 +712,7 @@
         </div>
       </div>
 
-      <!-- ================= REGION PICKER MODAL ================= -->
+      <!-- REGION MODAL -->
       <div id="regionModal" class="fixed inset-0 z-[1500] hidden">
         <div onclick="closeRegionModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[82vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden shadow-2xl">
@@ -747,7 +730,7 @@
         </div>
       </div>
 
-      <!-- ================= 3-STEP BOOKING MODAL ================= -->
+      <!-- 3-STEP BOOKING SHEET -->
       <div id="bookingSheet" class="fixed inset-0 z-[1500] hidden">
         <div onclick="closeBookingSheet()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[92vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden shadow-2xl">
@@ -763,18 +746,16 @@
             <button type="button" onclick="closeBookingSheet()"
               class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white flex items-center justify-center cursor-pointer shrink-0">✕</button>
           </div>
-
           <div class="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-1.5 shrink-0">
             <div id="stepBar1" class="h-1.5 flex-1 rounded-full bg-[#E2C2FF]"></div>
             <div id="stepBar2" class="h-1.5 flex-1 rounded-full bg-[#2C2C2E]"></div>
             <div id="stepBar3" class="h-1.5 flex-1 rounded-full bg-[#2C2C2E]"></div>
           </div>
-
           <div id="sheetBody" class="p-4 overflow-y-auto flex-1 space-y-4"></div>
         </div>
       </div>
 
-      <!-- ================= STRICT ADMIN AUTH MODAL ================= -->
+      <!-- ADMIN AUTH MODAL -->
       <div id="adminAuthModal" class="fixed inset-0 z-[1800] hidden flex items-center justify-center p-4">
         <div onclick="closeAdminAuthModal()" class="absolute inset-0 bg-black/85 backdrop-blur-sm"></div>
         <div class="relative w-full max-w-[380px] oled-card p-5 shadow-2xl space-y-3.5">
@@ -787,15 +768,14 @@
           </div>
           <div>
             <label class="block text-xs text-[#8E8E93] mb-1">Login</label>
-            <input id="adminLoginInput" type="text" inputmode="text" lang="en" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('adminPassInput').focus();}" placeholder="Administrator logini..."
+            <input id="adminLoginInput" type="text" placeholder="Administrator logini..."
               class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E2C2FF]" />
           </div>
           <div>
             <label class="block text-xs text-[#8E8E93] mb-1">Parol</label>
-            <input id="adminPassInput" type="password" inputmode="text" lang="en" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();verifyAdminLogin();}" placeholder="Administrator paroli..."
+            <input id="adminPassInput" type="password" placeholder="Administrator paroli..."
               class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E2C2FF]" />
           </div>
-          <label class="flex items-center gap-2 text-xs text-[#8E8E93] cursor-pointer"><input type="checkbox" onchange="document.getElementById('adminPassInput').type=this.checked?'text':'password'"> Parolni ko‘rsatish</label>
           <div id="adminAuthError" class="hidden text-xs text-[#F87171]">Login yoki parol noto‘g‘ri! Ruxsat rad etildi.</div>
           <button type="button" onclick="verifyAdminLogin()"
             class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer transition">
@@ -804,7 +784,7 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN PANEL FULLSCREEN MODAL ================= -->
+      <!-- ADMIN PANEL MODAL -->
       <div id="adminPanelModal" class="fixed inset-0 z-[1900] hidden bg-black flex flex-col max-w-[480px] mx-auto sm:border-x sm:border-white/[0.08]">
         <div class="px-4 py-3.5 bg-[#151517] border-b border-white/[0.07] flex items-center justify-between shrink-0">
           <div>
@@ -816,7 +796,6 @@
             Yopish ✕
           </button>
         </div>
-
         <div class="px-4 pt-3 bg-black shrink-0">
           <div class="grid grid-cols-2 gap-1.5 bg-[#151517] p-1 rounded-2xl border border-white/[0.07]">
             <button type="button" id="admTabPlaces" onclick="switchAdminTab('places')"
@@ -829,7 +808,6 @@
             </button>
           </div>
         </div>
-
         <div class="p-4 overflow-y-auto flex-1 space-y-5">
           <div id="adminSectionPlaces" class="space-y-4">
             <div class="oled-card p-4 space-y-3">
@@ -838,13 +816,11 @@
                 <button id="adminCancelEditBtn" type="button" onclick="resetAdminForm()" class="hidden text-xs text-[#E2C2FF] cursor-pointer">Bekor</button>
               </div>
               <input type="hidden" id="admEditId" />
-
               <div>
                 <label class="block text-[11px] text-[#8E8E93] mb-1">Nomi</label>
                 <input id="admName" type="text" placeholder="Masalan: Jizzax Metan AYOQSH #7"
                   class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#E2C2FF]" />
               </div>
-
               <div class="grid grid-cols-2 gap-2.5">
                 <div>
                   <label class="block text-[11px] text-[#8E8E93] mb-1">Viloyat</label>
@@ -862,13 +838,11 @@
                   </select>
                 </div>
               </div>
-
               <div>
                 <label class="block text-[11px] text-[#8E8E93] mb-1">Manzil</label>
                 <input id="admAddress" type="text" placeholder="Ko‘cha, mahalla yoki mo‘ljal"
                   class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white" />
               </div>
-
               <div class="grid grid-cols-2 gap-2.5">
                 <div>
                   <label class="block text-[11px] text-[#8E8E93] mb-1">Holati</label>
@@ -884,7 +858,6 @@
                     class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-xl px-2.5 py-2.5 text-[11px] text-[#E2C2FF] font-mono" />
                 </div>
               </div>
-
               <div id="admFuelBox" class="hidden bg-black border border-white/[0.08] rounded-xl p-3 space-y-2">
                 <div class="text-[11px] font-bold text-[#FEF08A]">⛽ AYOQSH yoqilg‘i turlari:</div>
                 <div class="grid grid-cols-3 gap-2 text-xs text-white">
@@ -895,18 +868,15 @@
                   <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="adm-fuel-cb accent-[#E2C2FF]" value="elektr" /> Elektr</label>
                 </div>
               </div>
-
               <div>
                 <label class="block text-[11px] text-[#8E8E93] mb-1">📍 Yandex Gibrid xaritadan aniq binoni bosing:</label>
                 <div id="adminYMap" class="w-full h-[185px] rounded-2xl overflow-hidden border border-white/10 z-10"></div>
               </div>
-
               <button type="button" onclick="saveAdminPlace()"
                 class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer transition">
                 💾 Saqlash va Ilovani yangilash
               </button>
             </div>
-
             <div class="oled-card p-4 space-y-2.5">
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold text-white">📋 Obyektlar (<span id="adminTotalCount">0</span>)</h3>
@@ -919,33 +889,22 @@
                   <option value="dxm">🏛 DXMlar</option>
                 </select>
               </div>
-              <div class="flex gap-2 mb-2">
-                <button type="button" onclick="exportFacilities()" class="flex-1 py-2.5 rounded-xl bg-[#E2C2FF] text-[#111114] text-[11px] font-extrabold cursor-pointer">💾 Bazani saqlash (JSON)</button>
-                <label class="flex-1 py-2.5 rounded-xl bg-[#1C1C1E] border border-white/10 text-white text-[11px] font-bold text-center cursor-pointer">📥 JSON yuklash<input type="file" accept=".json,application/json" class="hidden" onchange="importFacilities(this)"></label>
-              </div>
               <div id="adminPlacesList" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
             </div>
           </div>
-
           <div id="adminSectionIntegrations" class="hidden space-y-4">
             <div class="oled-card p-4 space-y-3">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-9 h-9 rounded-full bg-[#FEF08A] text-[#111114] flex items-center justify-center text-base">🔥</div>
-                  <div>
-                    <h3 class="text-sm font-bold text-white">Firebase Cloud Sync</h3>
-                    <p class="text-[11px] text-[#8E8E93]">Barcha qurilmalarda jonli saqlash</p>
-                  </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Firebase Cloud Sync</h3>
+                  <p class="text-[11px] text-[#8E8E93]">Barcha qurilmalarda jonli saqlash</p>
                 </div>
                 <span id="fbStatusBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1C1C1E] text-[#8E8E93]">Lokal</span>
               </div>
-
               <div>
                 <label class="block text-[11px] text-[#8E8E93] mb-1">Firebase Realtime Database URL</label>
-                <input id="firebaseUrlInput" type="url" placeholder="https://navbatai-default-rtdb.firebaseio.com"
-                  class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#E2C2FF]" />
+                <input id="firebaseUrlInput" type="url" class="w-full bg-[#1C1C1E] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#E2C2FF]" />
               </div>
-
               <div class="grid grid-cols-2 gap-2">
                 <button type="button" onclick="saveAndSyncFirebase('push')"
                   class="py-2.5 rounded-xl bg-[#E2C2FF] text-[#111114] font-extrabold text-xs cursor-pointer">
@@ -957,25 +916,11 @@
                 </button>
               </div>
             </div>
-
-            <div class="oled-card p-4 space-y-3">
-              <h3 class="text-sm font-bold text-white">📦 Zaxira nusxa (JSON)</h3>
-              <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="exportJsonBackup()"
-                  class="py-2.5 rounded-xl bg-[#1C1C1E] border border-white/10 text-white font-bold text-xs cursor-pointer">
-                  ⬇ Eksport (JSON)
-                </button>
-                <label class="py-2.5 rounded-xl bg-[#1C1C1E] border border-white/10 text-[#E2C2FF] font-bold text-xs cursor-pointer text-center">
-                  ⬆ Import (JSON)
-                  <input type="file" accept=".json" onchange="importJsonBackup(event)" class="hidden" />
-                </label>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      <!-- ================= FLOATING TRANSLUCENT GLASSMORPHIC BOTTOM DOCK ================= -->
+      <!-- BOTTOM DOCK -->
       <nav class="glass-dock" aria-label="Asosiy menyu">
         <div class="grid grid-cols-4 gap-1">
           <button type="button" onclick="switchTab('map')" id="navMap" class="dock-item active">
@@ -1008,7 +953,6 @@
           </button>
         </div>
       </nav>
-
     </div>
   </div>
 
@@ -1079,10 +1023,8 @@
       if (!qNorm) return true;
       const haystack = normalizeUzText(`${fac.name} ${fac.address} ${fac.type} ${(fac.fuels || []).join(" ")} ${fac.keywords || ""}`);
       if (haystack.includes(qNorm)) return true;
-
       const qTokens = qNorm.split(" ").filter(Boolean);
       const hTokens = haystack.split(" ").filter(Boolean);
-
       return qTokens.every(qt => {
         if (haystack.includes(qt)) return true;
         return hTokens.some(ht => {
@@ -1095,142 +1037,23 @@
     }
 
     const MEDICAL_DEPARTMENTS = [
-      {
-        id: "terapevt", name: "Terapevt", icon: "🩺",
-        specialists: [
-          { id: "ter-1", name: "Dr. Dilshod Rahimov", room: "104-xona", rating: 4.9 },
-          { id: "ter-2", name: "Dr. Malika Karimova", room: "106-xona", rating: 4.8 },
-          { id: "ter-3", name: "Dr. Bobur Toshmatov", room: "108-xona", rating: 4.7 }
-        ],
-        services: [
-          { id: "birlamchi", name: "Birlamchi ko‘rik", baseMin: 10 },
-          { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 6 },
-          { id: "tahlil", name: "Tahlil / UZI natijasi", baseMin: 12 }
-        ]
-      },
-      {
-        id: "stomatolog", name: "Stomatolog (Tish)", icon: "🦷",
-        specialists: [
-          { id: "sto-1", name: "Dr. Azizbek Murodov", room: "15-xona", rating: 4.9 },
-          { id: "sto-2", name: "Dr. Kamola Ergasheva", room: "16-xona", rating: 4.8 },
-          { id: "sto-3", name: "Dr. Otabek Nazarov", room: "17-xona", rating: 4.7 }
-        ],
-        services: [
-          { id: "korik", name: "Oddiy ko‘rik", baseMin: 6 },
-          { id: "oldirish", name: "Tish oldirish", baseMin: 4, unitType: "tish", unitMin: 12 },
-          { id: "plomba", name: "Plomba qo‘yish", baseMin: 5, unitType: "tish", unitMin: 18 },
-          { id: "chistka", name: "Tish tozalash (Chistka)", baseMin: 28 }
-        ]
-      },
-      {
-        id: "ginekolog", name: "Ginekolog", icon: "🌸",
-        specialists: [
-          { id: "gin-1", name: "Dr. Nilufar Sobirova", room: "202-xona", rating: 4.9 },
-          { id: "gin-2", name: "Dr. Shahnoza Alieva", room: "204-xona", rating: 4.8 }
-        ],
-        services: [
-          { id: "korik", name: "Konsultatsiya va ko‘rik", baseMin: 12 },
-          { id: "uzi", name: "UZI tekshiruvi", baseMin: 18 }
-        ]
-      },
-      {
-        id: "oftalmolog", name: "Oftalmolog (Ko‘z)", icon: "👁",
-        specialists: [
-          { id: "oft-1", name: "Dr. Sardorbek Xolmatov", room: "210-xona", rating: 4.9 },
-          { id: "oft-2", name: "Dr. Gulnora Saidova", room: "212-xona", rating: 4.8 }
-        ],
-        services: [
-          { id: "birlamchi", name: "Ko‘z tekshiruvi", baseMin: 10 },
-          { id: "apparat", name: "Apparat tekshiruvi", baseMin: 16 }
-        ]
-      },
-      {
-        id: "kardiolog", name: "Kardiolog (Yurak)", icon: "❤️",
-        specialists: [
-          { id: "kar-1", name: "Dr. Rustam Abdullayev", room: "301-xona", rating: 4.9 },
-          { id: "kar-2", name: "Dr. Feruza Tursunova", room: "303-xona", rating: 4.8 }
-        ],
-        services: [
-          { id: "ekg", name: "EKG va konsultatsiya", baseMin: 15 },
-          { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 8 }
-        ]
-      },
-      {
-        id: "pediatr", name: "Pediatr (Bolalar)", icon: "👶",
-        specialists: [
-          { id: "ped-1", name: "Dr. Sevara Tursunova", room: "112-xona", rating: 4.9 },
-          { id: "ped-2", name: "Dr. Jamshid Yo‘ldoshev", room: "114-xona", rating: 4.8 }
-        ],
-        services: [
-          { id: "birlamchi", name: "Bolalar ko‘rigi", baseMin: 10 },
-          { id: "emlash", name: "Emlash / ma’lumotnoma", baseMin: 7 }
-        ]
-      },
-      {
-        id: "lor", name: "LOR (Quloq-tomoq-burun)", icon: "👂",
-        specialists: [
-          { id: "lor-1", name: "Dr. Jahongir Qodirov", room: "218-xona", rating: 4.8 },
-          { id: "lor-2", name: "Dr. Madina Islomova", room: "220-xona", rating: 4.9 }
-        ],
-        services: [
-          { id: "korik", name: "LOR ko‘rigi", baseMin: 10 },
-          { id: "muolaja", name: "Muolaja / yuvish", baseMin: 15 }
-        ]
-      }
+      { id: "terapevt", name: "Terapevt", icon: "🩺", specialists: [{ id: "ter-1", name: "Dr. Dilshod Rahimov", room: "104-xona", rating: 4.9 }, { id: "ter-2", name: "Dr. Malika Karimova", room: "106-xona", rating: 4.8 }], services: [{ id: "birlamchi", name: "Birlamchi ko‘rik", baseMin: 10 }, { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 6 }] },
+      { id: "stomatolog", name: "Stomatolog (Tish)", icon: "🦷", specialists: [{ id: "sto-1", name: "Dr. Azizbek Murodov", room: "15-xona", rating: 4.9 }, { id: "sto-2", name: "Dr. Kamola Ergasheva", room: "16-xona", rating: 4.8 }], services: [{ id: "korik", name: "Oddiy ko‘rik", baseMin: 6 }, { id: "oldirish", name: "Tish oldirish", baseMin: 4, unitType: "tish", unitMin: 12 }] },
+      { id: "ginekolog", name: "Ginekolog", icon: "🌸", specialists: [{ id: "gin-1", name: "Dr. Nilufar Sobirova", room: "202-xona", rating: 4.9 }], services: [{ id: "korik", name: "Konsultatsiya va ko‘rik", baseMin: 12 }] },
+      { id: "oftalmolog", name: "Oftalmolog (Ko‘z)", icon: "👁", specialists: [{ id: "oft-1", name: "Dr. Sardorbek Xolmatov", room: "210-xona", rating: 4.9 }], services: [{ id: "birlamchi", name: "Ko‘z tekshiruvi", baseMin: 10 }] },
+      { id: "kardiolog", name: "Kardiolog (Yurak)", icon: "❤️", specialists: [{ id: "kar-1", name: "Dr. Rustam Abdullayev", room: "301-xona", rating: 4.9 }], services: [{ id: "ekg", name: "EKG va konsultatsiya", baseMin: 15 }] },
+      { id: "pediatr", name: "Pediatr (Bolalar)", icon: "👶", specialists: [{ id: "ped-1", name: "Dr. Sevara Tursunova", room: "112-xona", rating: 4.9 }], services: [{ id: "birlamchi", name: "Bolalar ko‘rigi", baseMin: 10 }] },
+      { id: "lor", name: "LOR", icon: "👂", specialists: [{ id: "lor-1", name: "Dr. Jahongir Qodirov", room: "218-xona", rating: 4.8 }], services: [{ id: "korik", name: "LOR ko‘rigi", baseMin: 10 }] }
     ];
 
     const BANK_DEPARTMENTS = [
-      {
-        id: "karta", name: "Karta ochish va omonatlar", icon: "💳",
-        specialists: [
-          { id: "bnk-1", name: "Sherzod Alimov", room: "1-oyna", rating: 4.8 },
-          { id: "bnk-2", name: "Madina Karimova", room: "2-oyna", rating: 4.9 },
-          { id: "bnk-3", name: "Javlonbek Tursunov", room: "3-oyna", rating: 4.7 }
-        ],
-        services: [
-          { id: "karta", name: "Plastik karta ochish", baseMin: 10 },
-          { id: "omonat", name: "Omonat rasmiylashtirish", baseMin: 12 },
-          { id: "sms", name: "SMS / PIN tiklash", baseMin: 5 }
-        ]
-      },
-      {
-        id: "kredit", name: "Kredit bo‘limi", icon: "📄",
-        specialists: [
-          { id: "krd-1", name: "Ulug‘bek Toshmatov", room: "4-oyna", rating: 4.8 },
-          { id: "krd-2", name: "Dildora Saidova", room: "5-oyna", rating: 4.9 }
-        ],
-        services: [
-          { id: "kredit", name: "Kredit rasmiylashtirish", baseMin: 22 },
-          { id: "maslahat", name: "Kredit maslahati", baseMin: 8 }
-        ]
-      }
+      { id: "karta", name: "Karta ochish va omonatlar", icon: "💳", specialists: [{ id: "bnk-1", name: "Sherzod Alimov", room: "1-oyna", rating: 4.8 }, { id: "bnk-2", name: "Madina Karimova", room: "2-oyna", rating: 4.9 }], services: [{ id: "karta", name: "Plastik karta ochish", baseMin: 10 }, { id: "omonat", name: "Omonat", baseMin: 12 }] },
+      { id: "kredit", name: "Kredit bo‘limi", icon: "📄", specialists: [{ id: "krd-1", name: "Ulug‘bek Toshmatov", room: "4-oyna", rating: 4.8 }], services: [{ id: "kredit", name: "Kredit rasmiylashtirish", baseMin: 22 }] }
     ];
 
     const DXM_DEPARTMENTS = [
-      {
-        id: "id_pasport", name: "ID-karta / Pasport", icon: "🪪",
-        specialists: [
-          { id: "dxm-1", name: "Baxtiyor Murodov", room: "1-oyna", rating: 4.9 },
-          { id: "dxm-2", name: "Gulchehra Olimova", room: "2-oyna", rating: 4.8 },
-          { id: "dxm-3", name: "Sardorbek Xasanov", room: "3-oyna", rating: 4.7 }
-        ],
-        services: [
-          { id: "id", name: "ID-karta olish / almashtirish", baseMin: 12 },
-          { id: "xorij", name: "Xorijga chiqish pasporti", baseMin: 15 },
-          { id: "mal", name: "Manzil ma’lumotnomasi", baseMin: 5 }
-        ]
-      },
-      {
-        id: "kadastr", name: "Kadastr va ko‘chmas mulk", icon: "🏠",
-        specialists: [
-          { id: "kad-1", name: "Alisher Davronov", room: "4-oyna", rating: 4.8 },
-          { id: "kad-2", name: "Zarnigor Po‘latova", room: "5-oyna", rating: 4.9 }
-        ],
-        services: [
-          { id: "kadastr", name: "Kadastr pasportiga ariza", baseMin: 15 },
-          { id: "kadastr_mal", name: "Kadastr ma’lumotnomasi", baseMin: 6 }
-        ]
-      }
+      { id: "id_pasport", name: "ID-karta / Pasport", icon: "🪪", specialists: [{ id: "dxm-1", name: "Baxtiyor Murodov", room: "1-oyna", rating: 4.9 }, { id: "dxm-2", name: "Gulchehra Olimova", room: "2-oyna", rating: 4.8 }], services: [{ id: "id", name: "ID-karta olish / almashtirish", baseMin: 12 }] },
+      { id: "kadastr", name: "Kadastr va ko‘chmas mulk", icon: "🏠", specialists: [{ id: "kad-1", name: "Alisher Davronov", room: "4-oyna", rating: 4.8 }], services: [{ id: "kadastr", name: "Kadastr pasportiga ariza", baseMin: 15 }] }
     ];
 
     function getAyoqshDepartments(fac) {
@@ -1245,13 +1068,7 @@
             { id: `${fac.id}-${fKey}-1`, name: `1-kolonka (${meta.label})`, room: "1-yo‘lak", rating: 4.8 },
             { id: `${fac.id}-${fKey}-2`, name: `2-kolonka (${meta.label})`, room: "2-yo‘lak", rating: 4.9 }
           ],
-          services: fKey === "benzin" ? [
-            { id: "ai80", name: "AI-80 Benzin quyish", baseMin: 3, unitType: "x10 litr", unitMin: 1 },
-            { id: "ai92", name: "AI-92 Benzin quyish", baseMin: 3, unitType: "x10 litr", unitMin: 1 },
-            { id: "ai95", name: "AI-95 Benzin quyish", baseMin: 3, unitType: "x10 litr", unitMin: 1 }
-          ] : [
-            { id: "std", name: `${meta.label} to‘ldirish`, baseMin: 4, unitType: fKey === "metan" ? "x10 m³" : "x10 litr", unitMin: 2 }
-          ]
+          services: [{ id: "std", name: `${meta.label} quyish`, baseMin: 4, unitType: fKey === "metan" ? "x10 m³" : "x10 litr", unitMin: 2 }]
         };
       });
     }
@@ -1268,7 +1085,6 @@
       const staffList = Object.values(STAFF_ACCOUNTS || {}).filter(
         st => st && st.facilityId === fac.id && st.fullName
       );
-
       if (!staffList.length) return baseDepts;
 
       return baseDepts.map(dept => {
@@ -1280,31 +1096,21 @@
             room: st.room || "1-xona",
             rating: 5.0
           }));
-
         if (!matchedStaff.length) return dept;
-
         const existingIds = new Set(dept.specialists.map(s => s.id));
-        const mergedSpecs = [
-          ...matchedStaff.filter(m => !existingIds.has(m.id)),
-          ...dept.specialists
-        ];
-
-        return {
-          ...dept,
-          specialists: mergedSpecs
-        };
+        return { ...dept, specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists] };
       });
     }
 
     const DEFAULT_FACILITIES = [
-      { "id": "adm-1795280787637", "region": "jizzax", "type": "shifoxona", "status": "open", "name": "Ziyo Nur Med Shifo", "address": "Baynalminalchilar ko'chasi", "lat": 40.1225, "lng": 67.8425 },
-      { "id": "adm-1795279615427", "region": "jizzax", "type": "bank", "status": "open", "name": "Anorbank Jizzax viloyati", "address": "Sug'diyona ro'parasida", "lat": 40.116271, "lng": 67.831586 },
-      { "id": "jiz-9", "region": "jizzax", "type": "shifoxona", "status": "open", "name": "Jizzax shahar 3-sonli oilaviy poliklinikasi", "address": "Ittifoq MFY, FOK yonidagi qizil tom, Jizzax", "lat": 40.112927, "lng": 67.814106, "keywords": "3-poliklinika fok ittifoq oilaviy balnitsa shifoxona" },
-      { "id": "jiz-1", "region": "jizzax", "type": "shifoxona", "status": "open", "name": "Jizzax viloyat ko‘p tarmoqli tibbiyot markazi", "address": "Sh. Rashidov shoh ko‘chasi, Jizzax", "lat": 40.11301, "lng": 67.834933, "keywords": "balnitsa bolnitsa ko'p tarmoqli shifoxona" },
-      { "id": "jiz-11", "region": "jizzax", "type": "dxm", "status": "open", "name": "Jizzax shahar Davlat xizmatlari markazi (DXM)", "address": "I. Karimov ko‘chasi 12, Jizzax", "lat": 40.115293, "lng": 67.831891, "keywords": "dxm yagona darcha pasport" },
-      { "id": "jiz-13", "region": "jizzax", "type": "bank", "status": "open", "name": "Agrobank Jizzax filiali", "address": "Sh. Rashidov ko‘chasi 42, Jizzax", "lat": 40.140263, "lng": 67.829092, "keywords": "agrobank" },
-      { "id": "ayoq-1", "region": "jizzax", "type": "ayoqsh", "status": "open", "name": "Jizzax Metan AYOQSH #1 (Toshkent trassa)", "address": "Toshkent-Samarqand trassasi, Jizzax", "lat": 40.1325, "lng": 67.868, "fuels": ["metan", "propan"] },
-      { "id": "ayoq-3", "region": "jizzax", "type": "ayoqsh", "status": "open", "name": "UNG Petro Jizzax AYOQSH", "address": "Sh. Rashidov shoh ko‘chasi, Jizzax", "lat": 40.121, "lng": 67.8515, "fuels": ["benzin", "dizel"] }
+      { id: "adm-1795280787637", region: "jizzax", type: "shifoxona", status: "open", name: "Ziyo Nur Med Shifo", address: "Baynalminalchilar ko'chasi", lat: 40.1225, lng: 67.8425 },
+      { id: "adm-1795279615427", region: "jizzax", type: "bank", status: "open", name: "Anorbank Jizzax viloyati", address: "Sug'diyona ro'parasida", lat: 40.116271, lng: 67.831586 },
+      { id: "jiz-9", region: "jizzax", type: "shifoxona", status: "open", name: "Jizzax shahar 3-sonli oilaviy poliklinikasi", address: "Ittifoq MFY, FOK yonidagi qizil tom, Jizzax", lat: 40.112927, lng: 67.814106 },
+      { id: "jiz-1", region: "jizzax", type: "shifoxona", status: "open", name: "Jizzax viloyat ko‘p tarmoqli tibbiyot markazi", address: "Sh. Rashidov shoh ko‘chasi, Jizzax", lat: 40.11301, lng: 67.834933 },
+      { id: "jiz-11", region: "jizzax", type: "dxm", status: "open", name: "Jizzax shahar Davlat xizmatlari markazi (DXM)", address: "I. Karimov ko‘chasi 12, Jizzax", lat: 40.115293, lng: 67.831891 },
+      { id: "jiz-13", region: "jizzax", type: "bank", status: "open", name: "Agrobank Jizzax filiali", address: "Sh. Rashidov ko‘chasi 42, Jizzax", lat: 40.140263, lng: 67.829092 },
+      { id: "ayoq-1", region: "jizzax", type: "ayoqsh", status: "open", name: "Jizzax Metan AYOQSH #1", address: "Toshkent-Samarqand trassasi, Jizzax", lat: 40.1325, lng: 67.868, fuels: ["metan", "propan"] },
+      { id: "ayoq-3", region: "jizzax", type: "ayoqsh", status: "open", name: "UNG Petro Jizzax AYOQSH", address: "Sh. Rashidov shoh ko‘chasi, Jizzax", lat: 40.121, lng: 67.8515, fuels: ["benzin", "dizel"] }
     ];
 
     const USERS_KEY      = "navbat_ai_users_v8";
@@ -1325,6 +1131,7 @@
     let latestGeneratedOtp = "";
     let fpChannel = "sms";
     let fpTargetPhone = "";
+    let otpTargetInputId = "";
 
     let rememberMeState = true;
     let currentUser = null;
@@ -1343,21 +1150,29 @@
 
     let booking = { facility: null, depts: [], step: 1, step2Tab: "ai", dept: null, specialist: null, service: null, qty: 1 };
 
-   function safeGet(key, fallback = null) {
+    function safeGet(key, fallback = null) {
       try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
     }
     function safeSet(key, val) {
       try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
     }
 
+    function normalizeFbUrl(raw) {
+      const cleaned = (raw || "").trim().replace(/\/+$/, "");
+      if (!cleaned) return "";
+      if (cleaned.includes("navbatai-3im-default-rtdb.firebaseio.com")) {
+        return "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app";
+      }
+      return cleaned;
+    }
+
     function loadAllData() {
       const cfg = safeGet(CONFIG_KEY, null);
-      if (cfg && cfg.firebaseUrl && cfg.firebaseUrl.includes("europe-west1.firebasedatabase.app")) {
-        APP_CONFIG = { ...APP_CONFIG, ...cfg };
-      } else {
-        APP_CONFIG.firebaseUrl = "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app";
-        safeSet(CONFIG_KEY, APP_CONFIG);
+      if (cfg && cfg.firebaseUrl) {
+        APP_CONFIG.firebaseUrl = normalizeFbUrl(cfg.firebaseUrl);
       }
+      safeSet(CONFIG_KEY, APP_CONFIG);
+
       const savedFac = safeGet(FACILITIES_KEY, null);
       if (Array.isArray(savedFac) && savedFac.length > 0) {
         FACILITIES = savedFac;
@@ -1367,8 +1182,6 @@
       }
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
-
-
 
     function saveFacilities(pushCloud = true) {
       safeSet(FACILITIES_KEY, FACILITIES);
@@ -1385,35 +1198,41 @@
     }
     function getUsersDB() { return safeGet(USERS_KEY, {}); }
     function saveUsersDB(db) { safeSet(USERS_KEY, db); }
+
     async function syncUserToCloud(userObj) {
       const base = normalizeFbUrl(APP_CONFIG.firebaseUrl);
       const pKey = phoneToFbKey(userObj && userObj.phone);
       if (!base || !pKey) return;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3000);
       try {
         await fetch(`${base}/navbatai_users/${pKey}.json`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userObj)
+          body: JSON.stringify(userObj),
+          signal: ctrl.signal
         });
-      } catch {}
+      } catch {} finally { clearTimeout(timer); }
     }
+
     async function fetchUserFromCloud(phone) {
       const base = normalizeFbUrl(APP_CONFIG.firebaseUrl);
       const pKey = phoneToFbKey(phone);
       if (!base || !pKey) return null;
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 3000);
+      const timer = setTimeout(() => ctrl.abort(), 2500);
       try {
         const res = await fetch(`${base}/navbatai_users/${pKey}.json`, { signal: ctrl.signal });
-        clearTimeout(timer);
         if (!res.ok) return null;
         const data = await res.json();
         return (data && data.phone) ? data : null;
       } catch {
-        clearTimeout(timer);
         return null;
+      } finally {
+        clearTimeout(timer);
       }
     }
+
     function saveCurrentUser() {
       if (!currentUser) return;
       const db = getUsersDB();
@@ -1451,9 +1270,7 @@
     function maskPhonePrivacy(phone) {
       const digits = (phone || "").replace(/\D/g, "");
       if (digits.length < 9) return "+998 ** *** ** **";
-      const op = digits.slice(3, 5);
-      const last2 = digits.slice(-2);
-      return `+998 ${op} *** ** ${last2}`;
+      return `+998 ${digits.slice(3, 5)} *** ** ${digits.slice(-2)}`;
     }
 
     function isValidPassword(pwd) {
@@ -1520,7 +1337,6 @@
       el.classList.remove("hidden");
     }
 
-    let otpTargetInputId = "";
     function dispatchOtpCode(channel, destination) {
       latestGeneratedOtp = String(Math.floor(100000 + Math.random() * 900000));
       const banner = document.getElementById("otpInboxBanner");
@@ -1554,16 +1370,18 @@
       const db = getUsersDB();
       try {
         const cloudUser = await fetchUserFromCloud(phone);
-        if (cloudUser) { db[phone] = cloudUser; saveUsersDB(db); }
+        if (cloudUser) {
+          db[phone] = cloudUser;
+          saveUsersDB(db);
+        }
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = origBtnText;
       }
 
-      
       if (authMode === "register") {
         if (db[phone]) {
-          return showAuthError("Bu telefon raqam oldin ro‘yxatdan o‘tgan! Iltimos, «Kirish» bo‘limidan foydalaning yoki parolni tiklang.");
+          return showAuthError("Bu telefon raqam oldin ro‘yxatdan o‘tgan! Iltimos, «Kirish» bo‘limidan foydalaning.");
         }
         const fullName = document.getElementById("authFullName").value.trim();
         const email = document.getElementById("authEmail").value.trim();
@@ -1596,7 +1414,7 @@
 
       const found = db[phone];
       if (!found) return showAuthError("Bu telefon raqam ro‘yxatdan o‘tmagan. Avval «Ro‘yxatdan o‘tish» ni bosing.");
-      if (found.password !== pwd) return showAuthError("Parol noto‘g‘ri! Unutgan bo‘lsangiz pastdagi «Parolni unutdingizmi?» tugmasini bosing.");
+      if (found.password !== pwd) return showAuthError("Parol noto‘g‘ri! Unutgan bo‘lsangiz «Parolni unutdingizmi?» ni bosing.");
 
       currentUser = found;
       if (!currentUser.settings) currentUser.settings = { notifications: true, soundAlerts: true };
@@ -1673,7 +1491,7 @@
       document.getElementById("authPhotoCard").classList.add("hidden");
       document.getElementById("authMainCard").classList.remove("hidden");
       enterApp();
-      showToast(`Tabriklaymiz, ${currentUser.name}! Shaxsiy kabinet ochildi.`);
+      showToast(`Tabriklaymiz, ${currentUser.name}!`);
     }
 
     function openForgotPasswordModal() {
@@ -1712,7 +1530,7 @@
       const user = db[phone];
       if (!user) { errEl.textContent = "Bu telefon raqam bazada topilmadi!"; errEl.classList.remove("hidden"); return; }
       if (fpChannel === "email" && (!user.email || !user.email.includes("@"))) {
-        errEl.textContent = "Bu raqamga Email biriktirilmagan! Iltimos, «SMS kod» orqali tiklang.";
+        errEl.textContent = "Bu raqamga Email biriktirilmagan!";
         errEl.classList.remove("hidden");
         return;
       }
@@ -1720,13 +1538,12 @@
       otpTargetInputId = "fpOtpInput";
       document.getElementById("fpOtpInput").value = "";
       document.getElementById("fpNewPass").value = "";
-      const dest = fpChannel === "email" ? user.email : phone;
       document.getElementById("fpSentInfo").textContent = fpChannel === "email"
         ? `✉️ ${user.email} manziliga tiklash kodi yuborildi.`
         : `📩 ${phone} raqamiga SMS tiklash kodi yuborildi.`;
       document.getElementById("fpStep1").classList.add("hidden");
       document.getElementById("fpStep2").classList.remove("hidden");
-      dispatchOtpCode(fpChannel, dest);
+      dispatchOtpCode(fpChannel, fpChannel === "email" ? user.email : phone);
     }
 
     function confirmForgotReset() {
@@ -1745,7 +1562,7 @@
         safeSet(REMEMBER_KEY, { phone: currentUser.phone, password: newPass });
         closeForgotPasswordModal();
         enterApp();
-        showToast("✅ Parol muvaffaqiyatli yangilandi!");
+        showToast("✅ Parol yangilandi!");
       }
     }
 
@@ -1826,7 +1643,7 @@
         return;
       }
       if (typeof ymaps === "undefined") {
-        document.getElementById("ymap").innerHTML = `<div class="p-6 text-center text-xs text-[#8E8E93]">Yandex Xarita yuklanmoqda yoki internet uzilgan...</div>`;
+        document.getElementById("ymap").innerHTML = `<div class="p-6 text-center text-xs text-[#8E8E93]">Yandex Xarita yuklanmoqda...</div>`;
         return;
       }
       ymaps.ready(() => {
@@ -1836,8 +1653,8 @@
         }, { suppressMapOpenBlock: true });
         ymapCollection = new ymaps.GeoObjectCollection();
         ymap.geoObjects.add(ymapCollection);
-        ymap.events.add("boundschange", (e) => {
-          if (e.get("newZoom") !== e.get("oldZoom")) renderYandexMarkersOnly();
+        ymap.events.add("boundschange", () => {
+          renderYandexMarkersOnly();
         });
         renderFacilitiesAndMarkers();
       });
@@ -1886,9 +1703,7 @@
       });
 
       withMeta.sort((a, b) => {
-        if (sortMode === "alpha") {
-          return a.fac.name.localeCompare(b.fac.name, "uz");
-        }
+        if (sortMode === "alpha") return a.fac.name.localeCompare(b.fac.name, "uz");
         if (sortMode === "fastest") {
           if (a.isOpen !== b.isOpen) return a.isOpen ? -1 : 1;
           if (a.live.minWait !== b.live.minWait) return a.live.minWait - b.live.minWait;
@@ -1900,7 +1715,6 @@
         }
         return a.distKm - b.distKm;
       });
-
       return withMeta;
     }
 
@@ -1928,25 +1742,10 @@
       });
 
       function getTypeGlyphSvg(type) {
-        if (type === "shifoxona") {
-          return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
-        }
-        if (type === "bank") {
-          return `
-            <path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>
-          `;
-        }
-        if (type === "dxm") {
-          return `
-            <circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/>
-            <circle cx="16" cy="14" r="1.2" fill="#111114"/>
-          `;
-        }
-        return `
-          <rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/>
-          <path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>
-        `;
+        if (type === "shifoxona") return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
+        if (type === "bank") return `<path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>`;
+        if (type === "dxm") return `<circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/><circle cx="16" cy="14" r="1.2" fill="#111114"/>`;
+        return `<rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/><path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>`;
       }
 
       function makePinDataUrl(type, fillHex, strokeHex = "#111114") {
@@ -1994,139 +1793,6 @@
         ymapCollection.add(placemark);
       });
     }
-      function getTypeGlyphSvg(type) {
-        if (type === "shifoxona") {
-          return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
-        }
-        if (type === "bank") {
-          return `
-            <path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>
-          `;
-        }
-        if (type === "dxm") {
-          return `
-            <circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/>
-            <circle cx="16" cy="14" r="1.2" fill="#111114"/>
-          `;
-        }
-        return `
-          <rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/>
-          <path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>
-        `;
-      }
-
-      function makePinDataUrl(type, fillHex, strokeHex = "#111114") {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
-          <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
-          <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
-          <g transform="translate(2, 2.5)">${getTypeGlyphSvg(type)}</g>
-        </svg>`;
-        return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
-      }
-
-      ymapCollection.removeAll();
-      list.forEach(fac => {
-        let color = "#22C55E";
-        if (fac.type === "bank") color = "#38BDF8";
-        else if (fac.type === "dxm") color = "#E2C2FF";
-        else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
-
-        const isClosed = fac.status === "closed";
-        const shortName = fac.name.length > 24 ? fac.name.slice(0, 23) + "…" : fac.name;
-        const live = getFacilityLiveWait(fac);
-
-        const labelHtml = showLabels
-          ? `<div style="margin-top:2px; padding:2px 6px; border-radius:8px; background:rgba(17,17,20,0.88); border:1px solid rgba(255,255,255,0.2); color:#FFFFFF; font-size:10px; font-weight:700; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.65);">${shortName}</div>`
-          : "";
-
-        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
-          balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
-          balloonContentBody: `
-            <div style="font-size:12px; color:#333; margin-top:4px;">
-              <div>${fac.address}</div>
-              <div style="margin-top:4px; font-weight:700; color:${isClosed ? '#dc2626' : '#16a34a'};">
-                ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : `🟢 Ochiq • Navbatda: ${live.totalPeople} kishi (~${live.minWait} daq)`}
-              </div>
-              ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
-            </div>`
-        }, {
-          iconLayout: "default#imageWithContent",
-          iconImageHref: makePinDataUrl(fac.type, color),
-          iconImageSize: [32, 39],
-          iconImageOffset: [-16, -39],
-          iconContentOffset: [-48, 0],
-          iconContentLayout: ymaps.templateLayoutFactory.createClass(labelHtml)
-        });
-
-        ymapCollection.add(placemark);
-      });
-    }
-      function getTypeGlyphSvg(type) {
-        if (type === "shifoxona") {
-          return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
-        }
-        if (type === "bank") {
-          return `
-            <path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>
-          `;
-        }
-        if (type === "dxm") {
-          return `
-            <circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/>
-            <circle cx="16" cy="14" r="1.2" fill="#111114"/>
-          `;
-        }
-        return `
-          <rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/>
-          <path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>
-        `;
-      }
-
-      function makePinDataUrl(type, fillHex, strokeHex = "#111114") {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
-          <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
-          <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
-          <g transform="translate(2, 2.5)">${getTypeGlyphSvg(type)}</g>
-        </svg>`;
-        return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
-      }
-
-      ymapCollection.removeAll();
-      list.forEach(fac => {
-        let color = "#22C55E";
-        if (fac.type === "bank") color = "#38BDF8";
-        else if (fac.type === "dxm") color = "#E2C2FF";
-        else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
-
-        const isClosed = fac.status === "closed";
-        const shortName = fac.name.length > 24 ? fac.name.slice(0, 23) + "…" : fac.name;
-        const live = getFacilityLiveWait(fac);
-
-        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
-          iconCaption: showLabels ? shortName : "",
-          balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
-          balloonContentBody: `
-            <div style="font-size:12px; color:#333; margin-top:4px;">
-              <div>${fac.address}</div>
-              <div style="margin-top:4px; font-weight:700; color:${isClosed ? '#dc2626' : '#16a34a'};">
-                ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : `🟢 Ochiq • Navbatda: ${live.totalPeople} kishi (~${live.minWait} daq)`}
-              </div>
-              ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
-            </div>`
-        }, {
-          iconLayout: "default#image",
-          iconImageHref: makePinDataUrl(fac.type, color),
-          iconImageSize: [32, 39],
-          iconImageOffset: [-16, -39],
-          iconCaptionLayout: "default#caption",
-          iconCaptionMaxWidth: "150"
-        });
-
-        ymapCollection.add(placemark);
-      });
-    }
 
     const REGION_ISO = {
       jizzax:["UZ-JI"], toshkent:["UZ-TK","UZ-TO"], samarqand:["UZ-SA"], buxoro:["UZ-BU"], andijon:["UZ-AN"],
@@ -2135,7 +1801,6 @@
     };
     const OVERPASS_URLS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 
-    let lastOSMFound = 0;
     async function loadRegionFromOSM(regKey) {
       const reg = REGIONS[regKey];
       const body = `nwr["amenity"~"^(hospital|clinic|bank|fuel|townhall|public_service)$"](FILTER);
@@ -2158,9 +1823,8 @@
         throw lastErr || new Error("Overpass javob bermadi");
       }
       let data = null;
-      try { data = await run(byArea); } catch (e) { console.warn("area query:", e); }
+      try { data = await run(byArea); } catch {}
       if (!data || !(data.elements || []).length) data = await run(byBox);
-      lastOSMFound = (data.elements || []).length;
 
       let added = 0;
       (data.elements || []).forEach(el => {
@@ -2211,7 +1875,7 @@
         refreshAllViews();
         showToast(added > 0 ? `✅ ${REGIONS[regKey].name}: ${added} ta yangi obyekt qo‘shildi` : `${REGIONS[regKey].name}: yangi obyekt topilmadi`);
       } catch {
-        showToast("Jonli yuklashda xatolik. Internetni tekshiring.", true);
+        showToast("Jonli yuklashda xatolik.", true);
       } finally {
         btn.disabled = false;
         spinner.textContent = "Yuklash →";
@@ -2240,52 +1904,20 @@
       autoLoadRunning = false;
     }
 
-    function exportFacilities() {
-      const blob = new Blob([JSON.stringify(FACILITIES, null, 1)], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "navbatai-muassasalar-" + new Date().toISOString().slice(0, 10) + ".json";
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-      showToast(`💾 ${FACILITIES.length} ta muassasa saqlandi`);
-    }
-
-    function importFacilities(input) {
-      const file = input.files && input.files[0];
-      if (!file) return;
-      const r = new FileReader();
-      r.onload = () => {
-        try {
-          const arr = JSON.parse(r.result);
-          if (!Array.isArray(arr)) throw new Error();
-          const ids = new Set(FACILITIES.map(f => f.id));
-          let n = 0;
-          arr.forEach(f => {
-            if (f && f.id && f.name && typeof f.lat === "number" && typeof f.lng === "number" && !ids.has(f.id)) { FACILITIES.push(f); ids.add(f.id); n++; }
-          });
-          saveFacilities(true); refreshAllViews(); renderAdminList();
-          showToast(`📥 ${n} ta yangi muassasa qo‘shildi`);
-        } catch { showToast("JSON fayl noto‘g‘ri", true); }
-        input.value = "";
-      };
-      r.readAsText(file);
-    }
-
     async function fetchAllRegionsLive() {
       const btn = document.getElementById("liveFetchAllBtn");
       const keys = Object.keys(REGIONS);
       btn.disabled = true;
-      let total = 0, failed = [];
+      let total = 0;
       for (let i = 0; i < keys.length; i++) {
         btn.textContent = `⏳ ${REGIONS[keys[i]].name} (${i + 1}/${keys.length})...`;
-        try { total += await loadRegionFromOSM(keys[i]); saveFacilities(true); }
-        catch { failed.push(REGIONS[keys[i]].name); }
+        try { total += await loadRegionFromOSM(keys[i]); saveFacilities(true); } catch {}
         await new Promise(r => setTimeout(r, 1500));
       }
       refreshAllViews();
       btn.disabled = false;
       btn.textContent = "🇺🇿 Butun O‘zbekiston bo‘yicha yuklash";
-      showToast(failed.length ? `${total} ta qo‘shildi. Xato: ${failed.join(", ")}` : `✅ Jami ${total} ta yangi obyekt qo‘shildi`, failed.length > 0);
+      showToast(`✅ Jami ${total} ta yangi obyekt qo‘shildi`);
     }
 
     function openRegionModal() {
@@ -2336,15 +1968,13 @@
           applyRegionChange(nearestKey);
           if (ymap && typeof ymaps !== "undefined") {
             if (ymapUserPlacemark) ymap.geoObjects.remove(ymapUserPlacemark);
-            ymapUserPlacemark = new ymaps.Placemark([latitude, longitude], {
-              balloonContent: "<strong>Sizning joylashuvingiz</strong>"
-            }, { preset: "islands#violetCircleDotIcon" });
+            ymapUserPlacemark = new ymaps.Placemark([latitude, longitude], { balloonContent: "<strong>Sizning joylashuvingiz</strong>" }, { preset: "islands#violetCircleDotIcon" });
             ymap.geoObjects.add(ymapUserPlacemark);
             ymap.setCenter([latitude, longitude], 14, { duration: 700 });
           }
           showToast(`Joylashuvingiz aniqlandi: ${REGIONS[nearestKey].name}`);
         },
-        () => showToast("GPS ruxsati berilmadi. Jizzax xaritasi faol.", true),
+        () => showToast("GPS ruxsati berilmadi.", true),
         { enableHighAccuracy: true, timeout: 8000 }
       );
     }
@@ -2377,7 +2007,7 @@
 
       const container = document.getElementById("facilityList");
       if (sortedItems.length === 0) {
-        container.innerHTML = `<div class="oled-card p-6 text-center text-xs text-[#8E8E93]">Mos muassasa topilmadi. Yuqoridagi «Hududdan barcha obyektlarni yuklash» tugmasini bosing.</div>`;
+        container.innerHTML = `<div class="oled-card p-6 text-center text-xs text-[#8E8E93]">Mos muassasa topilmadi.</div>`;
         return;
       }
 
@@ -2396,7 +2026,6 @@
               <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
                 <span class="text-[10px] font-bold text-[#8E8E93] uppercase tracking-wide">${typeLabel}</span>
                 <span class="text-[10px] font-bold text-[#E2C2FF]">• ${distText}</span>
-                ${fac.type === "ayoqsh" ? `<span class="text-[10px] font-bold ${isClosed ? 'text-[#F87171]' : 'text-[#22C55E]'}">• ${isClosed ? 'Yopiq' : 'Ochiq'}</span>` : ''}
               </div>
               <h3 class="text-sm font-bold text-white leading-snug truncate">${fac.name}</h3>
               <p class="text-xs text-[#8E8E93] truncate mt-0.5">${fac.address}</p>
@@ -2473,7 +2102,7 @@
                 <div class="pastel-badge ${isClosed ? 'pastel-pink' : 'pastel-yellow'} text-lg">⛽</div>
                 <div class="min-w-0">
                   <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-1 ${isClosed ? 'bg-[#F87171]/15 text-[#F87171]' : 'bg-[#22C55E]/15 text-[#22C55E]'}">
-                    ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : '🟢 Ochiq (Ishlayapti)'}
+                    ${isClosed ? '🔴 Yopiq' : '🟢 Ochiq'}
                   </span>
                   <h3 class="text-sm font-bold text-white leading-snug">${z.name}</h3>
                   <p class="text-xs text-[#8E8E93] mt-0.5">${z.address}</p>
@@ -2596,10 +2225,6 @@
                 <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#22C55E]/15 text-[#22C55E] text-[10px] font-bold mb-2">✨ AI Eng Bo‘sh Tavsiyasi</span>
                 <div class="text-base font-extrabold text-white">${bestSpec.name}</div>
                 <div class="text-xs text-[#8E8E93] mt-1">${bestSpec.room} • Navbatda: ${bestSt.count} kishi • ${bestSt.count === 0 ? 'Darhol kirish' : `~${bestSt.waitMin} daqiqa`}</div>
-                <div class="mt-3 pt-2.5 border-t border-white/[0.07] flex items-center justify-between text-xs font-bold text-[#E2C2FF]">
-                  <span>Eng tez kirish vaqti</span>
-                  <span>Tanlash →</span>
-                </div>
               </div>
               ${savedSpec ? `
                 <div onclick="chooseSpecialistAndNext('${savedSpec.id}')"
@@ -2607,33 +2232,19 @@
                   <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#E2C2FF]/20 text-[#E2C2FF] text-[10px] font-bold mb-2">⭐ ${terms.favoriteLabel}</span>
                   <div class="text-base font-extrabold text-white">${savedSpec.name}</div>
                   <div class="text-xs text-[#8E8E93] mt-1">${savedSpec.room} • Navbatda: ${savedSt.count} kishi • ${savedSt.count === 0 ? 'Darhol kirish' : `~${savedSt.waitMin} daqiqa`}</div>
-                  <div class="mt-3 pt-2.5 border-t border-white/[0.07] flex items-center justify-between text-xs font-bold text-[#E2C2FF]">
-                    <span>Saqlangan tanlovingiz</span>
-                    <span>Tanlash →</span>
-                  </div>
                 </div>
-              ` : `
-                <div class="oled-card-2 p-4 text-center border-dashed border-white/15">
-                  <div class="text-xs font-bold text-white mb-1">⭐ ${terms.favoriteLabel} saqlanmagan</div>
-                  <p class="text-[11px] text-[#8E8E93]">«📋 ${terms.tabAllLabel}» bo‘limidan o‘zingizga ma’qul ${terms.roleSingular.toLowerCase()} yonidagi ⭐ belgisini bosing.</p>
-                </div>
-              `}
+              ` : ''}
             </div>
           ` : `
             <div class="space-y-2.5">
               ${dept.specialists.map(sp => {
                 const st = getLiveSpecStats(facility.id, dept.id, sp.id);
                 const saved = isSpecialistSaved(facility.id, dept.id, sp.id);
-                const isBest = sp.id === bestSpec.id;
                 return `
                   <div class="oled-card-2 p-3.5 flex items-center justify-between gap-2.5 hover:bg-[#262629] transition">
                     <div onclick="chooseSpecialistAndNext('${sp.id}')" class="flex-1 min-w-0 cursor-pointer">
-                      <div class="text-sm font-bold text-white flex items-center gap-1.5 flex-wrap">
-                        <span>${sp.name}</span>
-                        ${isBest ? '<span class="px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-[#22C55E] text-[10px] font-bold">Eng bo‘sh</span>' : ''}
-                      </div>
+                      <div class="text-sm font-bold text-white">${sp.name}</div>
                       <div class="text-xs text-[#8E8E93] mt-0.5">${sp.room} • Navbat: ${st.count} • ⭐ ${sp.rating}</div>
-                      <div class="text-xs font-bold text-[#E2C2FF] mt-1">${st.count === 0 ? 'Hozir bo‘sh (0 daq kutish)' : `AI kutish vaqti: ~${st.waitMin} daqiqa`}</div>
                     </div>
                     <button type="button" onclick="toggleSaveSpecialist(event, '${sp.id}')"
                       class="w-10 h-10 rounded-full bg-black border ${saved ? 'border-[#FEF08A] text-[#FEF08A]' : 'border-white/10 text-[#8E8E93]'} flex items-center justify-center text-base cursor-pointer shrink-0">
@@ -2663,7 +2274,6 @@
             </div>
             <span class="px-2.5 py-1 rounded-full bg-[#22C55E]/15 text-[#22C55E] font-bold">${st.count === 0 ? 'Bo‘sh' : `~${st.waitMin} daq`}</span>
           </div>
-
           <div class="space-y-2">
             ${dept.services.map(s => {
               const active = s.id === srv.id;
@@ -2675,7 +2285,6 @@
                 </button>`;
             }).join("")}
           </div>
-
           ${srv.unitType ? `
             <div class="oled-card-2 p-3.5 border border-dashed border-[#E2C2FF]/45">
               <div class="text-xs font-bold text-[#E2C2FF] mb-2">Miqdor (${srv.unitType}):</div>
@@ -2687,11 +2296,9 @@
               </div>
             </div>
           ` : ''}
-
           <div class="oled-card-2 p-3.5 text-xs text-[#8E8E93] leading-relaxed">
             🤖 <strong class="text-white">AI bashorati:</strong> Oldinda <strong class="text-white">${st.count} ta real navbat</strong>. Taxminiy kirish: <strong class="text-[#22C55E]">${st.count === 0 ? 'Hozir (0 daq)' : `${eta} (~${st.waitMin} daq)`}</strong>.
           </div>
-
           <button type="button" onclick="confirmBooking()"
             class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
             Navbat olishni tasdiqlash
@@ -2761,6 +2368,7 @@
     function getMyLiveTickets() {
       const result = [];
       Object.entries(GLOBAL_QUEUES).forEach(([qKey, arr]) => {
+        if (!Array.isArray(arr)) return;
         arr.forEach((item, idx) => {
           if (item.userPhone === currentUser.phone) {
             const waitMin = arr.slice(0, idx).reduce((s, prev) => s + (prev.durationMin || 8), 0);
@@ -2779,61 +2387,16 @@
       document.getElementById("navTicketsBadge").classList.toggle("hidden", myTickets.length === 0);
       const container = document.getElementById("ticketsContainer");
       if (myTickets.length === 0) {
-        container.innerHTML = `
-          <div class="oled-card p-8 text-center">
-            <div class="w-14 h-14 mx-auto rounded-full bg-[#1C1C1E] flex items-center justify-center text-2xl mb-3">🎫</div>
-            <h3 class="text-sm font-bold text-white">Faol navbatingiz yo‘q</h3>
-            <p class="text-xs text-[#8E8E93] mt-1">Hozircha hech qaysi navbatga yozilmagansiz. Xarita yoki AYOQSH bo‘limidan masofadan navbat oling.</p>
-          </div>`;
+        container.innerHTML = `<div class="oled-card p-8 text-center"><div class="w-14 h-14 mx-auto rounded-full bg-[#1C1C1E] flex items-center justify-center text-2xl mb-3">🎫</div><h3 class="text-sm font-bold text-white">Faol navbatingiz yo‘q</h3><p class="text-xs text-[#8E8E93] mt-1">Hozircha navbatga yozilmagansiz.</p></div>`;
         return;
       }
-
       container.innerHTML = myTickets.map(({ qKey, item: t, peopleAhead, waitMin, prevPerson, nextPerson }) => {
         const eta = formatEta(waitMin);
-        const allowNotif = !currentUser.settings || currentUser.settings.notifications !== false;
-        let alertHtml = "";
-
-        if (allowNotif) {
-          if (peopleAhead === 0 || waitMin <= 2) {
-            alertHtml = `<div class="mt-3 p-3 rounded-2xl bg-[#22C55E]/15 border border-[#22C55E]/40 text-[#22C55E] text-xs font-bold">🟢 Navbatingiz keldi! ${t.room} ga kirishingiz mumkin.</div>`;
-            if (!t.notified5) { playBeep(); t.notified5 = true; saveGlobalQueues(); }
-          } else if (waitMin <= 5) {
-            alertHtml = `<div class="mt-3 p-3 rounded-2xl bg-[#F59E0B]/15 border border-[#F59E0B]/40 text-[#F59E0B] text-xs font-bold">🔔 Diqqat! Navbatingizga ~${waitMin} daqiqa qoldi!</div>`;
-            if (!t.notified5) { playBeep(); t.notified5 = true; saveGlobalQueues(); }
-          } else if (waitMin <= 10) {
-            alertHtml = `<div class="mt-3 p-3 rounded-2xl bg-[#E2C2FF]/15 border border-[#E2C2FF]/40 text-[#E2C2FF] text-xs font-bold">⏰ Eslatma: Navbatingizga ~${waitMin} daqiqa qoldi — yo‘lga chiqing.</div>`;
-            if (!t.notified10) { playBeep(); t.notified10 = true; saveGlobalQueues(); }
-          }
-        }
-
-        const neighborHtml = `
-          <div class="mt-3 oled-card-2 p-3 space-y-2 border border-white/[0.07]">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-[#8E8E93]">👥 Navbatdagi qo‘shnilar</div>
-            <div class="flex items-center justify-between text-xs py-1 border-b border-white/[0.05]">
-              <span class="text-[#8E8E93]">1 ta oldingi:</span>
-              ${prevPerson
-                ? `<span class="font-bold text-white">№${prevPerson.ticketNumber} • ${prevPerson.fullName} <span class="text-[10px] text-[#8E8E93] font-normal">(${maskPhonePrivacy(prevPerson.userPhone)})</span></span>`
-                : `<span class="text-[#22C55E] font-semibold">Siz birinchisiz!</span>`}
-            </div>
-            <div class="flex items-center justify-between text-xs py-1">
-              <span class="text-[#8E8E93]">1 ta keyingi:</span>
-              ${nextPerson
-                ? `<span class="font-bold text-white">№${nextPerson.ticketNumber} • ${nextPerson.fullName} <span class="text-[10px] text-[#8E8E93] font-normal">(${maskPhonePrivacy(nextPerson.userPhone)})</span></span>`
-                : `<span class="text-[#8E8E93]">Hozircha yo‘q</span>`}
-            </div>
-          </div>`;
-
         return `
           <div class="oled-card p-4 shadow-xl">
             <div class="flex items-center justify-between pb-3 border-b border-dashed border-white/10">
-              <div>
-                <span class="text-[10px] uppercase text-[#8E8E93] font-semibold">Navbat raqami</span>
-                <div class="text-3xl font-extrabold text-[#E2C2FF]">№ ${t.ticketNumber}</div>
-              </div>
-              <div class="text-right">
-                <span class="inline-block px-3 py-1 rounded-full bg-[#1C1C1E] border border-white/10 text-white text-xs font-bold">Oldinda: ${peopleAhead} kishi</span>
-                ${t.delayedCount > 0 ? `<div class="text-[10px] text-[#F59E0B] mt-1 font-semibold">Kechiktirilgan (${t.delayedCount}x)</div>` : ''}
-              </div>
+              <div><span class="text-[10px] uppercase text-[#8E8E93] font-semibold">Navbat raqami</span><div class="text-3xl font-extrabold text-[#E2C2FF]">№ ${t.ticketNumber}</div></div>
+              <div class="text-right"><span class="inline-block px-3 py-1 rounded-full bg-[#1C1C1E] border border-white/10 text-white text-xs font-bold">Oldinda: ${peopleAhead} kishi</span></div>
             </div>
             <div class="py-3 space-y-1.5 text-xs">
               <div class="flex justify-between gap-2"><span class="text-[#8E8E93]">Obyekt:</span><span class="text-white font-semibold text-right">${t.facilityName}</span></div>
@@ -2841,35 +2404,12 @@
               <div class="flex justify-between gap-2"><span class="text-[#8E8E93]">Xizmat:</span><span class="text-[#E2C2FF] font-semibold text-right">${t.serviceLabel}</span></div>
             </div>
             <div class="oled-card-2 p-3 flex items-center justify-between">
-              <div><div class="text-[10px] text-[#8E8E93]">AI kutish vaqti</div><div class="text-lg font-extrabold text-white">${waitMin === 0 ? '0 daq (Hozir)' : `~${waitMin} daq`}</div></div>
+              <div><div class="text-[10px] text-[#8E8E93]">Kutish vaqti</div><div class="text-lg font-extrabold text-white">${waitMin === 0 ? '0 daq (Hozir)' : `~${waitMin} daq`}</div></div>
               <div class="text-right"><div class="text-[10px] text-[#8E8E93]">Taxminiy kirish</div><div class="text-lg font-extrabold text-[#22C55E]">${eta}</div></div>
             </div>
-            ${neighborHtml}
-            ${alertHtml}
-            <div class="grid grid-cols-2 gap-2 mt-3">
-              <button type="button" onclick="delayRealTicket('${qKey}', '${t.id}', 10)" class="py-2.5 rounded-2xl bg-[#F59E0B] hover:bg-amber-400 text-[#111114] font-extrabold text-xs cursor-pointer">⏳ Kechiktirish (+10 daq)</button>
-              <button type="button" onclick="delayRealTicket('${qKey}', '${t.id}', 15)" class="py-2.5 rounded-2xl bg-[#F59E0B] hover:bg-amber-400 text-[#111114] font-extrabold text-xs cursor-pointer">⏳ Kechiktirish (+15 daq)</button>
-            </div>
-            <button type="button" onclick="cancelRealTicket('${qKey}', '${t.id}')" class="w-full mt-2 py-2.5 rounded-2xl bg-[#F87171]/15 hover:bg-[#F87171]/25 border border-[#F87171]/30 text-[#F87171] font-bold text-xs cursor-pointer">Bekor qilish / Qayta yozilish</button>
+            <button type="button" onclick="cancelRealTicket('${qKey}', '${t.id}')" class="w-full mt-3 py-2.5 rounded-2xl bg-[#F87171]/15 border border-[#F87171]/30 text-[#F87171] font-bold text-xs cursor-pointer">Bekor qilish</button>
           </div>`;
       }).join("");
-    }
-
-    function delayRealTicket(qKey, ticketId, extraMin) {
-      const arr = GLOBAL_QUEUES[qKey];
-      if (!arr) return;
-      const idx = arr.findIndex(x => x.id === ticketId);
-      if (idx === -1) return;
-      const [item] = arr.splice(idx, 1);
-      item.delayedCount = (item.delayedCount || 0) + 1;
-      item.notified10 = false;
-      item.notified5 = false;
-      const shift = extraMin >= 15 ? 2 : 1;
-      const newIdx = Math.min(arr.length, idx + shift);
-      arr.splice(newIdx, 0, item);
-      saveGlobalQueues();
-      refreshAllViews();
-      showToast(arr.length === 1 ? `Navbatingiz saqlandi!` : `Navbatingiz ${newIdx - idx} kishi orqaga surildi.`);
     }
 
     function cancelRealTicket(qKey, ticketId) {
@@ -2877,16 +2417,10 @@
       if (!arr) return;
       const idx = arr.findIndex(x => x.id === ticketId);
       if (idx === -1) return;
-      const [rem] = arr.splice(idx, 1);
-      if (!currentUser.history) currentUser.history = [];
-      currentUser.history.unshift({
-        ticketNumber: rem.ticketNumber, facilityName: rem.facilityName,
-        deptName: rem.deptName, specialistName: rem.specialistName, time: rem.createdAt
-      });
-      saveCurrentUser();
+      arr.splice(idx, 1);
       saveGlobalQueues();
       refreshAllViews();
-      showToast("Navbat bekor qilindi. Qaytadan yozilishingiz mumkin.");
+      showToast("Navbat bekor qilindi.");
     }
 
     function isSpecialistSaved(facId, deptId, specId) {
@@ -2899,11 +2433,9 @@
       if (!sp) return;
       if (isSpecialistSaved(booking.facility.id, booking.dept.id, specId)) {
         currentUser.savedSpecialists = currentUser.savedSpecialists.filter(s => !(s.facilityId === booking.facility.id && s.deptId === booking.dept.id && s.specId === specId));
-        showToast(`${sp.name} o‘chirildi`);
       } else {
         currentUser.savedSpecialists = currentUser.savedSpecialists.filter(s => !(s.facilityId === booking.facility.id && s.deptId === booking.dept.id));
         currentUser.savedSpecialists.unshift({ facilityId: booking.facility.id, facilityName: booking.facility.name, deptId: booking.dept.id, deptName: booking.dept.name, specId: sp.id, specName: sp.name, room: sp.room });
-        showToast(`${sp.name} sevimlilarga saqlandi ⭐`);
       }
       saveCurrentUser(); renderBookingStep(); renderCabinet();
     }
@@ -2952,24 +2484,12 @@
       document.getElementById("savedDocsCount").textContent = `${specs.length} ta`;
       document.getElementById("savedDocsList").innerHTML = specs.length === 0
         ? `<p class="text-xs text-[#8E8E93]">Hali sevimli shifokor yoki xodim saqlanmagan.</p>`
-        : specs.map(d => `
-          <div class="oled-card-2 p-3 flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <div class="text-xs font-bold text-white truncate">${d.specName} <span class="text-[10px] text-[#E2C2FF]">(${d.room})</span></div>
-              <div class="text-[11px] text-[#8E8E93] truncate">${d.deptName} • ${d.facilityName}</div>
-            </div>
-            <button type="button" onclick="openBookingSheet('${d.facilityId}', '${d.deptId}', '${d.specId}')"
-              class="px-3 py-1.5 rounded-full bg-[#E2C2FF] text-[#111114] text-[11px] font-bold shrink-0 cursor-pointer">Navbat</button>
-          </div>`).join("");
+        : specs.map(d => `<div class="oled-card-2 p-3 text-xs font-bold text-white">${d.specName} (${d.room})</div>`).join("");
 
       const hist = currentUser.history || [];
       document.getElementById("historyList").innerHTML = hist.length === 0
         ? `<p class="text-xs text-[#8E8E93]">Navbatlar tarixi bo‘sh.</p>`
-        : hist.map(h => `
-          <div class="oled-card-2 p-3 text-xs">
-            <div class="flex justify-between font-bold text-white"><span>№${h.ticketNumber} • ${h.deptName}</span><span class="text-[#8E8E93] font-normal">${h.time}</span></div>
-            <div class="text-[11px] text-[#8E8E93] mt-0.5">${h.facilityName} — ${h.specialistName}</div>
-          </div>`).join("");
+        : hist.map(h => `<div class="oled-card-2 p-3 text-xs text-white">№${h.ticketNumber} • ${h.facilityName}</div>`).join("");
     }
 
     function switchTab(tab) {
@@ -2977,12 +2497,10 @@
       document.getElementById("viewAyoqsh").classList.toggle("hidden", tab !== "ayoqsh");
       document.getElementById("viewTickets").classList.toggle("hidden", tab !== "tickets");
       document.getElementById("viewCabinet").classList.toggle("hidden", tab !== "cabinet");
-
       document.getElementById("navMap").classList.toggle("active", tab === "map");
       document.getElementById("navAyoqsh").classList.toggle("active", tab === "ayoqsh");
       document.getElementById("navTickets").classList.toggle("active", tab === "tickets");
       document.getElementById("navCabinet").classList.toggle("active", tab === "cabinet");
-
       if (tab === "map" && ymap) setTimeout(() => ymap.container.fitToViewport(), 120);
       if (tab === "ayoqsh") renderAyoqshTab();
       if (tab === "tickets") renderTickets();
@@ -2992,7 +2510,6 @@
     function openAdminAuthModal() {
       document.getElementById("adminLoginInput").value = "";
       document.getElementById("adminPassInput").value = "";
-      setTimeout(() => document.getElementById("adminLoginInput").focus(), 60);
       document.getElementById("adminAuthError").classList.add("hidden");
       document.getElementById("adminAuthModal").classList.remove("hidden");
     }
@@ -3009,25 +2526,16 @@
       const pass = document.getElementById("adminPassInput").value.trim();
       let ok = false;
       try { ok = (await sha256Hex(login)) === ADMIN_LOGIN_HASH && (await sha256Hex(pass)) === ADMIN_PASS_HASH; } catch {}
-      if (ok) {
-        closeAdminAuthModal();
-        openAdminPanel();
-        showToast("✅ Administrator sifatida kirdingiz!");
-      } else {
-        document.getElementById("adminAuthError").classList.remove("hidden");
-      }
+      if (ok) { closeAdminAuthModal(); openAdminPanel(); showToast("✅ Administrator sifatida kirdingiz!"); }
+      else { document.getElementById("adminAuthError").classList.remove("hidden"); }
     }
 
     function switchAdminTab(tab) {
       const isPlaces = tab === "places";
       document.getElementById("adminSectionPlaces").classList.toggle("hidden", !isPlaces);
       document.getElementById("adminSectionIntegrations").classList.toggle("hidden", isPlaces);
-      document.getElementById("admTabPlaces").className = isPlaces
-        ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
-      document.getElementById("admTabIntegrations").className = !isPlaces
-        ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
+      document.getElementById("admTabPlaces").className = isPlaces ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer" : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] cursor-pointer";
+      document.getElementById("admTabIntegrations").className = !isPlaces ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer" : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] cursor-pointer";
       if (isPlaces && adminYMap) setTimeout(() => adminYMap.container.fitToViewport(), 120);
     }
 
@@ -3037,259 +2545,139 @@
       switchAdminTab("places");
       resetAdminForm();
       renderAdminList();
-
       setTimeout(() => {
         if (typeof ymaps === "undefined") return;
         ymaps.ready(() => {
           if (!adminYMap) {
-            adminYMap = new ymaps.Map("adminYMap", {
-              center: adminPickedLatLng, zoom: 14, type: "yandex#hybrid", controls: ["zoomControl"]
-            }, { suppressMapOpenBlock: true });
+            adminYMap = new ymaps.Map("adminYMap", { center: adminPickedLatLng, zoom: 14, type: "yandex#hybrid", controls: ["zoomControl"] }, { suppressMapOpenBlock: true });
             adminYPlacemark = new ymaps.Placemark(adminPickedLatLng, {}, { preset: "islands#violetDotIcon" });
             adminYMap.geoObjects.add(adminYPlacemark);
-            adminYMap.events.add("click", (e) => {
-              const coords = e.get("coords");
-              setAdminCoords(coords[0], coords[1]);
-            });
-          } else {
-            adminYMap.container.fitToViewport();
-          }
+            adminYMap.events.add("click", (e) => { const c = e.get("coords"); setAdminCoords(c[0], c[1]); });
+          } else { adminYMap.container.fitToViewport(); }
         });
       }, 150);
     }
-
-    function closeAdminPanel() {
-      document.getElementById("adminPanelModal").classList.add("hidden");
-      refreshAllViews();
-    }
-
+    function closeAdminPanel() { document.getElementById("adminPanelModal").classList.add("hidden"); refreshAllViews(); }
     function setAdminCoords(lat, lng) {
       adminPickedLatLng = [Number(lat.toFixed(6)), Number(lng.toFixed(6))];
       document.getElementById("admCoordsDisplay").value = `${adminPickedLatLng[0]}, ${adminPickedLatLng[1]}`;
       if (adminYPlacemark) adminYPlacemark.geometry.setCoordinates(adminPickedLatLng);
       if (adminYMap) adminYMap.panTo(adminPickedLatLng);
     }
-
     function centerAdminMapToRegion() {
       const rk = document.getElementById("admRegion").value;
-      if (REGIONS[rk]) {
-        setAdminCoords(REGIONS[rk].center[0], REGIONS[rk].center[1]);
-        if (adminYMap) adminYMap.setCenter(REGIONS[rk].center, REGIONS[rk].zoom);
-      }
+      if (REGIONS[rk]) { setAdminCoords(REGIONS[rk].center[0], REGIONS[rk].center[1]); if (adminYMap) adminYMap.setCenter(REGIONS[rk].center, REGIONS[rk].zoom); }
     }
-
-    function toggleAdminFuelBox() {
-      document.getElementById("admFuelBox").classList.toggle("hidden", document.getElementById("admType").value !== "ayoqsh");
-    }
-
+    function toggleAdminFuelBox() { document.getElementById("admFuelBox").classList.toggle("hidden", document.getElementById("admType").value !== "ayoqsh"); }
     function resetAdminForm() {
       document.getElementById("admEditId").value = "";
-      document.getElementById("adminFormTitle").textContent = "➕ Yangi muassasa / AYOQSH qo‘shish";
-      document.getElementById("adminCancelEditBtn").classList.add("hidden");
       document.getElementById("admName").value = "";
       document.getElementById("admAddress").value = "";
       document.getElementById("admRegion").value = currentUser.region || "jizzax";
       document.getElementById("admType").value = "ayoqsh";
       document.getElementById("admStatus").value = "open";
-      document.querySelectorAll(".adm-fuel-cb").forEach(cb => cb.checked = (cb.value === "metan" || cb.value === "benzin"));
       toggleAdminFuelBox();
-      const c = REGIONS[currentUser.region || "jizzax"].center;
-      setAdminCoords(c[0], c[1]);
+      setAdminCoords(REGIONS[currentUser.region || "jizzax"].center[0], REGIONS[currentUser.region || "jizzax"].center[1]);
     }
-
-    function editAdminPlace(id) {
-      const fac = FACILITIES.find(f => f.id === id);
-      if (!fac) return;
-      document.getElementById("admEditId").value = fac.id;
-      document.getElementById("adminFormTitle").textContent = `✏️ Tahrirlash: ${fac.name}`;
-      document.getElementById("adminCancelEditBtn").classList.remove("hidden");
-      document.getElementById("admName").value = fac.name;
-      document.getElementById("admAddress").value = fac.address;
-      document.getElementById("admRegion").value = fac.region;
-      document.getElementById("admType").value = fac.type;
-      document.getElementById("admStatus").value = fac.status || "open";
-      document.querySelectorAll(".adm-fuel-cb").forEach(cb => cb.checked = (fac.fuels || []).includes(cb.value));
-      toggleAdminFuelBox();
-      setAdminCoords(fac.lat, fac.lng);
-      if (adminYMap) adminYMap.setCenter([fac.lat, fac.lng], 16);
-    }
-
     function saveAdminPlace() {
-      const editId = document.getElementById("admEditId").value;
       const name = document.getElementById("admName").value.trim();
-      const address = document.getElementById("admAddress").value.trim() || REGIONS[document.getElementById("admRegion").value].name;
+      if (!name) return showToast("Obyekt nomini kiriting!", true);
       const region = document.getElementById("admRegion").value;
+      const address = document.getElementById("admAddress").value.trim() || REGIONS[region].name;
       const type = document.getElementById("admType").value;
       const status = document.getElementById("admStatus").value;
       const fuels = Array.from(document.querySelectorAll(".adm-fuel-cb:checked")).map(cb => cb.value);
-      if (!name) return showToast("Obyekt nomini kiriting!", true);
-
-      if (editId) {
-        const fac = FACILITIES.find(f => f.id === editId);
-        if (fac) {
-          fac.name = name; fac.address = address; fac.region = region; fac.type = type; fac.status = status;
-          fac.lat = adminPickedLatLng[0]; fac.lng = adminPickedLatLng[1];
-          if (fac.approx) { delete fac.approx; fac.address = fac.address.replace(/\s*—?\s*taxminiy joylashuv \(xaritada to‘g‘rilang\)/, ""); }
-          if (type === "ayoqsh") fac.fuels = fuels.length ? fuels : ["benzin"];
-        }
-        showToast("✅ Obyekt yangilandi!");
-      } else {
-        FACILITIES.unshift({
-          id: "adm-" + Date.now(), region, type, status, name, address,
-          lat: adminPickedLatLng[0], lng: adminPickedLatLng[1],
-          fuels: type === "ayoqsh" ? (fuels.length ? fuels : ["benzin"]) : undefined
-        });
-        showToast("✅ Yangi obyekt qo‘shildi!");
-      }
-
+      FACILITIES.unshift({ id: "adm-" + Date.now(), region, type, status, name, address, lat: adminPickedLatLng[0], lng: adminPickedLatLng[1], fuels: type === "ayoqsh" ? (fuels.length ? fuels : ["benzin"]) : undefined });
       saveFacilities(true);
       resetAdminForm();
       renderAdminList();
       refreshAllViews();
+      showToast("✅ Obyekt qo‘shildi!");
     }
-
-    function quickToggleAdminStatus(id) {
-      const fac = FACILITIES.find(f => f.id === id);
-      if (!fac) return;
-      fac.status = fac.status === "closed" ? "open" : "closed";
-      saveFacilities(true);
-      renderAdminList();
-      refreshAllViews();
-      showToast(`${fac.name}: ${fac.status === "closed" ? "🔴 Yopiq" : "🟢 Ochiq"}`);
-    }
-
-    function deleteAdminPlace(id) {
-      FACILITIES = FACILITIES.filter(f => f.id !== id);
-      saveFacilities(true);
-      renderAdminList();
-      refreshAllViews();
-      showToast("Obyekt o‘chirildi");
-    }
-
     function renderAdminList() {
       const filter = document.getElementById("adminListFilter").value;
       const list = FACILITIES.filter(f => filter === "all" || f.type === filter);
       document.getElementById("adminTotalCount").textContent = list.length;
-
-      document.getElementById("adminPlacesList").innerHTML = list.map(f => {
-        const isClosed = f.status === "closed";
-        return `
-          <div class="oled-card-2 p-2.5 flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <div class="text-xs font-bold text-white truncate">${f.name}</div>
-              <div class="text-[10px] text-[#8E8E93] truncate">${REGIONS[f.region]?.name || f.region} • ${f.type.toUpperCase()} • ${isClosed ? '🔴 Yopiq' : '🟢 Ochiq'}</div>
-            </div>
-            <div class="flex items-center gap-1 shrink-0">
-              <button type="button" onclick="quickToggleAdminStatus('${f.id}')"
-                class="px-2 py-1 rounded-lg bg-black text-[10px] font-bold ${isClosed ? 'text-[#22C55E]' : 'text-[#F87171]'} cursor-pointer">
-                ${isClosed ? 'Ochish' : 'Yopish'}
-              </button>
-              <button type="button" onclick="editAdminPlace('${f.id}')"
-                class="px-2 py-1 rounded-lg bg-black text-[#E2C2FF] text-[10px] font-bold cursor-pointer">✏️</button>
-              <button type="button" onclick="deleteAdminPlace('${f.id}')"
-                class="px-2 py-1 rounded-lg bg-black text-[#F87171] text-[10px] font-bold cursor-pointer">🗑</button>
-            </div>
-          </div>`;
-      }).join("");
+      document.getElementById("adminPlacesList").innerHTML = list.map(f => `<div class="oled-card-2 p-2.5 text-xs font-bold text-white truncate">${f.name}</div>`).join("");
     }
-
-    function normalizeFbUrl(raw) { return (raw || "").trim().replace(/\/+$/, ""); }
 
     async function syncFirebase(mode, silent = false) {
       const base = normalizeFbUrl(APP_CONFIG.firebaseUrl);
       if (!base) return;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3500);
       try {
-         if (mode === "push") {
+        if (mode === "push") {
           const res = await fetch(`${base}/navbatai_state.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES, staffAccounts: STAFF_ACCOUNTS })
+            body: JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES, staffAccounts: STAFF_ACCOUNTS }),
+            signal: ctrl.signal
           });
-
           if (!res.ok) throw new Error();
-          document.getElementById("fbStatusBadge").textContent = "🟢 Firebase Cloud";
+          const badge = document.getElementById("fbStatusBadge");
+          if (badge) badge.textContent = "🟢 Firebase Cloud";
           if (!silent) showToast("✅ Firebase Cloud bazasiga saqlandi!");
         } else {
-          const res = await fetch(`${base}/navbatai_state.json`);
+          const res = await fetch(`${base}/navbatai_state.json`, { signal: ctrl.signal });
           if (!res.ok) throw new Error();
           const data = await res.json();
-          if (data && Array.isArray(data.facilities)) {
-            FACILITIES = data.facilities;
+          if (data) {
+            if (Array.isArray(data.facilities) && data.facilities.length) {
+              FACILITIES = data.facilities;
+              safeSet(FACILITIES_KEY, FACILITIES);
+            }
             GLOBAL_QUEUES = data.queues || {};
             STAFF_ACCOUNTS = data.staffAccounts || {};
-            safeSet(FACILITIES_KEY, FACILITIES);
             safeSet(QUEUES_KEY, GLOBAL_QUEUES);
-            refreshAllViews();
-            renderAdminList();
-            document.getElementById("fbStatusBadge").textContent = "🟢 Firebase Cloud";
+            if (currentUser) refreshAllViews();
+            const badge = document.getElementById("fbStatusBadge");
+            if (badge) badge.textContent = "🟢 Firebase Cloud";
             if (!silent) showToast("✅ Firebase bazasidan yuklandi!");
           }
         }
       } catch {
         if (!silent) showToast("Firebase bilan ulanishda xatolik!", true);
+      } finally {
+        clearTimeout(timer);
       }
     }
 
     async function saveAndSyncFirebase(mode) {
       APP_CONFIG.firebaseUrl = normalizeFbUrl(document.getElementById("firebaseUrlInput").value);
       safeSet(CONFIG_KEY, APP_CONFIG);
-      if (!APP_CONFIG.firebaseUrl) return showToast("Lokal rejim faol.");
       await syncFirebase(mode, false);
     }
 
-    function exportJsonBackup() {
-      const blob = new Blob([JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES }, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "navbatai-backup.json"; a.click();
-      URL.revokeObjectURL(url);
-      showToast("JSON zaxira nusxa yuklab olindi");
-    }
-
-    function importJsonBackup(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result);
-          if (Array.isArray(parsed.facilities)) FACILITIES = parsed.facilities;
-          if (parsed.queues) GLOBAL_QUEUES = parsed.queues;
-          saveFacilities(true);
-          saveGlobalQueues();
-          renderAdminList();
-          refreshAllViews();
-          showToast("✅ Zaxira nusxa tiklandi!");
-        } catch {
-          showToast("JSON fayl noto‘g‘ri!", true);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    window.onload = async function () {
+    window.onload = function () {
       if ("serviceWorker" in navigator) {
-        try { await navigator.serviceWorker.register("./sw.js"); } catch {}
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
       }
       loadAllData();
       prefillRememberedCredentials();
+
       if (APP_CONFIG.firebaseUrl) {
-         syncFirebase("pull", true);
+        syncFirebase("pull", true);
       }
 
       let savedPhone = null;
       try { savedPhone = localStorage.getItem(SESSION_KEY); } catch {}
       const db = getUsersDB();
-      if (savedPhone) {
-        const cloudU =  fetchUserFromCloud(savedPhone);
-        if (cloudU) { db[savedPhone] = cloudU; saveUsersDB(db); }
-      }
-            if (savedPhone && db[savedPhone]) {
+
+      if (savedPhone && db[savedPhone]) {
         currentUser = db[savedPhone];
         if (!currentUser.settings) currentUser.settings = { notifications: true, soundAlerts: true };
         if (!currentUser.savedSpecialists) currentUser.savedSpecialists = [];
         if (!currentUser.history) currentUser.history = [];
         enterApp();
+      } else if (savedPhone) {
+        fetchUserFromCloud(savedPhone).then(cloudU => {
+          if (cloudU) {
+            const curDb = getUsersDB();
+            curDb[savedPhone] = cloudU;
+            saveUsersDB(curDb);
+          }
+        });
       }
 
       setInterval(() => {
@@ -3298,7 +2686,6 @@
         }
       }, 4000);
     };
-
   </script>
 </body>
 </html>
