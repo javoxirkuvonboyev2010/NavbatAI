@@ -1174,12 +1174,22 @@
       safeSet(CONFIG_KEY, APP_CONFIG);
 
       const savedFac = safeGet(FACILITIES_KEY, null);
-      if (Array.isArray(savedFac) && savedFac.length > 0) {
-        FACILITIES = savedFac;
-      } else {
-        FACILITIES = JSON.parse(JSON.stringify(DEFAULT_FACILITIES));
-        safeSet(FACILITIES_KEY, FACILITIES);
-      }
+      FACILITIES = Array.isArray(savedFac)
+        ? savedFac.filter(f => f && f.id && f.name && typeof f.lat === "number" && typeof f.lng === "number")
+        : [];
+
+      const existingIds = new Set(FACILITIES.map(f => f.id));
+      DEFAULT_FACILITIES.forEach(def => {
+        if (!existingIds.has(def.id)) {
+          FACILITIES.push({ ...def });
+        }
+      });
+
+      FACILITIES.forEach(f => {
+        f.region = (f.region || "jizzax").toLowerCase();
+      });
+
+      safeSet(FACILITIES_KEY, FACILITIES);
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
 
