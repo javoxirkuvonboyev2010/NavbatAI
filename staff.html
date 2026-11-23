@@ -425,49 +425,41 @@
     function renderFacilitySearchResults() {
       const regKey = document.getElementById("regRegion").value || "jizzax";
       const districtRaw = document.getElementById("regDistrict").value || "";
-      const district = districtRaw.toLowerCase().replace(/\s*\(.*?\)\s*/g, "").replace(/\s+(shahar|tumani|shahri)$/i, "").trim();
       const field = document.getElementById("regField").value || "shifoxona";
-      const q = (document.getElementById("facSearchInput").value || "").toLowerCase().trim();
+      const query = (document.getElementById("facSearchInput").value || "").toLowerCase().trim();
 
-      document.getElementById("facListTitle").textContent = `📍 ${districtRaw} — muassasalar`;
+      document.getElementById("facListTitle").textContent = 📍 ${districtRaw} — muassasalar;
 
-      // Faqat tanlangan viloyat, soha va aynan shu tuman/shaharga tegishli obyektlar
-      const districtPool = FACILITIES.filter(f => {
-        if (f.region !== regKey || f.type !== field) return false;
-        const fDist = (f.district || "").toLowerCase();
-        const fAddr = (f.address || "").toLowerCase();
-        const fName = (f.name || "").toLowerCase();
-        return !district || fDist.includes(district) || fAddr.includes(district) || fName.includes(district);
-      });
+      // Shu viloyat va sohadagi muassasalar
+      const regionPool = FACILITIES.filter(f => f.region === regKey && f.type === field);
 
-      const filtered = q
-        ? districtPool.filter(f => `${f.name} ${f.address} ${f.district || ""}`.toLowerCase().includes(q))
-        : districtPool;
+      // Avval tuman/shahar bo'yicha qidiramiz; topilmasa viloyatdagi shu soha obyektlarini ko'rsatamiz
+      const cleanDist = districtRaw.toLowerCase().replace(/\s*\(.*?\)\s*/g, "").replace(/\s+(shahar|tumani|shahri)$/i, "").trim();
+      const districtMatches = cleanDist
+        ? regionPool.filter(f => ${f.district || ""} ${f.address || ""} ${f.name || ""}.toLowerCase().includes(cleanDist))
+        : regionPool;
 
-      document.getElementById("facMatchCount").textContent = `${filtered.length} ta`;
+      const baseList = districtMatches.length ? districtMatches : regionPool;
+      const filtered = query
+        ? baseList.filter(f => ${f.name} ${f.address}.toLowerCase().includes(query))
+        : baseList;
+
+      document.getElementById("facMatchCount").textContent = ${filtered.length} ta;
       const box = document.getElementById("facSearchResults");
 
       if (!filtered.length) {
-        const isCustomSelected = selectedFacilityObj && selectedFacilityObj.isCustomDistrictPlace;
-        box.innerHTML = `
-          <div class="p-3 rounded-xl bg-black/70 space-y-2 text-[11px] text-[#8E8E93]">
-            <div>«${districtRaw}» bo‘yicha bazada tayyor muassasa topilmadi.</div>
-            <button type="button" onclick="selectCustomDistrictFacility()"
-              class="w-full py-2 px-3 rounded-xl border cursor-pointer text-xs font-bold transition ${isCustomSelected ? 'bg-[#22C55E]/20 border-[#22C55E] text-[#22C55E]' : 'bg-[#1C1C1E] border-[#E2C2FF]/40 text-[#E2C2FF]'}">
-              ${isCustomSelected ? '✓ ' : '+ '}${districtRaw} hududidagi ish joyini biriktirish
-            </button>
-          </div>`;
+        box.innerHTML = <div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Mos muassasa topilmadi. Qidiruvni tozalab ko‘ring.</div>;
         return;
       }
 
       box.innerHTML = filtered.map(f => {
         const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
-        return `
+        return 
           <button type="button" onclick="pickFacility('${f.id}')"
-            class="w-full text-left p-2.5 rounded-xl border cursor-pointer transition ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10 hover:border-white/25'}">
+            class="w-full text-left p-2.5 rounded-xl border cursor-pointer ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10'}">
             <div class="text-xs font-bold text-white truncate">${active ? '✓ ' : ''}${f.name}</div>
             <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
-          </button>`;
+          </button>;
       }).join("");
     }
 
