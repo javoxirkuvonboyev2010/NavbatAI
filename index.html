@@ -1909,12 +1909,16 @@
       const rawList = getFilteredFacilities();
       const z = ymap.getZoom();
       const showLabels = z >= 14;
-      document.getElementById("zoomHintBadge").textContent = showLabels
-        ? `Zoom ${Math.round(z)} • Nomlar faol`
-        : `Yaqinlashtirsangiz nomlar chiqadi`;
+      const hintEl = document.getElementById("zoomHintBadge");
+      if (hintEl) {
+        hintEl.textContent = showLabels
+          ? `Zoom ${Math.round(z)} • Nomlar faol`
+          : `Yaqinlashtirsangiz nomlar chiqadi`;
+      }
 
       const list = [];
       rawList.forEach(fac => {
+        if (typeof fac.lat !== "number" || typeof fac.lng !== "number" || isNaN(fac.lat) || isNaN(fac.lng)) return;
         const isTooCloseDuplicate = list.some(existing =>
           existing.type === fac.type &&
           Math.abs(existing.lat - fac.lat) < 0.00035 &&
@@ -1922,8 +1926,74 @@
         );
         if (!isTooCloseDuplicate) list.push(fac);
       });
-    }
 
+      function getTypeGlyphSvg(type) {
+        if (type === "shifoxona") {
+          return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
+        }
+        if (type === "bank") {
+          return `
+            <path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>
+          `;
+        }
+        if (type === "dxm") {
+          return `
+            <circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/>
+            <circle cx="16" cy="14" r="1.2" fill="#111114"/>
+          `;
+        }
+        return `
+          <rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/>
+          <path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>
+        `;
+      }
+
+      function makePinDataUrl(type, fillHex, strokeHex = "#111114") {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+          <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
+          <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
+          <g transform="translate(2, 2.5)">${getTypeGlyphSvg(type)}</g>
+        </svg>`;
+        return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+      }
+
+      ymapCollection.removeAll();
+      list.forEach(fac => {
+        let color = "#22C55E";
+        if (fac.type === "bank") color = "#38BDF8";
+        else if (fac.type === "dxm") color = "#E2C2FF";
+        else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
+
+        const isClosed = fac.status === "closed";
+        const shortName = (fac.name || "").length > 24 ? fac.name.slice(0, 23) + "…" : (fac.name || "");
+        const safeCaption = shortName.replace(/['"`<>]/g, "");
+        const live = getFacilityLiveWait(fac);
+
+        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
+          iconCaption: showLabels ? safeCaption : "",
+          balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
+          balloonContentBody: `
+            <div style="font-size:12px; color:#333; margin-top:4px;">
+              <div>${fac.address || ""}</div>
+              <div style="margin-top:4px; font-weight:700; color:${isClosed ? '#dc2626' : '#16a34a'};">
+                ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : `🟢 Ochiq • Navbatda: ${live.totalPeople} kishi (~${live.minWait} daq)`}
+              </div>
+              ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
+            </div>`
+        }, showLabels ? {
+          preset: "islands#violetDotIconWithCaption",
+          iconColor: color
+        } : {
+          iconLayout: "default#image",
+          iconImageHref: makePinDataUrl(fac.type, color),
+          iconImageSize: [32, 39],
+          iconImageOffset: [-16, -39]
+        });
+
+        ymapCollection.add(placemark);
+      });
+    }
       function getTypeGlyphSvg(type) {
         if (type === "shifoxona") {
           return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
