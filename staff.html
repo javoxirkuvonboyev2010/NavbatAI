@@ -359,14 +359,18 @@
 
     async function pushStateToFirebase() {
       try {
-        await fetch(`${FIREBASE_URL}/navbatai_state.json`, {
+        if (activeStaff && activeStaff.loginKey) {
+          const safeKey = activeStaff.loginKey.replace(/[^a-zA-Z0-9_-]/g, "_");
+          await fetch(`${FIREBASE_URL}/navbatai_state/staffAccounts/${safeKey}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(activeStaff)
+          });
+        }
+        await fetch(`${FIREBASE_URL}/navbatai_state/queues.json`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            facilities: FACILITIES,
-            queues: GLOBAL_QUEUES,
-            staffAccounts: STAFF_ACCOUNTS
-          })
+          body: JSON.stringify(GLOBAL_QUEUES)
         });
       } catch {}
     }
@@ -549,6 +553,7 @@
         activeStaff = acc;
         if (rememberState) localStorage.setItem(STAFF_REMEMBER_KEY, JSON.stringify({ phone, password }));
         localStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(activeStaff));
+        await pushStateToFirebase();
         openWorkstationUI();
         showToast(`Xush kelibsiz, ${activeStaff.fullName}!`);
         return;
