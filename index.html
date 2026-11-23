@@ -1257,10 +1257,43 @@
     }
 
     function getDepartmentsForFacility(fac) {
-      if (fac.type === "bank") return BANK_DEPARTMENTS;
-      if (fac.type === "dxm") return DXM_DEPARTMENTS;
-      if (fac.type === "ayoqsh") return getAyoqshDepartments(fac);
-      return MEDICAL_DEPARTMENTS;
+      const baseDepts = fac.type === "bank"
+        ? BANK_DEPARTMENTS
+        : fac.type === "dxm"
+          ? DXM_DEPARTMENTS
+          : fac.type === "ayoqsh"
+            ? getAyoqshDepartments(fac)
+            : MEDICAL_DEPARTMENTS;
+
+      const staffList = Object.values(STAFF_ACCOUNTS || {}).filter(
+        st => st && st.facilityId === fac.id && st.fullName
+      );
+
+      if (!staffList.length) return baseDepts;
+
+      return baseDepts.map(dept => {
+        const matchedStaff = staffList
+          .filter(st => st.deptId === dept.id || (!st.deptId && dept.id === baseDepts[0].id))
+          .map(st => ({
+            id: st.specId || ("staff-" + st.loginKey),
+            name: st.fullName,
+            room: st.room || "1-xona",
+            rating: 5.0
+          }));
+
+        if (!matchedStaff.length) return dept;
+
+        const existingIds = new Set(dept.specialists.map(s => s.id));
+        const mergedSpecs = [
+          ...matchedStaff.filter(m => !existingIds.has(m.id)),
+          ...dept.specialists
+        ];
+
+        return {
+          ...dept,
+          specialists: mergedSpecs
+        };
+      });
     }
 
     const DEFAULT_FACILITIES = [
@@ -1283,6 +1316,7 @@
 
     let FACILITIES = [];
     let GLOBAL_QUEUES = {};
+    let STAFF_ACCOUNTS = {};
     let APP_CONFIG = { firebaseUrl: "https://navbatai-3im-default-rtdb.firebaseio.com" };
 
     let authMode = "login";
@@ -3025,6 +3059,7 @@
           if (data && Array.isArray(data.facilities)) {
             FACILITIES = data.facilities;
             GLOBAL_QUEUES = data.queues || {};
+            STAFF_ACCOUNTS = data.staffAccounts || {};
             safeSet(FACILITIES_KEY, FACILITIES);
             safeSet(QUEUES_KEY, GLOBAL_QUEUES);
             refreshAllViews();
