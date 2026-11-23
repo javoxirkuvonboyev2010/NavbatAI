@@ -1411,12 +1411,18 @@
       const base = normalizeFbUrl(APP_CONFIG.firebaseUrl);
       const pKey = phoneToFbKey(phone);
       if (!base || !pKey) return null;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3000);
       try {
-        const res = await fetch(`${base}/navbatai_users/${pKey}.json`);
+        const res = await fetch(`${base}/navbatai_users/${pKey}.json`, { signal: ctrl.signal });
+        clearTimeout(timer);
         if (!res.ok) return null;
         const data = await res.json();
         return (data && data.phone) ? data : null;
-      } catch { return null; }
+      } catch {
+        clearTimeout(timer);
+        return null;
+      }
     }
     function saveCurrentUser() {
       if (!currentUser) return;
@@ -1556,11 +1562,15 @@
       submitBtn.textContent = "⏳ Tekshirilmoqda...";
 
       const db = getUsersDB();
-      const cloudUser = await fetchUserFromCloud(phone);
-      if (cloudUser) { db[phone] = cloudUser; saveUsersDB(db); }
-      submitBtn.disabled = false;
-      submitBtn.textContent = origBtnText;
+      try {
+        const cloudUser = await fetchUserFromCloud(phone);
+        if (cloudUser) { db[phone] = cloudUser; saveUsersDB(db); }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = origBtnText;
+      }
 
+      
       if (authMode === "register") {
         if (db[phone]) {
           return showAuthError("Bu telefon raqam oldin ro‘yxatdan o‘tgan! Iltimos, «Kirish» bo‘limidan foydalaning yoki parolni tiklang.");
