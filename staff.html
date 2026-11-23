@@ -419,7 +419,7 @@
       if (!found) return;
       selectedFacilityObj = found;
       renderFacilitySearchResults();
-      showToast(`Tanlandi: ${found.name}`);
+      showToast(Tanlandi: ${found.name});
     }
 
     function renderFacilitySearchResults() {
@@ -430,11 +430,14 @@
 
       document.getElementById("facListTitle").textContent = 📍 ${districtRaw} — muassasalar;
 
-      // Shu viloyat va sohadagi muassasalar
       const regionPool = FACILITIES.filter(f => f.region === regKey && f.type === field);
 
-      // Avval tuman/shahar bo'yicha qidiramiz; topilmasa viloyatdagi shu soha obyektlarini ko'rsatamiz
-      const cleanDist = districtRaw.toLowerCase().replace(/\s*\(.*?\)\s*/g, "").replace(/\s+(shahar|tumani|shahri)$/i, "").trim();
+      const cleanDist = districtRaw
+        .toLowerCase()
+        .replace(/\s*\(.*?\)\s*/g, "")
+        .replace(/\s+(shahar|tumani|shahri)$/i, "")
+        .trim();
+
       const districtMatches = cleanDist
         ? regionPool.filter(f => ${f.district || ""} ${f.address || ""} ${f.name || ""}.toLowerCase().includes(cleanDist))
         : regionPool;
