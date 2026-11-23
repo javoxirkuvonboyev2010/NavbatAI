@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <!-- OTP Banner (Password Reset) -->
+    <!-- OTP Banner -->
     <div id="otpInboxBanner" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-50 max-w-[420px] w-[92%]">
       <div class="bg-[#151517]/95 border border-[#E2C2FF]/45 rounded-2xl p-3.5 shadow-2xl flex items-center justify-between gap-3">
         <div class="min-w-0">
@@ -116,7 +116,6 @@
             </select>
           </div>
 
-          <!-- Search & Facilities List in Selected District + Field -->
           <div class="oled-card-2 p-3.5 space-y-2.5">
             <div class="flex items-center justify-between">
               <label id="facListTitle" class="text-xs font-bold text-[#E2C2FF]">📍 Tuman/shahardagi muassasalar</label>
@@ -141,7 +140,7 @@
           </div>
         </div>
 
-        <!-- Phone / Login -->
+        <!-- Phone -->
         <div>
           <label class="block text-xs text-[#8E8E93] mb-1">Telefon raqamingiz *</label>
           <input id="authPhone" type="tel" value="+998 " placeholder="+998 90 123 45 67"
@@ -163,7 +162,7 @@
           </div>
         </div>
 
-        <!-- Remember Phone & Password -->
+        <!-- Remember Toggle -->
         <div class="flex items-center justify-between py-1">
           <div>
             <div class="text-xs font-semibold text-white">Telefon raqam va parolni eslab qol</div>
@@ -419,7 +418,7 @@
       if (!found) return;
       selectedFacilityObj = found;
       renderFacilitySearchResults();
-      showToast(Tanlandi: ${found.name});
+      showToast(`Tanlandi: ${found.name}`);
     }
 
     function renderFacilitySearchResults() {
@@ -428,7 +427,7 @@
       const field = document.getElementById("regField").value || "shifoxona";
       const query = (document.getElementById("facSearchInput").value || "").toLowerCase().trim();
 
-      document.getElementById("facListTitle").textContent = 📍 ${districtRaw} — muassasalar;
+      document.getElementById("facListTitle").textContent = `📍 ${districtRaw} — muassasalar`;
 
       const regionPool = FACILITIES.filter(f => f.region === regKey && f.type === field);
 
@@ -439,52 +438,31 @@
         .trim();
 
       const districtMatches = cleanDist
-        ? regionPool.filter(f => ${f.district || ""} ${f.address || ""} ${f.name || ""}.toLowerCase().includes(cleanDist))
+        ? regionPool.filter(f => `${f.district || ""} ${f.address || ""} ${f.name || ""}`.toLowerCase().includes(cleanDist))
         : regionPool;
 
       const baseList = districtMatches.length ? districtMatches : regionPool;
       const filtered = query
-        ? baseList.filter(f => ${f.name} ${f.address}.toLowerCase().includes(query))
+        ? baseList.filter(f => `${f.name} ${f.address}`.toLowerCase().includes(query))
         : baseList;
 
-      document.getElementById("facMatchCount").textContent = ${filtered.length} ta;
+      document.getElementById("facMatchCount").textContent = `${filtered.length} ta`;
       const box = document.getElementById("facSearchResults");
 
       if (!filtered.length) {
-        box.innerHTML = <div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Mos muassasa topilmadi. Qidiruvni tozalab ko‘ring.</div>;
+        box.innerHTML = `<div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Mos muassasa topilmadi. Qidiruvni tozalab ko‘ring.</div>`;
         return;
       }
 
       box.innerHTML = filtered.map(f => {
         const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
-        return 
+        return `
           <button type="button" onclick="pickFacility('${f.id}')"
             class="w-full text-left p-2.5 rounded-xl border cursor-pointer ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10'}">
             <div class="text-xs font-bold text-white truncate">${active ? '✓ ' : ''}${f.name}</div>
             <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
-          </button>;
+          </button>`;
       }).join("");
-    }
-
-    function selectCustomDistrictFacility() {
-      const regKey = document.getElementById("regRegion").value || "jizzax";
-      const districtRaw = document.getElementById("regDistrict").value || "Jizzax shahar";
-      const field = document.getElementById("regField").value || "shifoxona";
-      const fullName = (document.getElementById("regFullName").value || "").trim() || "Mutaxassis";
-      const q = (document.getElementById("facSearchInput").value || "").trim();
-
-      selectedFacilityObj = {
-        id: "stf-fac-" + Date.now(),
-        region: regKey,
-        district: districtRaw,
-        type: field,
-        status: "open",
-        name: q ? `${q} (${districtRaw})` : `${fullName} — ${districtRaw}`,
-        address: `${districtRaw}, ${REGIONS[regKey]?.name || regKey}`,
-        isCustomDistrictPlace: true
-      };
-      renderFacilitySearchResults();
-      showToast(`Biriktirildi: ${selectedFacilityObj.name}`);
     }
 
     function setAuthTab(tab) {
@@ -778,7 +756,7 @@
       renderWorkstation();
       showToast(`➕ №${maxNum + 1} qo‘shildi`);
     }
-    
+
     window.onload = function () {
       loadAccounts();
       initSelectors();
