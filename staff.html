@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NavbatAI Staff — Xodimlar va Operatorlar Paneli</title>
+  <title>NavbatAI Staff — Xodim Akkounti va Ish Stoli</title>
   <meta name="theme-color" content="#000000" />
   <link rel="icon" type="image/png" href="./logo.png" />
+  <link rel="manifest" href="./manifest-staff.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -34,62 +35,122 @@
             <h1 class="text-base font-extrabold">NavbatAI Staff</h1>
             <span id="syncStatus" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30">● Jonli</span>
           </div>
-          <p class="text-[11px] text-[#8E8E93]">Xodim, shifokor va operator ish stoli</p>
+          <p id="headerStaffSub" class="text-[11px] text-[#8E8E93]">Xodimlar profili va navbat boshqaruvi</p>
         </div>
       </div>
-      <button id="logoutBtn" onclick="logoutStaff()" class="hidden px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#F87171] cursor-pointer">
-        Chiqish
-      </button>
+      <div class="flex items-center gap-2">
+        <a href="./index.html" class="px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#E2C2FF]">
+          Xarita
+        </a>
+        <button id="logoutBtn" onclick="logoutStaff()" class="hidden px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#F87171] cursor-pointer">
+          Chiqish
+        </button>
+      </div>
     </header>
 
-    <!-- STEP 1: STAFF LOGIN -->
-    <section id="staffLoginSection" class="my-auto py-6 space-y-4">
+    <!-- STEP 1: STAFF ACCOUNT (LOGIN / REGISTER) -->
+    <section id="staffAuthSection" class="py-5 space-y-4">
       <div class="oled-card p-5 space-y-4 shadow-2xl">
-        <div>
-          <h2 class="text-lg font-extrabold text-white">🩺 Ish joyiga kirish</h2>
-          <p class="text-xs text-[#8E8E93] mt-0.5">O‘z muassasangiz va xonangizni tanlang</p>
+        <div class="grid grid-cols-2 gap-1.5 bg-black p-1 rounded-2xl border border-white/[0.08]">
+          <button type="button" id="tabStaffLogin" onclick="setAuthTab('login')"
+            class="py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer">
+            Kirish
+          </button>
+          <button type="button" id="tabStaffRegister" onclick="setAuthTab('register')"
+            class="py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer">
+            Akkount yaratish
+          </button>
+        </div>
+
+        <div id="regExtraFields" class="hidden space-y-3">
+          <div>
+            <label class="block text-xs text-[#8E8E93] mb-1">Xodim ism-familiyasi (shifokor / mutaxassis) *</label>
+            <input id="regFullName" type="text" placeholder="Masalan: Dr. Dilshod Rahimov"
+              class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-[#8E8E93] mb-1">Qaysi sohada ishlaysiz? *</label>
+            <select id="regField" onchange="onRegFieldChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white">
+              <option value="shifoxona" class="bg-[#1C1C1E]">🏥 Shifoxona (Tibbiyot)</option>
+              <option value="bank" class="bg-[#1C1C1E]">🏦 Bank</option>
+              <option value="dxm" class="bg-[#1C1C1E]">🏛 DXM (Davlat xizmatlari)</option>
+              <option value="ayoqsh" class="bg-[#1C1C1E]">⛽ AYOQSH</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs text-[#8E8E93] mb-1">Viloyat *</label>
+              <select id="regRegion" onchange="onRegLocationChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
+            </div>
+            <div>
+              <label class="block text-xs text-[#8E8E93] mb-1">Tuman / Shahar / Manzil *</label>
+              <input id="regDistrictAddress" type="text" oninput="renderFacilitySearchResults()" placeholder="Masalan: Jizzax shahar, Ittifoq"
+                class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white" />
+            </div>
+          </div>
+
+          <!-- Xaritadagi muassasalar orasidan izlash -->
+          <div class="oled-card-2 p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-[#E2C2FF]">📍 Ish joyini xaritadagi muassasalar orasidan izlang</label>
+              <span id="facMatchCount" class="text-[10px] text-[#8E8E93]">0 ta</span>
+            </div>
+            <input id="facSearchInput" type="text" oninput="renderFacilitySearchResults()"
+              placeholder="Muassasa nomi yoki ko‘cha bo‘yicha izlash..."
+              class="w-full bg-black border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
+
+            <div id="facSearchResults" class="max-h-40 overflow-y-auto space-y-1.5"></div>
+
+            <!-- Agar muassasa ro'yxatda bo'lmasa manzil bo'yicha shu tuman/shahardagi muassasalar -->
+            <div id="districtFallbackBox" class="hidden pt-2 border-t border-white/10 space-y-2">
+              <div class="text-[11px] text-[#F59E0B] font-semibold">
+                Ko‘rsatilgan tuman/shahar yoki manzil bo‘yicha muassasalar:
+              </div>
+              <div id="districtFacilitiesList" class="space-y-1.5 max-h-32 overflow-y-auto"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label id="deptLabel" class="block text-xs text-[#8E8E93] mb-1">Bo‘lim / Yo‘nalish *</label>
+              <select id="regDept" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
+            </div>
+            <div>
+              <label id="roomLabel" class="block text-xs text-[#8E8E93] mb-1">Ish xonasi / Oyna *</label>
+              <input id="regRoom" type="text" placeholder="Masalan: 104-xona"
+                class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white" />
+            </div>
+          </div>
         </div>
 
         <div>
-          <label class="block text-xs text-[#8E8E93] mb-1">1. Viloyat</label>
-          <select id="selRegion" onchange="onRegionChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white"></select>
+          <label class="block text-xs text-[#8E8E93] mb-1">Telefon raqam yoki xodim logini *</label>
+          <input id="authPhoneOrLogin" type="text" value="+998 " placeholder="+998 90 123 45 67"
+            class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
         </div>
 
         <div>
-          <label class="block text-xs text-[#8E8E93] mb-1">2. Muassasa / AYOQSH</label>
-          <select id="selFacility" onchange="onFacilityChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white"></select>
+          <label class="block text-xs text-[#8E8E93] mb-1">Parol *</label>
+          <input id="authPassword" type="password" placeholder="Kamida 4 ta belgi"
+            class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
         </div>
 
-        <div>
-          <label class="block text-xs text-[#8E8E93] mb-1">3. Bo‘lim</label>
-          <select id="selDept" onchange="onDeptChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white"></select>
-        </div>
-
-        <div>
-          <label class="block text-xs text-[#8E8E93] mb-1">4. Shifokor / Oyna / Kolonka</label>
-          <select id="selSpec" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white"></select>
-        </div>
-
-<div>
-          <label class="block text-xs text-[#8E8E93] mb-1">5. Xodim PIN kodi (Standart: <span class="text-[#E2C2FF] font-bold">1234</span>)</label>
-          <input id="staffPin" type="password" inputmode="numeric" maxlength="6" value="1234"
-            class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-sm font-bold tracking-widest text-white" />
-        </div>
-
-        <button onclick="enterStaffWorkstation()" class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
-          Ishni boshlash →
+        <button id="authSubmitBtn" onclick="submitStaffAuth()"
+          class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
+          Kirish
         </button>
       </div>
     </section>
 
     <!-- STEP 2: STAFF WORKSTATION -->
     <section id="staffWorkSection" class="hidden flex-1 py-4 space-y-4">
-      <!-- Active Room Card -->
       <div class="oled-card p-4 flex items-center justify-between gap-3">
         <div class="min-w-0">
           <div id="workFacilityName" class="text-[11px] font-bold text-[#E2C2FF] truncate">Muassasa</div>
-          <h2 id="workSpecName" class="text-base font-extrabold text-white truncate">Shifokor</h2>
-          <div id="workRoomMeta" class="text-xs text-[#8E8E93] mt-0.5">Bo‘lim • Xona</div>
+          <h2 id="workStaffName" class="text-base font-extrabold text-white truncate">Xodim</h2>
+          <div id="workMeta" class="text-xs text-[#8E8E93] mt-0.5">Soha • Bo‘lim • Xona</div>
         </div>
         <div class="text-right shrink-0 bg-[#1C1C1E] px-3 py-2 rounded-2xl border border-white/10">
           <div class="text-[10px] text-[#8E8E93]">Navbatda</div>
@@ -97,19 +158,16 @@
         </div>
       </div>
 
-      <!-- Current Serving Patient -->
       <div id="currentServingBox" class="oled-card p-5 space-y-3 border border-[#E2C2FF]/35"></div>
 
-      <!-- Walk-in Add Button -->
       <div class="oled-card p-3.5 flex items-center gap-2">
         <input id="walkInName" type="text" placeholder="Joyida kelgan mijoz ismi (ixtiyoriy)..."
-          class="flex-1 bg-[#1C1C1E] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#E2C2FF]" />
+          class="flex-1 bg-[#1C1C1E] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
         <button onclick="addWalkInPatient()" class="px-3.5 py-2.5 rounded-xl bg-[#22C55E] text-[#111114] font-extrabold text-xs shrink-0 cursor-pointer">
-          + Navbatga qo‘shish
+          + Qo‘shish
         </button>
       </div>
 
-      <!-- Waiting List -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <h3 class="text-xs font-bold uppercase tracking-wider text-[#8E8E93]">Kutayotganlar ro‘yxati</h3>
@@ -123,7 +181,8 @@
 
   <script>
     const FIREBASE_URL = "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app";
-    const STAFF_SESSION_KEY = "navbat_staff_session_v1";
+    const STAFF_ACCOUNTS_KEY = "navbat_staff_accounts_v1";
+    const STAFF_SESSION_KEY = "navbat_staff_active_v1";
 
     const REGIONS = {
       jizzax: "Jizzax", toshkent: "Toshkent", samarqand: "Samarqand", buxoro: "Buxoro",
@@ -131,201 +190,289 @@
       surxondaryo: "Surxondaryo", navoiy: "Navoiy", sirdaryo: "Sirdaryo", xorazm: "Xorazm", qoraqalpogiston: "Qoraqalpog‘iston"
     };
 
-    const MEDICAL_DEPARTMENTS = [
-      { id: "terapevt", name: "Terapevt", specialists: [
-        { id: "ter-1", name: "Dr. Dilshod Rahimov", room: "104-xona" },
-        { id: "ter-2", name: "Dr. Malika Karimova", room: "106-xona" },
-        { id: "ter-3", name: "Dr. Bobur Toshmatov", room: "108-xona" }
-      ]},
-      { id: "stomatolog", name: "Stomatolog (Tish)", specialists: [
-        { id: "sto-1", name: "Dr. Azizbek Murodov", room: "15-xona" },
-        { id: "sto-2", name: "Dr. Kamola Ergasheva", room: "16-xona" },
-        { id: "sto-3", name: "Dr. Otabek Nazarov", room: "17-xona" }
-      ]},
-      { id: "ginekolog", name: "Ginekolog", specialists: [
-
-{ id: "gin-1", name: "Dr. Nilufar Sobirova", room: "202-xona" },
-        { id: "gin-2", name: "Dr. Shahnoza Alieva", room: "204-xona" }
-      ]},
-      { id: "oftalmolog", name: "Oftalmolog (Ko‘z)", specialists: [
-        { id: "oft-1", name: "Dr. Sardorbek Xolmatov", room: "210-xona" },
-        { id: "oft-2", name: "Dr. Gulnora Saidova", room: "212-xona" }
-      ]},
-      { id: "kardiolog", name: "Kardiolog (Yurak)", specialists: [
-        { id: "kar-1", name: "Dr. Rustam Abdullayev", room: "301-xona" },
-        { id: "kar-2", name: "Dr. Feruza Tursunova", room: "303-xona" }
-      ]},
-      { id: "pediatr", name: "Pediatr (Bolalar)", specialists: [
-        { id: "ped-1", name: "Dr. Sevara Tursunova", room: "112-xona" },
-        { id: "ped-2", name: "Dr. Jamshid Yo‘ldoshev", room: "114-xona" }
-      ]},
-      { id: "lor", name: "LOR", specialists: [
-        { id: "lor-1", name: "Dr. Jahongir Qodirov", room: "218-xona" },
-        { id: "lor-2", name: "Dr. Madina Islomova", room: "220-xona" }
-      ]}
-    ];
-
-    const BANK_DEPARTMENTS = [
-      { id: "karta", name: "Karta ochish va omonatlar", specialists: [
-        { id: "bnk-1", name: "Sherzod Alimov", room: "1-oyna" },
-        { id: "bnk-2", name: "Madina Karimova", room: "2-oyna" },
-        { id: "bnk-3", name: "Javlonbek Tursunov", room: "3-oyna" }
-      ]},
-      { id: "kredit", name: "Kredit bo‘limi", specialists: [
-        { id: "krd-1", name: "Ulug‘bek Toshmatov", room: "4-oyna" },
-        { id: "krd-2", name: "Dildora Saidova", room: "5-oyna" }
-      ]}
-    ];
-
-    const DXM_DEPARTMENTS = [
-      { id: "id_pasport", name: "ID-karta / Pasport", specialists: [
-        { id: "dxm-1", name: "Baxtiyor Murodov", room: "1-oyna" },
-        { id: "dxm-2", name: "Gulchehra Olimova", room: "2-oyna" },
-        { id: "dxm-3", name: "Sardorbek Xasanov", room: "3-oyna" }
-      ]},
-      { id: "kadastr", name: "Kadastr va ko‘chmas mulk", specialists: [
-        { id: "kad-1", name: "Alisher Davronov", room: "4-oyna" },
-        { id: "kad-2", name: "Zarnigor Po‘latova", room: "5-oyna" }
-      ]}
-    ];
-
-    function getDepartmentsForFacility(fac) {
-      if (fac.type === "bank") return BANK_DEPARTMENTS;
-      if (fac.type === "dxm") return DXM_DEPARTMENTS;
-      if (fac.type === "ayoqsh") {
-        const fuels = (fac.fuels && fac.fuels.length) ? fac.fuels : ["metan", "benzin"];
-        return fuels.map(f => ({
-          id: f, name: f.toUpperCase(),
-          specialists: [
-            { id: ${fac.id}-${f}-1, name: 1-kolonka (${f.toUpperCase()}), room: "1-yo‘lak" },
-            { id: ${fac.id}-${f}-2, name: 2-kolonka (${f.toUpperCase()}), room: "2-yo‘lak" }
-          ]
-        }));
-      }
-      return MEDICAL_DEPARTMENTS;
-    }
+    const DEPTS_BY_FIELD = {
+      shifoxona: [
+        { id: "terapevt", name: "Terapevt" },
+        { id: "stomatolog", name: "Stomatolog (Tish)" },
+        { id: "ginekolog", name: "Ginekolog" },
+        { id: "oftalmolog", name: "Oftalmolog (Ko‘z)" },
+        { id: "kardiolog", name: "Kardiolog (Yurak)" },
+        { id: "pediatr", name: "Pediatr (Bolalar)" },
+        { id: "lor", name: "LOR" }
+      ],
+      bank: [
+        { id: "karta", name: "Karta ochish va omonatlar" },
+        { id: "kredit", name: "Kredit bo‘limi" }
+      ],
+      dxm: [
+        { id: "id_pasport", name: "ID-karta / Pasport" },
+        { id: "kadastr", name: "Kadastr va ko‘chmas mulk" }
+      ],
+      ayoqsh: [
+        { id: "metan", name: "Metan" },
+        { id: "propan", name: "Propan" },
+        { id: "benzin", name: "Benzin" },
+        { id: "dizel", name: "Dizel" },
+        { id: "elektr", name: "Elektr" }
+      ]
+    };
 
     let FACILITIES = [];
     let GLOBAL_QUEUES = {};
+    let STAFF_ACCOUNTS = {};
+    let authTab = "login";
+    let selectedFacilityObj = null;
     let activeStaff = null;
-    let pollTimer = null;
 
     function showToast(msg, warn = false) {
       const el = document.getElementById("toast");
       document.getElementById("toastText").textContent = msg;
-      document.getElementById("toastDot").className = w-2.5 h-2.5 rounded-full ${warn ? 'bg-[#F59E0B]' : 'bg-[#22C55E]'};
+      document.getElementById("toastDot").className = `w-2.5 h-2.5 rounded-full ${warn ? 'bg-[#F59E0B]' : 'bg-[#22C55E]'}`;
       el.classList.remove("opacity-0");
       setTimeout(() => el.classList.add("opacity-0"), 2800);
     }
 
+    function loadLocalAccounts() {
+      try { STAFF_ACCOUNTS = JSON.parse(localStorage.getItem(STAFF_ACCOUNTS_KEY) || "{}"); } catch { STAFF_ACCOUNTS = {}; }
+    }
+    function saveLocalAccounts() {
+      try { localStorage.setItem(STAFF_ACCOUNTS_KEY, JSON.stringify(STAFF_ACCOUNTS)); } catch {}
+    }
+
     async function pullFromFirebase(manual = false) {
       try {
-        const res = await fetch(${FIREBASE_URL}/navbatai_state.json);
+        const res = await fetch(`${FIREBASE_URL}/navbatai_state.json`);
         if (!res.ok) throw new Error();
         const data = await res.json();
         if (data) {
           if (Array.isArray(data.facilities)) FACILITIES = data.facilities;
           GLOBAL_QUEUES = data.queues || {};
+          if (data.staffAccounts && typeof data.staffAccounts === "object") {
+            STAFF_ACCOUNTS = { ...data.staffAccounts, ...STAFF_ACCOUNTS };
+            saveLocalAccounts();
+          }
         }
         document.getElementById("syncStatus").textContent = "● Jonli";
         if (activeStaff) renderWorkstation();
-        else populateSelectors();
-        if (manual) showToast("Navbatlar yangilandi");
+        else renderFacilitySearchResults();
+        if (manual) showToast("Ma’lumotlar yangilandi");
       } catch {
-        document.getElementById("syncStatus").textContent = "● Offline";
-        if (manual) showToast("Internet yoki Firebase bilan aloqa yo‘q", true);
+        document.getElementById("syncStatus").textContent = "● Lokal";
+        if (manual) showToast("Firebase bilan ulanish tekshirilmoqda", true);
       }
     }
 
-async function pushToFirebase() {
+    async function pushStateToFirebase() {
       try {
-        const res = await fetch(${FIREBASE_URL}/navbatai_state.json, {
+        await fetch(`${FIREBASE_URL}/navbatai_state.json`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES })
+          body: JSON.stringify({
+            facilities: FACILITIES,
+            queues: GLOBAL_QUEUES,
+            staffAccounts: STAFF_ACCOUNTS
+          })
         });
-        if (!res.ok) throw new Error();
-      } catch {
-        showToast("Bazaga saqlashda xatolik!", true);
+      } catch {}
+    }
+
+    function setAuthTab(tab) {
+      authTab = tab;
+      const isReg = tab === "register";
+      document.getElementById("tabStaffLogin").className = !isReg
+        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
+      document.getElementById("tabStaffRegister").className = isReg
+        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
+      document.getElementById("regExtraFields").classList.toggle("hidden", !isReg);
+      document.getElementById("authSubmitBtn").textContent = isReg
+        ? "Akkount yaratish va ishni boshlash"
+        : "Kirish";
+      if (isReg) {
+        onRegFieldChange();
+        renderFacilitySearchResults();
       }
     }
 
-    function populateSelectors() {
-      const selReg = document.getElementById("selRegion");
-      const prevReg = selReg.value || "jizzax";
-      selReg.innerHTML = Object.entries(REGIONS).map(([k, v]) => <option value="${k}" class="bg-[#1C1C1E]">${v}</option>).join("");
-      selReg.value = prevReg;
-      onRegionChange();
+    function onRegFieldChange() {
+      const field = document.getElementById("regField").value;
+      const depts = DEPTS_BY_FIELD[field] || DEPTS_BY_FIELD.shifoxona;
+      document.getElementById("regDept").innerHTML = depts.map(d => `<option value="${d.id}" class="bg-[#1C1C1E]">${d.name}</option>`).join("");
+      document.getElementById("roomLabel").textContent = field === "ayoqsh" ? "Kolonka / Yo‘lak *" : (field === "shifoxona" ? "Ish xonasi *" : "Oyna raqami *");
+      document.getElementById("regRoom").placeholder = field === "ayoqsh" ? "Masalan: 1-kolonka" : (field === "shifoxona" ? "Masalan: 104-xona" : "Masalan: 2-oyna");
+      renderFacilitySearchResults();
     }
 
-    function onRegionChange() {
-      const reg = document.getElementById("selRegion").value;
-      const list = FACILITIES.filter(f => f.region === reg);
-      const selFac = document.getElementById("selFacility");
-      selFac.innerHTML = list.map(f => <option value="${f.id}" class="bg-[#1C1C1E]">${f.name}</option>).join("");
-      onFacilityChange();
+    function onRegLocationChange() {
+      selectedFacilityObj = null;
+      renderFacilitySearchResults();
     }
 
-    function onFacilityChange() {
-      const facId = document.getElementById("selFacility").value;
-      const fac = FACILITIES.find(f => f.id === facId);
-      const selDept = document.getElementById("selDept");
-      if (!fac) { selDept.innerHTML = ""; return; }
-      const depts = getDepartmentsForFacility(fac);
-      selDept.innerHTML = depts.map(d => <option value="${d.id}" class="bg-[#1C1C1E]">${d.name}</option>).join("");
-      onDeptChange();
+    function pickFacility(facId) {
+      const found = FACILITIES.find(f => f.id === facId);
+      if (!found) return;
+      selectedFacilityObj = found;
+      renderFacilitySearchResults();
+      showToast(`Tanlandi: ${found.name}`);
     }
 
-    function onDeptChange() {
-      const facId = document.getElementById("selFacility").value;
-      const deptId = document.getElementById("selDept").value;
-      const fac = FACILITIES.find(f => f.id === facId);
-      const selSpec = document.getElementById("selSpec");
-      if (!fac) { selSpec.innerHTML = ""; return; }
-      const dept = getDepartmentsForFacility(fac).find(d => d.id === deptId);
-      if (!dept) { selSpec.innerHTML = ""; return; }
-      selSpec.innerHTML = dept.specialists.map(s => <option value="${s.id}" class="bg-[#1C1C1E]">${s.name} (${s.room})</option>).join("");
+    function renderFacilitySearchResults() {
+      const reg = document.getElementById("regRegion").value || "jizzax";
+      const field = document.getElementById("regField").value || "shifoxona";
+      const q = (document.getElementById("facSearchInput").value || "").toLowerCase().trim();
+      const districtAddr = (document.getElementById("regDistrictAddress").value || "").toLowerCase().trim();
+
+      // 1) Xaritadagi muassasalar orasidan izlash
+      const byFieldAndRegion = FACILITIES.filter(f => f.region === reg && f.type === field);
+      const matched = byFieldAndRegion.filter(f => {
+        if (!q && !districtAddr) return true;
+        const hay = `${f.name} ${f.address}`.toLowerCase();
+        const okQ = !q || hay.includes(q);
+        const okD = !districtAddr || hay.includes(districtAddr);
+        return okQ && okD;
+      });
+
+      document.getElementById("facMatchCount").textContent = `${matched.length} ta`;
+      const resBox = document.getElementById("facSearchResults");
+
+      if (matched.length === 0) {
+        resBox.innerHTML = `<div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Xaritadagi mos muassasa topilmadi. Pastdagi tuman/shahar ro‘yxatidan tanlang yoki manzilni aniqlashtiring.</div>`;
+      } else {
+        resBox.innerHTML = matched.slice(0, 12).map(f => {
+          const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
+          return `
+            <button type="button" onclick="pickFacility('${f.id}')"
+              class="w-full text-left p-2.5 rounded-xl border cursor-pointer transition ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10 hover:border-white/25'}">
+              <div class="text-xs font-bold text-white truncate">${active ? '✓ ' : ''}${f.name}</div>
+              <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
+            </button>`;
+        }).join("");
+      }
+
+      // 2) Shu viloyat / tuman / shahar bo'yicha barcha muassasalar
+      const fallbackBox = document.getElementById("districtFallbackBox");
+      const fallbackList = document.getElementById("districtFacilitiesList");
+      const regionalAll = FACILITIES.filter(f => f.region === reg && (!districtAddr || `${f.name} ${f.address}`.toLowerCase().includes(districtAddr)));
+
+      if (matched.length === 0 || districtAddr) {
+        fallbackBox.classList.remove("hidden");
+        fallbackList.innerHTML = regionalAll.length === 0
+          ? `<div class="text-[11px] text-[#8E8E93]">Bu manzil bo‘yicha yozuv topilmadi — kiritilgan manzil bilan yangi ish joyi biriktiriladi.</div>`
+          : regionalAll.slice(0, 8).map(f => {
+              const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
+              return `
+                <button type="button" onclick="pickFacility('${f.id}')"
+                  class="w-full text-left p-2 rounded-xl border cursor-pointer ${active ? 'bg-[#22C55E]/15 border-[#22C55E]' : 'bg-black/60 border-white/10'}">
+                  <div class="text-[11px] font-bold text-white truncate">${f.name} <span class="text-[#8E8E93] font-normal">(${f.type})</span></div>
+                  <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
+                </button>`;
+            }).join("");
+      } else {
+        fallbackBox.classList.add("hidden");
+      }
     }
 
-    function enterStaffWorkstation() {
-      const pin = document.getElementById("staffPin").value.trim();
-      if (pin !== "1234" && pin !== "2026") return showToast("PIN kod noto‘g‘ri!", true);
+    function makeStaffSlugId(name) {
+      return "staff-" + (name || "xodim").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
 
-      const facId = document.getElementById("selFacility").value;
-      const deptId = document.getElementById("selDept").value;
-      const specId = document.getElementById("selSpec").value;
-      const fac = FACILITIES.find(f => f.id === facId);
-      if (!fac) return showToast("Muassasani tanlang!", true);
-      const dept = getDepartmentsForFacility(fac).find(d => d.id === deptId);
-      const spec = dept.specialists.find(s => s.id === specId);
+    async function submitStaffAuth() {
+      const loginKey = document.getElementById("authPhoneOrLogin").value.replace(/\s+/g, "").trim();
+      const password = document.getElementById("authPassword").value.trim();
+      if (!loginKey || password.length < 4) {
+        return showToast("Telefon/login va parolni (kamida 4 belgi) kiriting!", true);
+      }
 
-      activeStaff = {
-        qKey: ${fac.id}__${dept.id}__${spec.id},
-        facilityId: fac.id, facilityName: fac.name,
-        deptId: dept.id, deptName: dept.name,
-        specId: spec.id, specName: spec.name, room: spec.room
+      if (authTab === "login") {
+        const acc = STAFF_ACCOUNTS[loginKey];
+        if (!acc || acc.password !== password) {
+          return showToast("Akkount topilmadi yoki parol noto‘g‘ri!", true);
+        }
+        activeStaff = acc;
+        localStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(activeStaff));
+        openWorkstationUI();
+        showToast(`Xush kelibsiz, ${activeStaff.fullName}!`);
+        return;
+      }
+
+      // Register new staff account
+      const fullName = document.getElementById("regFullName").value.trim();
+      const field = document.getElementById("regField").value;
+      const region = document.getElementById("regRegion").value;
+      const districtAddress = document.getElementById("regDistrictAddress").value.trim();
+      const deptId = document.getElementById("regDept").value;
+      const deptObj = (DEPTS_BY_FIELD[field] || []).find(d => d.id === deptId) || { id: deptId, name: deptId };
+      const room = document.getElementById("regRoom").value.trim() || "1-xona";
+
+      if (!fullName) return showToast("Xodim ism-familiyasini kiriting!", true);
+
+      let facilityObj = selectedFacilityObj;
+      if (!facilityObj) {
+        if (!districtAddress) {
+          return showToast("Xaritadan muassasa tanlang yoki ish joyining manzilini kiriting!", true);
+        }
+        const regCenter = region === "toshkent" ? [41.3111, 69.2797] : [40.1225, 67.8425];
+        facilityObj = {
+          id: "stf-fac-" + Date.now(),
+          region,
+          type: field,
+          status: "open",
+          name: `${fullName} — ${districtAddress}`,
+          address: districtAddress,
+          lat: regCenter[0],
+          lng: regCenter[1],
+          fuels: field === "ayoqsh" ? [deptId] : undefined
+        };
+        FACILITIES.unshift(facilityObj);
+      }
+
+      const specId = makeStaffSlugId(`${fullName}-${room}`);
+      const qKey = `${facilityObj.id}__${deptObj.id}__${specId}`;
+
+      const newAcc = {
+        loginKey,
+        password,
+        fullName,
+        field,
+        region,
+        districtAddress: districtAddress || facilityObj.address,
+        facilityId: facilityObj.id,
+        facilityName: facilityObj.name,
+        deptId: deptObj.id,
+        deptName: deptObj.name,
+        specId,
+        room,
+        qKey
       };
+
+      STAFF_ACCOUNTS[loginKey] = newAcc;
+      activeStaff = newAcc;
+      saveLocalAccounts();
       localStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(activeStaff));
+      await pushStateToFirebase();
       openWorkstationUI();
+      showToast("✅ Xodim akkounti yaratildi va xaritaga ulandi!");
     }
 
     function openWorkstationUI() {
-      document.getElementById("staffLoginSection").classList.add("hidden");
+      document.getElementById("staffAuthSection").classList.add("hidden");
       document.getElementById("staffWorkSection").classList.remove("hidden");
       document.getElementById("logoutBtn").classList.remove("hidden");
+      document.getElementById("headerStaffSub").textContent = `${activeStaff.fullName} • ${activeStaff.room}`;
       document.getElementById("workFacilityName").textContent = activeStaff.facilityName;
-      document.getElementById("workSpecName").textContent = activeStaff.specName;
-      document.getElementById("workRoomMeta").textContent = ${activeStaff.deptName} • ${activeStaff.room};
+      document.getElementById("workStaffName").textContent = activeStaff.fullName;
+      document.getElementById("workMeta").textContent = `${(activeStaff.field || "").toUpperCase()} • ${activeStaff.deptName} • ${activeStaff.room}`;
       renderWorkstation();
     }
 
     function logoutStaff() {
-
-localStorage.removeItem(STAFF_SESSION_KEY);
+      localStorage.removeItem(STAFF_SESSION_KEY);
       activeStaff = null;
       document.getElementById("staffWorkSection").classList.add("hidden");
       document.getElementById("logoutBtn").classList.add("hidden");
-      document.getElementById("staffLoginSection").classList.remove("hidden");
+      document.getElementById("staffAuthSection").classList.remove("hidden");
+      document.getElementById("headerStaffSub").textContent = "Xodimlar profili va navbat boshqaruvi";
     }
 
     function renderWorkstation() {
@@ -334,91 +481,75 @@ localStorage.removeItem(STAFF_SESSION_KEY);
       document.getElementById("workQueueCount").textContent = q.length;
 
       const curBox = document.getElementById("currentServingBox");
-      if (q.length === 0) {
-        curBox.innerHTML = 
-          <div class="text-center py-4">
-            <div class="text-2xl mb-1">☕</div>
-            <div class="text-sm font-bold text-white">Hozir navbat bo‘sh</div>
-            <div class="text-xs text-[#8E8E93] mt-0.5">Yangi mijoz navbat olganda shu yerda avtomatik chiqadi</div>
-          </div>;
+      if (!q.length) {
+        curBox.innerHTML = `<div class="text-center py-4"><div class="text-2xl mb-1">☕</div><div class="text-sm font-bold text-white">Hozir navbat bo‘sh</div></div>`;
       } else {
         const cur = q[0];
-        curBox.innerHTML = 
+        curBox.innerHTML = `
           <div class="flex items-center justify-between">
             <span class="px-2.5 py-1 rounded-full bg-[#22C55E]/15 text-[#22C55E] text-[10px] font-extrabold uppercase">🟢 Hozirgi mijoz</span>
             <span class="text-xs text-[#8E8E93]">${cur.createdAt || ''}</span>
           </div>
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <div class="text-3xl font-extrabold text-[#E2C2FF]">№ ${cur.ticketNumber}</div>
-              <div class="text-base font-bold text-white mt-0.5">${cur.fullName}</div>
-              <div class="text-xs text-[#8E8E93]">${cur.serviceLabel} • ${cur.userPhone || 'Joyida'}</div>
-            </div>
+          <div>
+            <div class="text-3xl font-extrabold text-[#E2C2FF]">№ ${cur.ticketNumber}</div>
+            <div class="text-base font-bold text-white mt-0.5">${cur.fullName}</div>
+            <div class="text-xs text-[#8E8E93]">${cur.serviceLabel} • ${cur.userPhone || 'Joyida'}</div>
           </div>
           <div class="grid grid-cols-2 gap-2.5 pt-2">
-            <button onclick="completeCurrentPatient()" class="py-3 rounded-2xl bg-[#22C55E] hover:bg-emerald-400 text-[#111114] font-extrabold text-xs cursor-pointer transition">
-              ✅ Qabul yakunlandi (Keyingi)
+            <button onclick="completeCurrentPatient()" class="py-3 rounded-2xl bg-[#22C55E] text-[#111114] font-extrabold text-xs cursor-pointer">
+              ✅ Qabul yakunlandi
             </button>
-            <button onclick="skipCurrentPatient()" class="py-3 rounded-2xl bg-[#F59E0B]/20 border border-[#F59E0B]/40 text-[#F59E0B] font-bold text-xs cursor-pointer transition">
-              ⏭ Kelmadi (Orqaga surish)
+            <button onclick="skipCurrentPatient()" class="py-3 rounded-2xl bg-[#F59E0B]/20 border border-[#F59E0B]/40 text-[#F59E0B] font-bold text-xs cursor-pointer">
+              ⏭ Kelmadi (Surish)
             </button>
-          </div>;
+          </div>`;
       }
 
       const listBox = document.getElementById("waitingQueueList");
       const waiting = q.slice(1);
-      if (waiting.length === 0) {
-        listBox.innerHTML = <div class="oled-card p-4 text-center text-xs text-[#8E8E93]">Keyingi kutayotganlar yo‘q</div>;
-      } else {
-        listBox.innerHTML = waiting.map((item, idx) => 
+      listBox.innerHTML = !waiting.length
+        ? `<div class="oled-card p-4 text-center text-xs text-[#8E8E93]">Keyingi kutayotganlar yo‘q</div>`
+        : waiting.map(item => `
           <div class="oled-card-2 p-3.5 flex items-center justify-between gap-2">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-full bg-black border border-white/10 flex items-center justify-center text-xs font-extrabold text-[#E2C2FF] shrink-0">
-                №${item.ticketNumber}
-              </div>
-              <div class="min-w-0">
-                <div class="text-xs font-bold text-white truncate">${item.fullName}</div>
-                <div class="text-[11px] text-[#8E8E93] truncate">${item.serviceLabel} • ~${item.durationMin || 8} daq</div>
-              </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white truncate">№${item.ticketNumber} • ${item.fullName}</div>
+              <div class="text-[11px] text-[#8E8E93] truncate">${item.serviceLabel} • ~${item.durationMin || 8} daq</div>
             </div>
             <button onclick="removeTicketById('${item.id}')" class="px-2.5 py-1.5 rounded-xl bg-black text-[#F87171] text-[11px] font-bold cursor-pointer">
               O‘chirish
             </button>
-          </div>).join("");
-      }
+          </div>`).join("");
     }
 
     async function completeCurrentPatient() {
       const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
       if (!q.length) return;
       const done = q.shift();
-      await pushToFirebase();
+      await pushStateToFirebase();
       renderWorkstation();
-      showToast(✅ №${done.ticketNumber} qabul yakunlandi!);
+      showToast(`✅ №${done.ticketNumber} yakunlandi`);
     }
 
     async function skipCurrentPatient() {
-
-const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
-      if (q.length <= 1) return showToast("Navbatda boshqa odam yo‘q", true);
+      const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
+      if (q.length <= 1) return showToast("Navbatda boshqa mijoz yo‘q", true);
       const first = q.shift();
       q.splice(Math.min(2, q.length), 0, first);
-      await pushToFirebase();
+      await pushStateToFirebase();
       renderWorkstation();
-      showToast(⏭ №${first.ticketNumber} orqaga surildi);
+      showToast(`⏭ №${first.ticketNumber} orqaga surildi`);
     }
 
     async function removeTicketById(id) {
-      const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
-      GLOBAL_QUEUES[activeStaff.qKey] = q.filter(x => x.id !== id);
-      await pushToFirebase();
+      GLOBAL_QUEUES[activeStaff.qKey] = (GLOBAL_QUEUES[activeStaff.qKey] || []).filter(x => x.id !== id);
+      await pushStateToFirebase();
       renderWorkstation();
       showToast("Navbatdan o‘chirildi");
     }
 
     async function addWalkInPatient() {
-      const nameInp = document.getElementById("walkInName");
-      const name = nameInp.value.trim() || "Jonli navbat mijozi";
+      const inp = document.getElementById("walkInName");
+      const name = inp.value.trim() || "Jonli navbat mijozi";
       if (!GLOBAL_QUEUES[activeStaff.qKey]) GLOBAL_QUEUES[activeStaff.qKey] = [];
       const q = GLOBAL_QUEUES[activeStaff.qKey];
       const maxNum = q.reduce((m, x) => Math.max(m, x.ticketNumber || 0), 0);
@@ -432,19 +563,24 @@ const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
         deptId: activeStaff.deptId,
         deptName: activeStaff.deptName,
         specId: activeStaff.specId,
-        specialistName: activeStaff.specName,
+        specialistName: activeStaff.fullName,
         room: activeStaff.room,
         serviceLabel: "Joyida qabul",
         durationMin: 8,
         createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
       });
-      nameInp.value = "";
-      await pushToFirebase();
+      inp.value = "";
+      await pushStateToFirebase();
       renderWorkstation();
-      showToast(➕ №${maxNum + 1} navbatga qo‘shildi!);
+      showToast(`➕ №${maxNum + 1} qo‘shildi`);
     }
 
     window.onload = async function () {
+      loadLocalAccounts();
+      document.getElementById("regRegion").innerHTML = Object.entries(REGIONS)
+        .map(([k, v]) => `<option value="${k}" class="bg-[#1C1C1E]">${v}</option>`).join("");
+      onRegFieldChange();
+
       await pullFromFirebase(false);
       const saved = localStorage.getItem(STAFF_SESSION_KEY);
       if (saved) {
@@ -453,7 +589,7 @@ const q = GLOBAL_QUEUES[activeStaff.qKey] || [];
           openWorkstationUI();
         } catch {}
       }
-      pollTimer = setInterval(() => pullFromFirebase(false), 3500);
+      setInterval(() => pullFromFirebase(false), 3500);
     };
   </script>
 </body>
