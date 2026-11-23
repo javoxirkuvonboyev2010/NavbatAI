@@ -1760,6 +1760,15 @@
         if (!isTooCloseDuplicate) list.push(fac);
       });
 
+      function escapeXml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&apos;");
+      }
+
       function getTypeGlyphSvg(type) {
         if (type === "shifoxona") return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
         if (type === "bank") return `<path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>`;
@@ -1767,13 +1776,24 @@
         return `<rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/><path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>`;
       }
 
-      function makePinDataUrl(type, fillHex, strokeHex = "#111114") {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+      function makePinWithLabelDataUrl(type, fillHex, strokeHex, labelText, withLabel) {
+        const cleanLabel = escapeXml(labelText);
+        const svgWidth = withLabel && cleanLabel ? 215 : 36;
+        const labelSvg = (withLabel && cleanLabel)
+          ? `<text x="41" y="21" fill="#000000" stroke="#000000" stroke-width="3.2" stroke-linejoin="round" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>
+             <text x="41" y="21" fill="${fillHex}" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>`
+          : "";
+
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="44" viewBox="0 0 ${svgWidth} 44">
           <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
           <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
           <g transform="translate(2, 2.5)">${getTypeGlyphSvg(type)}</g>
+          ${labelSvg}
         </svg>`;
-        return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+        return {
+          href: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+          size: [svgWidth, 44]
+        };
       }
 
       ymapCollection.removeAll();
@@ -1785,10 +1805,10 @@
 
         const isClosed = fac.status === "closed";
         const shortName = (fac.name || "").length > 22 ? fac.name.slice(0, 21) + "…" : (fac.name || "");
-        const safeCaption = shortName.replace(/['"`<>]/g, "");
         const live = getFacilityLiveWait(fac);
+        const iconData = makePinWithLabelDataUrl(fac.type, color, "#111114", shortName, showLabels);
 
-        const balloonData = {
+        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
           balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
           balloonContentBody: `
             <div style="font-size:12px; color:#333; margin-top:4px;">
@@ -1798,27 +1818,14 @@
               </div>
               ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
             </div>`
-        };
-
-        const pinPlacemark = new ymaps.Placemark([fac.lat, fac.lng], balloonData, {
+        }, {
           iconLayout: "default#image",
-          iconImageHref: makePinDataUrl(fac.type, color),
-          iconImageSize: [32, 39],
-          iconImageOffset: [-16, -39]
+          iconImageHref: iconData.href,
+          iconImageSize: iconData.size,
+          iconImageOffset: [-18, -42]
         });
-        ymapCollection.add(pinPlacemark);
 
-        if (showLabels && safeCaption) {
-          const labelPlacemark = new ymaps.Placemark([fac.lat, fac.lng], {
-            iconContent: `<span style="color:#FFFFFF; font-size:10px; font-weight:700;">${safeCaption}</span>`,
-            ...balloonData
-          }, {
-            preset: "islands#blackStretchyIcon",
-            iconColor: "#151517",
-            iconOffset: [16, -32]
-          });
-          ymapCollection.add(labelPlacemark);
-        }
+        ymapCollection.add(placemark);
       });
     }
 
