@@ -982,8 +982,8 @@
     };
 
     function getTerminology(type) {
-      if (type === "bank") return { roleSingular: "Bank xodimi", tabAllLabel: "Barchasi (Oynalar)", favoriteLabel: "Sevimli xodimim", unitWord: "oyna" };
-      if (type === "dxm")  return { roleSingular: "DXM operatori", tabAllLabel: "Barchasi (Oynalar)", favoriteLabel: "Sevimli operatorim", unitWord: "oyna" };
+      if (type === "bank") return { roleSingular: "Bank xodimi", tabAllLabel: "Barchasi (Xodimlar)", favoriteLabel: "Sevimli xodimim", unitWord: "xodim" };
+      if (type === "dxm")  return { roleSingular: "DXM operatori", tabAllLabel: "Barchasi (Operatorlar)", favoriteLabel: "Sevimli operatorim", unitWord: "operator" };
       if (type === "ayoqsh") return { roleSingular: "Kolonka", tabAllLabel: "Barchasi (Kolonkalar)", favoriteLabel: "Sevimli AYOQSH", unitWord: "kolonka" };
       return { roleSingular: "Shifokor", tabAllLabel: "Barchasi (Shifokorlar)", favoriteLabel: "Shaxsiy shifokorim", unitWord: "shifokor" };
     }
@@ -1036,24 +1036,25 @@
       });
     }
 
+    // Faqat real staff.html xodimlari ulanadigan toza bo'limlar (sun'iy doktor/xodimlar olib tashlangan)
     const MEDICAL_DEPARTMENTS = [
-      { id: "terapevt", name: "Terapevt", icon: "🩺", specialists: [{ id: "ter-1", name: "Dr. Dilshod Rahimov", room: "104-xona", rating: 4.9 }, { id: "ter-2", name: "Dr. Malika Karimova", room: "106-xona", rating: 4.8 }], services: [{ id: "birlamchi", name: "Birlamchi ko‘rik", baseMin: 10 }, { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 6 }] },
-      { id: "stomatolog", name: "Stomatolog (Tish)", icon: "🦷", specialists: [{ id: "sto-1", name: "Dr. Azizbek Murodov", room: "15-xona", rating: 4.9 }, { id: "sto-2", name: "Dr. Kamola Ergasheva", room: "16-xona", rating: 4.8 }], services: [{ id: "korik", name: "Oddiy ko‘rik", baseMin: 6 }, { id: "oldirish", name: "Tish oldirish", baseMin: 4, unitType: "tish", unitMin: 12 }] },
-      { id: "ginekolog", name: "Ginekolog", icon: "🌸", specialists: [{ id: "gin-1", name: "Dr. Nilufar Sobirova", room: "202-xona", rating: 4.9 }], services: [{ id: "korik", name: "Konsultatsiya va ko‘rik", baseMin: 12 }] },
-      { id: "oftalmolog", name: "Oftalmolog (Ko‘z)", icon: "👁", specialists: [{ id: "oft-1", name: "Dr. Sardorbek Xolmatov", room: "210-xona", rating: 4.9 }], services: [{ id: "birlamchi", name: "Ko‘z tekshiruvi", baseMin: 10 }] },
-      { id: "kardiolog", name: "Kardiolog (Yurak)", icon: "❤️", specialists: [{ id: "kar-1", name: "Dr. Rustam Abdullayev", room: "301-xona", rating: 4.9 }], services: [{ id: "ekg", name: "EKG va konsultatsiya", baseMin: 15 }] },
-      { id: "pediatr", name: "Pediatr (Bolalar)", icon: "👶", specialists: [{ id: "ped-1", name: "Dr. Sevara Tursunova", room: "112-xona", rating: 4.9 }], services: [{ id: "birlamchi", name: "Bolalar ko‘rigi", baseMin: 10 }] },
-      { id: "lor", name: "LOR", icon: "👂", specialists: [{ id: "lor-1", name: "Dr. Jahongir Qodirov", room: "218-xona", rating: 4.8 }], services: [{ id: "korik", name: "LOR ko‘rigi", baseMin: 10 }] }
+      { id: "terapevt", name: "Terapevt", icon: "🩺", specialists: [], services: [{ id: "birlamchi", name: "Birlamchi ko‘rik", baseMin: 10 }, { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 6 }, { id: "tahlil", name: "Tahlil / UZI natijasi", baseMin: 12 }] },
+      { id: "stomatolog", name: "Stomatolog (Tish)", icon: "🦷", specialists: [], services: [{ id: "korik", name: "Oddiy ko‘rik", baseMin: 6 }, { id: "oldirish", name: "Tish oldirish", baseMin: 4, unitType: "tish", unitMin: 12 }, { id: "plomba", name: "Plomba qo‘yish", baseMin: 5, unitType: "tish", unitMin: 18 }] },
+      { id: "ginekolog", name: "Ginekolog", icon: "🌸", specialists: [], services: [{ id: "korik", name: "Konsultatsiya va ko‘rik", baseMin: 12 }, { id: "uzi", name: "UZI tekshiruvi", baseMin: 18 }] },
+      { id: "oftalmolog", name: "Oftalmolog (Ko‘z)", icon: "👁", specialists: [], services: [{ id: "birlamchi", name: "Ko‘z tekshiruvi", baseMin: 10 }, { id: "apparat", name: "Apparat tekshiruvi", baseMin: 16 }] },
+      { id: "kardiolog", name: "Kardiolog (Yurak)", icon: "❤️", specialists: [], services: [{ id: "ekg", name: "EKG va konsultatsiya", baseMin: 15 }, { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 8 }] },
+      { id: "pediatr", name: "Pediatr (Bolalar)", icon: "👶", specialists: [], services: [{ id: "birlamchi", name: "Bolalar ko‘rigi", baseMin: 10 }, { id: "emlash", name: "Emlash / ma’lumotnoma", baseMin: 7 }] },
+      { id: "lor", name: "LOR (Quloq-tomoq-burun)", icon: "👂", specialists: [], services: [{ id: "korik", name: "LOR ko‘rigi", baseMin: 10 }, { id: "muolaja", name: "Muolaja / yuvish", baseMin: 15 }] }
     ];
 
     const BANK_DEPARTMENTS = [
-      { id: "karta", name: "Karta ochish va omonatlar", icon: "💳", specialists: [{ id: "bnk-1", name: "Sherzod Alimov", room: "1-oyna", rating: 4.8 }, { id: "bnk-2", name: "Madina Karimova", room: "2-oyna", rating: 4.9 }], services: [{ id: "karta", name: "Plastik karta ochish", baseMin: 10 }, { id: "omonat", name: "Omonat", baseMin: 12 }] },
-      { id: "kredit", name: "Kredit bo‘limi", icon: "📄", specialists: [{ id: "krd-1", name: "Ulug‘bek Toshmatov", room: "4-oyna", rating: 4.8 }], services: [{ id: "kredit", name: "Kredit rasmiylashtirish", baseMin: 22 }] }
+      { id: "karta", name: "Karta ochish va omonatlar", icon: "💳", specialists: [], services: [{ id: "karta", name: "Plastik karta ochish", baseMin: 10 }, { id: "omonat", name: "Omonat rasmiylashtirish", baseMin: 12 }, { id: "sms", name: "SMS / PIN tiklash", baseMin: 5 }] },
+      { id: "kredit", name: "Kredit bo‘limi", icon: "📄", specialists: [], services: [{ id: "kredit", name: "Kredit rasmiylashtirish", baseMin: 22 }, { id: "maslahat", name: "Kredit maslahati", baseMin: 8 }] }
     ];
 
     const DXM_DEPARTMENTS = [
-      { id: "id_pasport", name: "ID-karta / Pasport", icon: "🪪", specialists: [{ id: "dxm-1", name: "Baxtiyor Murodov", room: "1-oyna", rating: 4.9 }, { id: "dxm-2", name: "Gulchehra Olimova", room: "2-oyna", rating: 4.8 }], services: [{ id: "id", name: "ID-karta olish / almashtirish", baseMin: 12 }] },
-      { id: "kadastr", name: "Kadastr va ko‘chmas mulk", icon: "🏠", specialists: [{ id: "kad-1", name: "Alisher Davronov", room: "4-oyna", rating: 4.8 }], services: [{ id: "kadastr", name: "Kadastr pasportiga ariza", baseMin: 15 }] }
+      { id: "id_pasport", name: "ID-karta / Pasport", icon: "🪪", specialists: [], services: [{ id: "id", name: "ID-karta olish / almashtirish", baseMin: 12 }, { id: "xorij", name: "Xorijga chiqish pasporti", baseMin: 15 }, { id: "mal", name: "Manzil ma’lumotnomasi", baseMin: 5 }] },
+      { id: "kadastr", name: "Kadastr va ko‘chmas mulk", icon: "🏠", specialists: [], services: [{ id: "kadastr", name: "Kadastr pasportiga ariza", baseMin: 15 }, { id: "kadastr_mal", name: "Kadastr ma’lumotnomasi", baseMin: 6 }] }
     ];
 
     function getAyoqshDepartments(fac) {
@@ -1074,7 +1075,7 @@
     }
 
     function getDepartmentsForFacility(fac) {
-      const baseDepts = fac.type === "bank"
+      const rawDepts = fac.type === "bank"
         ? BANK_DEPARTMENTS
         : fac.type === "dxm"
           ? DXM_DEPARTMENTS
@@ -1082,9 +1083,15 @@
             ? getAyoqshDepartments(fac)
             : MEDICAL_DEPARTMENTS;
 
+      const baseDepts = rawDepts.map(d => ({
+        ...d,
+        specialists: [...d.specialists]
+      }));
+
       const staffList = Object.values(STAFF_ACCOUNTS || {}).filter(
         st => st && st.facilityId === fac.id && st.fullName
       );
+
       if (!staffList.length) return baseDepts;
 
       return baseDepts.map(dept => {
@@ -1096,9 +1103,11 @@
             room: st.room || "1-xona",
             rating: 5.0
           }));
-        if (!matchedStaff.length) return dept;
         const existingIds = new Set(dept.specialists.map(s => s.id));
-        return { ...dept, specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists] };
+        return {
+          ...dept,
+          specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists]
+        };
       });
     }
 
@@ -1174,12 +1183,22 @@
       safeSet(CONFIG_KEY, APP_CONFIG);
 
       const savedFac = safeGet(FACILITIES_KEY, null);
-      if (Array.isArray(savedFac) && savedFac.length > 0) {
-        FACILITIES = savedFac;
-      } else {
-        FACILITIES = JSON.parse(JSON.stringify(DEFAULT_FACILITIES));
-        safeSet(FACILITIES_KEY, FACILITIES);
-      }
+      FACILITIES = Array.isArray(savedFac)
+        ? savedFac.filter(f => f && f.id && f.name && typeof f.lat === "number" && typeof f.lng === "number")
+        : [];
+
+      const existingIds = new Set(FACILITIES.map(f => f.id));
+      DEFAULT_FACILITIES.forEach(def => {
+        if (!existingIds.has(def.id)) {
+          FACILITIES.push({ ...def });
+        }
+      });
+
+      FACILITIES.forEach(f => {
+        f.region = (f.region || "jizzax").toLowerCase();
+      });
+
+      safeSet(FACILITIES_KEY, FACILITIES);
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
 
@@ -1765,12 +1784,11 @@
         else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
 
         const isClosed = fac.status === "closed";
-        const shortName = (fac.name || "").length > 24 ? fac.name.slice(0, 23) + "…" : (fac.name || "");
+        const shortName = (fac.name || "").length > 22 ? fac.name.slice(0, 21) + "…" : (fac.name || "");
         const safeCaption = shortName.replace(/['"`<>]/g, "");
         const live = getFacilityLiveWait(fac);
 
-        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
-          iconCaption: showLabels ? safeCaption : "",
+        const balloonData = {
           balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
           balloonContentBody: `
             <div style="font-size:12px; color:#333; margin-top:4px;">
@@ -1780,17 +1798,27 @@
               </div>
               ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
             </div>`
-        }, showLabels ? {
-          preset: "islands#violetDotIconWithCaption",
-          iconColor: color
-        } : {
+        };
+
+        const pinPlacemark = new ymaps.Placemark([fac.lat, fac.lng], balloonData, {
           iconLayout: "default#image",
           iconImageHref: makePinDataUrl(fac.type, color),
           iconImageSize: [32, 39],
           iconImageOffset: [-16, -39]
         });
+        ymapCollection.add(pinPlacemark);
 
-        ymapCollection.add(placemark);
+        if (showLabels && safeCaption) {
+          const labelPlacemark = new ymaps.Placemark([fac.lat, fac.lng], {
+            iconContent: `<span style="color:#FFFFFF; font-size:10px; font-weight:700;">${safeCaption}</span>`,
+            ...balloonData
+          }, {
+            preset: "islands#blackStretchyIcon",
+            iconColor: "#151517",
+            iconOffset: [16, -32]
+          });
+          ymapCollection.add(labelPlacemark);
+        }
       });
     }
 
@@ -2131,6 +2159,7 @@
     }
 
     function getBestSpecialist(facilityId, dept) {
+      if (!dept || !dept.specialists || dept.specialists.length === 0) return null;
       return [...dept.specialists].sort((a, b) => {
         const sa = getLiveSpecStats(facilityId, dept.id, a.id);
         const sb = getLiveSpecStats(facilityId, dept.id, b.id);
@@ -2178,8 +2207,9 @@
       if (step === 1) {
         document.getElementById("sheetSubtitle").textContent = facility.type === "ayoqsh" ? "1-qadam: Yoqilg‘i turini tanlang" : "1-qadam: Bo‘limni tanlang";
         body.innerHTML = `<div class="space-y-2.5">${depts.map(d => {
+          const activeCount = d.specialists.length;
           const best = getBestSpecialist(facility.id, d);
-          const st = getLiveSpecStats(facility.id, d.id, best.id);
+          const st = best ? getLiveSpecStats(facility.id, d.id, best.id) : { count: 0, waitMin: 0 };
           return `
             <button type="button" onclick="selectDepartment('${d.id}')"
               class="w-full text-left oled-card-2 hover:bg-[#262629] p-3.5 flex items-center justify-between gap-3 cursor-pointer transition">
@@ -2187,12 +2217,14 @@
                 <div class="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center text-lg shrink-0">${d.icon}</div>
                 <div class="min-w-0">
                   <div class="text-sm font-bold text-white truncate">${d.name}</div>
-                  <div class="text-xs text-[#22C55E] font-medium">${d.specialists.length} ta ${terms.unitWord} faol</div>
+                  <div class="text-xs ${activeCount > 0 ? 'text-[#22C55E]' : 'text-[#8E8E93]'} font-medium">
+                    ${activeCount > 0 ? `${activeCount} ta ${terms.unitWord} faol` : `Hozircha ro‘yxatdan o‘tgan ${terms.unitWord} yo‘q`}
+                  </div>
                 </div>
               </div>
               <div class="text-right shrink-0">
-                <div class="text-xs font-extrabold text-white">${st.count === 0 ? 'Bo‘sh' : `~${st.waitMin} daq`}</div>
-                <div class="text-[10px] text-[#8E8E93]">Navbat: ${st.count}</div>
+                <div class="text-xs font-extrabold text-white">${activeCount === 0 ? '—' : (st.count === 0 ? 'Bo‘sh' : `~${st.waitMin} daq`)}</div>
+                <div class="text-[10px] text-[#8E8E93]">${activeCount > 0 ? `Navbat: ${st.count}` : ''}</div>
               </div>
             </button>`;
         }).join("")}</div>`;
@@ -2201,6 +2233,18 @@
 
       if (step === 2) {
         document.getElementById("sheetSubtitle").textContent = `2-qadam: ${dept.name}`;
+        if (!dept.specialists || dept.specialists.length === 0) {
+          body.innerHTML = `
+            <div class="oled-card-2 p-6 text-center space-y-2 border border-dashed border-white/15">
+              <div class="text-2xl">👨‍⚕️</div>
+              <div class="text-sm font-bold text-white">Hozircha ro‘yxatdan o‘tgan ${terms.unitWord} yo‘q</div>
+              <p class="text-xs text-[#8E8E93] leading-relaxed">
+                Bu bo‘limda xodimlar <strong>NavbatAI Staff</strong> orqali ro‘yxatdan o‘tgach shu yerda avtomatik ko‘rinadi.
+              </p>
+            </div>`;
+          return;
+        }
+
         const bestSpec = getBestSpecialist(facility.id, dept);
         const bestSt = getLiveSpecStats(facility.id, dept.id, bestSpec.id);
         const savedEntry = (currentUser.savedSpecialists || []).find(s => s.facilityId === facility.id && s.deptId === dept.id);
@@ -2390,7 +2434,7 @@
         container.innerHTML = `<div class="oled-card p-8 text-center"><div class="w-14 h-14 mx-auto rounded-full bg-[#1C1C1E] flex items-center justify-center text-2xl mb-3">🎫</div><h3 class="text-sm font-bold text-white">Faol navbatingiz yo‘q</h3><p class="text-xs text-[#8E8E93] mt-1">Hozircha navbatga yozilmagansiz.</p></div>`;
         return;
       }
-      container.innerHTML = myTickets.map(({ qKey, item: t, peopleAhead, waitMin, prevPerson, nextPerson }) => {
+      container.innerHTML = myTickets.map(({ qKey, item: t, peopleAhead, waitMin }) => {
         const eta = formatEta(waitMin);
         return `
           <div class="oled-card p-4 shadow-xl">
@@ -2624,7 +2668,9 @@
           const data = await res.json();
           if (data) {
             if (Array.isArray(data.facilities) && data.facilities.length) {
-              FACILITIES = data.facilities;
+              const incomingIds = new Set(data.facilities.map(x => x.id));
+              const keptDefaults = DEFAULT_FACILITIES.filter(d => !incomingIds.has(d.id));
+              FACILITIES = [...data.facilities, ...keptDefaults];
               safeSet(FACILITIES_KEY, FACILITIES);
             }
             GLOBAL_QUEUES = data.queues || {};
