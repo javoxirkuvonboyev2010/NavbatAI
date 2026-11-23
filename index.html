@@ -49,7 +49,7 @@
 
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9999px; }
+    ::*webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9999px; }
 
     .oled-card {
       background-color: #151517;
@@ -1343,6 +1343,13 @@
 
     let booking = { facility: null, depts: [], step: 1, step2Tab: "ai", dept: null, specialist: null, service: null, qty: 1 };
 
+   function safeGet(key, fallback = null) {
+      try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+    }
+    function safeSet(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+    }
+
     function loadAllData() {
       const cfg = safeGet(CONFIG_KEY, null);
       if (cfg && cfg.firebaseUrl && cfg.firebaseUrl.includes("europe-west1.firebasedatabase.app")) {
@@ -1360,24 +1367,7 @@
       }
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
-    function safeSet(key, val) {
-      try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
-    }
 
-     function loadAllData() {
-      const cfg = safeGet(CONFIG_KEY, null);
-      if (cfg && cfg.firebaseUrl && !cfg.firebaseUrl.includes("firebaseio.com")) {
-        APP_CONFIG = { ...APP_CONFIG, ...cfg };
-      }
-      const savedFac = safeGet(FACILITIES_KEY, null);
-      if (Array.isArray(savedFac) && savedFac.length > 0) {
-        FACILITIES = savedFac;
-      } else {
-        FACILITIES = JSON.parse(JSON.stringify(DEFAULT_FACILITIES));
-        safeSet(FACILITIES_KEY, FACILITIES);
-      }
-      GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
-    }
 
 
     function saveFacilities(pushCloud = true) {
@@ -3145,14 +3135,14 @@
       loadAllData();
       prefillRememberedCredentials();
       if (APP_CONFIG.firebaseUrl) {
-        await syncFirebase("pull", true);
+         syncFirebase("pull", true);
       }
 
       let savedPhone = null;
       try { savedPhone = localStorage.getItem(SESSION_KEY); } catch {}
       const db = getUsersDB();
       if (savedPhone) {
-        const cloudU = await fetchUserFromCloud(savedPhone);
+        const cloudU =  fetchUserFromCloud(savedPhone);
         if (cloudU) { db[savedPhone] = cloudU; saveUsersDB(db); }
       }
             if (savedPhone && db[savedPhone]) {
