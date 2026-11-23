@@ -1317,7 +1317,7 @@
     let FACILITIES = [];
     let GLOBAL_QUEUES = {};
     let STAFF_ACCOUNTS = {};
-    let APP_CONFIG = { firebaseUrl: "https://navbatai-3im-default-rtdb.firebaseio.com" };
+    let APP_CONFIG = { firebaseUrl: "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app" };
 
     let authMode = "login";
     let regOtpChannel = "sms";
@@ -1350,9 +1350,11 @@
       try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
     }
 
-    function loadAllData() {
+     function loadAllData() {
       const cfg = safeGet(CONFIG_KEY, null);
-      if (cfg) APP_CONFIG = { ...APP_CONFIG, ...cfg };
+      if (cfg && cfg.firebaseUrl && !cfg.firebaseUrl.includes("firebaseio.com")) {
+        APP_CONFIG = { ...APP_CONFIG, ...cfg };
+      }
       const savedFac = safeGet(FACILITIES_KEY, null);
       if (Array.isArray(savedFac) && savedFac.length > 0) {
         FACILITIES = savedFac;
@@ -1362,6 +1364,7 @@
       }
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
     }
+
 
     function saveFacilities(pushCloud = true) {
       safeSet(FACILITIES_KEY, FACILITIES);
@@ -3043,12 +3046,13 @@
       const base = normalizeFbUrl(APP_CONFIG.firebaseUrl);
       if (!base) return;
       try {
-        if (mode === "push") {
+         if (mode === "push") {
           const res = await fetch(`${base}/navbatai_state.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES })
+            body: JSON.stringify({ facilities: FACILITIES, queues: GLOBAL_QUEUES, staffAccounts: STAFF_ACCOUNTS })
           });
+
           if (!res.ok) throw new Error();
           document.getElementById("fbStatusBadge").textContent = "🟢 Firebase Cloud";
           if (!silent) showToast("✅ Firebase Cloud bazasiga saqlandi!");
@@ -3127,14 +3131,21 @@
         const cloudU = await fetchUserFromCloud(savedPhone);
         if (cloudU) { db[savedPhone] = cloudU; saveUsersDB(db); }
       }
-      if (savedPhone && db[savedPhone]) {
+            if (savedPhone && db[savedPhone]) {
         currentUser = db[savedPhone];
         if (!currentUser.settings) currentUser.settings = { notifications: true, soundAlerts: true };
         if (!currentUser.savedSpecialists) currentUser.savedSpecialists = [];
         if (!currentUser.history) currentUser.history = [];
         enterApp();
       }
+
+      setInterval(() => {
+        if (APP_CONFIG.firebaseUrl && currentUser) {
+          syncFirebase("pull", true);
+        }
+      }, 4000);
     };
+
   </script>
 </body>
 </html>
