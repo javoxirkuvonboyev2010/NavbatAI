@@ -1,4 +1,4 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz" class="dark">
 <head>
   <meta charset="UTF-8" />
@@ -14,6 +14,16 @@
     body { background-color: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; }
     .oled-card { background-color: #151517; border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; }
     .oled-card-2 { background-color: #1C1C1E; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; }
+    .lav-toggle {
+      position: relative; width: 46px; height: 26px; border-radius: 9999px;
+      background-color: #2C2C2E; transition: background-color 0.2s ease; cursor: pointer; flex-shrink: 0;
+    }
+    .lav-toggle.on { background-color: #E2C2FF; }
+    .lav-toggle-knob {
+      position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 9999px;
+      background-color: #8E8E93; transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .lav-toggle.on .lav-toggle-knob { transform: translateX(20px); background-color: #111114; }
   </style>
 </head>
 <body class="min-h-screen bg-black text-white antialiased">
@@ -27,10 +37,23 @@
       </div>
     </div>
 
+    <!-- OTP Banner (Password Reset) -->
+    <div id="otpInboxBanner" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-50 max-w-[420px] w-[92%]">
+      <div class="bg-[#151517]/95 border border-[#E2C2FF]/45 rounded-2xl p-3.5 shadow-2xl flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div id="otpInboxChannel" class="text-[10px] font-bold uppercase tracking-wider text-[#E2C2FF]">📩 TASDIQLASH KODI</div>
+          <div id="otpInboxBody" class="text-xs text-white font-medium mt-0.5">Kod: <strong class="text-[#22C55E]">000000</strong></div>
+        </div>
+        <button type="button" onclick="autoFillOtp()" class="px-3 py-1.5 rounded-xl bg-[#E2C2FF] text-[#111114] text-[11px] font-extrabold cursor-pointer">
+          Kiritish
+        </button>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="flex items-center justify-between pb-4 border-b border-white/[0.08]">
       <div class="flex items-center gap-2.5">
-        <img src="./staff-logo.png" alt="NavbatAI" class="w-9 h-9 rounded-xl object-cover border border-white/15" />
+        <img src="./staff-logo.png" alt="NavbatAI Staff" class="w-9 h-9 rounded-xl object-cover border border-white/15" />
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-base font-extrabold">NavbatAI Staff</h1>
@@ -39,17 +62,12 @@
           <p id="headerStaffSub" class="text-[11px] text-[#8E8E93]">Xodimlar profili va navbat boshqaruvi</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <a href="./index.html" class="px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#E2C2FF]">
-          Xarita
-        </a>
-        <button id="logoutBtn" onclick="logoutStaff()" class="hidden px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#F87171] cursor-pointer">
-          Chiqish
-        </button>
-      </div>
+      <button id="logoutBtn" onclick="logoutStaff()" class="hidden px-3 py-1.5 rounded-xl bg-[#1C1C1E] hover:bg-[#2C2C2E] text-xs font-bold text-[#F87171] cursor-pointer">
+        Chiqish
+      </button>
     </header>
 
-    <!-- STEP 1: STAFF ACCOUNT (LOGIN / REGISTER) -->
+    <!-- STEP 1: STAFF AUTH -->
     <section id="staffAuthSection" class="py-5 space-y-4">
       <div class="oled-card p-5 space-y-4 shadow-2xl">
         <div class="grid grid-cols-2 gap-1.5 bg-black p-1 rounded-2xl border border-white/[0.08]">
@@ -63,11 +81,29 @@
           </button>
         </div>
 
+        <!-- Registration Fields -->
         <div id="regExtraFields" class="hidden space-y-3">
           <div>
             <label class="block text-xs text-[#8E8E93] mb-1">Xodim ism-familiyasi (shifokor / mutaxassis) *</label>
             <input id="regFullName" type="text" placeholder="Masalan: Dr. Dilshod Rahimov"
               class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-[#8E8E93] mb-1">Email manzil (parolni tiklash uchun)</label>
+            <input id="regEmail" type="email" placeholder="example@gmail.com"
+              class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs text-[#8E8E93] mb-1">Viloyat *</label>
+              <select id="regRegion" onchange="onRegRegionChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
+            </div>
+            <div>
+              <label class="block text-xs text-[#8E8E93] mb-1">Tuman / Shahar *</label>
+              <select id="regDistrict" onchange="onRegDistrictChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
+            </div>
           </div>
 
           <div>
@@ -80,42 +116,21 @@
             </select>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs text-[#8E8E93] mb-1">Viloyat *</label>
-              <select id="regRegion" onchange="onRegLocationChange()" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
-            </div>
-            <div>
-              <label class="block text-xs text-[#8E8E93] mb-1">Tuman / Shahar / Manzil *</label>
-              <input id="regDistrictAddress" type="text" oninput="renderFacilitySearchResults()" placeholder="Masalan: Jizzax shahar, Ittifoq"
-                class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white" />
-            </div>
-          </div>
-
-          <!-- Xaritadagi muassasalar orasidan izlash -->
+          <!-- Search & Facilities List in Selected District + Field -->
           <div class="oled-card-2 p-3.5 space-y-2.5">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-[#E2C2FF]">📍 Ish joyini xaritadagi muassasalar orasidan izlang</label>
+              <label id="facListTitle" class="text-xs font-bold text-[#E2C2FF]">📍 Tuman/shahardagi muassasalar</label>
               <span id="facMatchCount" class="text-[10px] text-[#8E8E93]">0 ta</span>
             </div>
             <input id="facSearchInput" type="text" oninput="renderFacilitySearchResults()"
-              placeholder="Muassasa nomi yoki ko‘cha bo‘yicha izlash..."
+              placeholder="Qidiruv: muassasa nomi yoki ko‘cha..."
               class="w-full bg-black border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
-
-            <div id="facSearchResults" class="max-h-40 overflow-y-auto space-y-1.5"></div>
-
-            <!-- Agar muassasa ro'yxatda bo'lmasa manzil bo'yicha shu tuman/shahardagi muassasalar -->
-            <div id="districtFallbackBox" class="hidden pt-2 border-t border-white/10 space-y-2">
-              <div class="text-[11px] text-[#F59E0B] font-semibold">
-                Ko‘rsatilgan tuman/shahar yoki manzil bo‘yicha muassasalar:
-              </div>
-              <div id="districtFacilitiesList" class="space-y-1.5 max-h-32 overflow-y-auto"></div>
-            </div>
+            <div id="facSearchResults" class="max-h-44 overflow-y-auto space-y-1.5"></div>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label id="deptLabel" class="block text-xs text-[#8E8E93] mb-1">Bo‘lim / Yo‘nalish *</label>
+              <label class="block text-xs text-[#8E8E93] mb-1">Bo‘lim / Yo‘nalish *</label>
               <select id="regDept" class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3 py-3 text-xs font-semibold text-white"></select>
             </div>
             <div>
@@ -126,24 +141,77 @@
           </div>
         </div>
 
+        <!-- Phone / Login -->
         <div>
-          <label class="block text-xs text-[#8E8E93] mb-1">Telefon raqam yoki xodim logini *</label>
-          <input id="authPhoneOrLogin" type="text" value="+998 " placeholder="+998 90 123 45 67"
+          <label class="block text-xs text-[#8E8E93] mb-1">Telefon raqamingiz *</label>
+          <input id="authPhone" type="tel" value="+998 " placeholder="+998 90 123 45 67"
             class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
         </div>
 
+        <!-- Password -->
         <div>
           <label class="block text-xs text-[#8E8E93] mb-1">Parol *</label>
-          <input id="authPassword" type="password" placeholder="Kamida 4 ta belgi"
-            class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl px-3.5 py-3 text-xs font-semibold text-white" />
+          <div class="relative">
+            <input id="authPassword" type="password" oninput="validatePasswordLive()" placeholder="Kamida 8 ta belgi (harf + raqam)"
+              class="w-full bg-[#1C1C1E] border border-white/10 rounded-2xl pl-3.5 pr-10 py-3 text-xs font-semibold text-white" />
+            <button type="button" onclick="togglePassVis()" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8E8E93] cursor-pointer">👁</button>
+          </div>
+          <div id="passChecklistWrap" class="hidden mt-2 grid grid-cols-3 gap-1.5 text-[10px]">
+            <div id="chkLen" class="px-2 py-1 rounded-lg bg-[#1C1C1E] text-[#8E8E93] text-center">○ 8+ belgi</div>
+            <div id="chkAlpha" class="px-2 py-1 rounded-lg bg-[#1C1C1E] text-[#8E8E93] text-center">○ Harf (A-z)</div>
+            <div id="chkNum" class="px-2 py-1 rounded-lg bg-[#1C1C1E] text-[#8E8E93] text-center">○ Raqam (0-9)</div>
+          </div>
+        </div>
+
+        <!-- Remember Phone & Password -->
+        <div class="flex items-center justify-between py-1">
+          <div>
+            <div class="text-xs font-semibold text-white">Telefon raqam va parolni eslab qol</div>
+            <div class="text-[11px] text-[#8E8E93]">Keyingi kirishda avtomatik to‘ldiriladi</div>
+          </div>
+          <div id="rememberToggle" onclick="toggleRemember()" class="lav-toggle on" role="switch" aria-checked="true">
+            <div class="lav-toggle-knob"></div>
+          </div>
         </div>
 
         <button id="authSubmitBtn" onclick="submitStaffAuth()"
           class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
           Kirish
         </button>
+
+        <div id="forgotRow" class="pt-2 border-t border-white/[0.07] text-center">
+          <button type="button" onclick="openForgotModal()" class="text-xs font-semibold text-[#E2C2FF] hover:underline cursor-pointer">
+            Parolni unutdingizmi?
+          </button>
+        </div>
       </div>
     </section>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+      <div onclick="closeForgotModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="relative w-full max-w-[390px] oled-card p-5 space-y-3.5 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-extrabold text-white">🔑 Parolni tiklash</h3>
+          <button type="button" onclick="closeForgotModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] cursor-pointer">✕</button>
+        </div>
+        <div id="fpStep1" class="space-y-3">
+          <p class="text-xs text-[#8E8E93]">Ro‘yxatdan o‘tgan telefon raqamingizni kiriting.</p>
+          <input id="fpPhone" type="tel" value="+998 " class="w-full bg-[#1C1C1E] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white" />
+          <button type="button" onclick="sendForgotOtp()" class="w-full py-3 rounded-xl bg-[#E2C2FF] text-[#111114] font-extrabold text-xs cursor-pointer">
+            Tasdiqlash kodini yuborish
+          </button>
+        </div>
+        <div id="fpStep2" class="hidden space-y-3">
+          <p id="fpSentInfo" class="text-xs text-[#22C55E]"></p>
+          <input id="fpOtpInput" type="text" maxlength="6" placeholder="000000" class="w-full bg-[#1C1C1E] border border-white/10 rounded-xl px-3.5 py-2.5 text-center text-base font-extrabold tracking-widest text-[#E2C2FF]" />
+          <input id="fpNewPass" type="password" placeholder="Yangi parol (8+ belgi, harf + raqam)" class="w-full bg-[#1C1C1E] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white" />
+          <button type="button" onclick="confirmForgotReset()" class="w-full py-3 rounded-xl bg-[#E2C2FF] text-[#111114] font-extrabold text-xs cursor-pointer">
+            Parolni yangilash
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- STEP 2: STAFF WORKSTATION -->
     <section id="staffWorkSection" class="hidden flex-1 py-4 space-y-4">
@@ -151,7 +219,7 @@
         <div class="min-w-0">
           <div id="workFacilityName" class="text-[11px] font-bold text-[#E2C2FF] truncate">Muassasa</div>
           <h2 id="workStaffName" class="text-base font-extrabold text-white truncate">Xodim</h2>
-          <div id="workMeta" class="text-xs text-[#8E8E93] mt-0.5">Soha • Bo‘lim • Xona</div>
+          <div id="workMeta" class="text-xs text-[#8E8E93] mt-0.5">Hudud • Soha • Bo‘lim • Xona</div>
         </div>
         <div class="text-right shrink-0 bg-[#1C1C1E] px-3 py-2 rounded-2xl border border-white/10">
           <div class="text-[10px] text-[#8E8E93]">Navbatda</div>
@@ -182,13 +250,24 @@
 
   <script>
     const FIREBASE_URL = "https://navbatai-3im-default-rtdb.europe-west1.firebasedatabase.app";
-    const STAFF_ACCOUNTS_KEY = "navbat_staff_accounts_v1";
-    const STAFF_SESSION_KEY = "navbat_staff_active_v1";
+    const STAFF_ACCOUNTS_KEY = "navbat_staff_accounts_v2";
+    const STAFF_SESSION_KEY = "navbat_staff_active_v2";
+    const STAFF_REMEMBER_KEY = "navbat_staff_remember_v2";
 
     const REGIONS = {
-      jizzax: "Jizzax", toshkent: "Toshkent", samarqand: "Samarqand", buxoro: "Buxoro",
-      andijon: "Andijon", fargona: "Farg‘ona", namangan: "Namangan", qashqadaryo: "Qashqadaryo",
-      surxondaryo: "Surxondaryo", navoiy: "Navoiy", sirdaryo: "Sirdaryo", xorazm: "Xorazm", qoraqalpogiston: "Qoraqalpog‘iston"
+      jizzax:          { name: "Jizzax",          districts: ["Jizzax shahar", "Sharof Rashidov", "Arnasoy", "Baxmal", "Do‘stlik", "Forish", "G‘allaorol", "Mirzacho‘l", "Paxtakor", "Yangiobod", "Zafarobod", "Zomin"] },
+      toshkent:        { name: "Toshkent",        districts: ["Toshkent shahar (Yunusobod)", "Toshkent shahar (Chilonzor)", "Toshkent shahar (Mirzo Ulug‘bek)", "Toshkent shahar (Yakkasaroy)", "Toshkent shahar (Sergeli)", "Chirchiq", "Olmaliq", "Angren", "Bekobod", "Zangiota", "Qibray", "Parkent"] },
+      samarqand:       { name: "Samarqand",       districts: ["Samarqand shahar", "Kattaqo‘rg‘on", "Urgut", "Payariq", "Ishtixon", "Jomboy", "Narpoy", "Oqdaryo", "Pastdarg‘om", "Samarqand tumani", "Toyloq"] },
+      buxoro:          { name: "Buxoro",          districts: ["Buxoro shahar", "Kogon", "G‘ijduvon", "Vobkent", "Jondor", "Olot", "Peshku", "Romitan", "Shofirkon", "Qorovulbozor"] },
+      andijon:         { name: "Andijon",         districts: ["Andijon shahar", "Xonobod", "Asaka", "Baliqchi", "Bo‘ston", "Buloqboshi", "Izboskan", "Jalolquduq", "Marhamat", "Oltinko‘l", "Paxtaobod", "Shahrixon", "Xo‘jaobod"] },
+      fargona:         { name: "Farg‘ona",        districts: ["Farg‘ona shahar", "Marg‘ilon", "Qo‘qon", "Quvasoy", "Beshariq", "Bog‘dod", "Buvayda", "Dang‘ara", "Farg‘ona tumani", "Furqat", "Oltiariq", "Qo‘shtepa", "Rishton", "So‘x", "Toshloq", "Uchko‘prik", "Yozyovon"] },
+      namangan:        { name: "Namangan",        districts: ["Namangan shahar", "Chortoq", "Chust", "Kosonsoy", "Mingbuloq", "Namangan tumani", "Norin", "Pop", "To‘raqo‘rg‘on", "Uchqo‘rg‘on", "Uychi", "Yangiqo‘rg‘on"] },
+      qashqadaryo:     { name: "Qashqadaryo",     districts: ["Qarshi shahar", "Shahrisabz", "Chiroqchi", "Dehqonobod", "G‘uzor", "Kasbi", "Kitob", "Koson", "Mirishkor", "Muborak", "Nishon", "Qamashi", "Yakkabog‘"] },
+      surxondaryo:     { name: "Surxondaryo",     districts: ["Termiz shahar", "Angor", "Bandixon", "Boysun", "Denov", "Jarqo‘rg‘on", "Muzrabot", "Oltinsoy", "Qiziriq", "Qumqo‘rg‘on", "Sariosiyo", "Sherobod", "Sho‘rchi", "Uzun"] },
+      navoiy:          { name: "Navoiy",          districts: ["Navoiy shahar", "Zarafshon", "Karmana", "Konimex", "Navbahor", "Nurota", "Tomdi", "Uchquduq", "Xatirchi", "Qiziltepa"] },
+      sirdaryo:        { name: "Sirdaryo",        districts: ["Guliston shahar", "Shirin", "Yangiyer", "Boyovut", "Guliston tumani", "Mirzaobod", "Oqoltin", "Sardoba", "Sayxunobod", "Sirdaryo tumani"] },
+      xorazm:          { name: "Xorazm",          districts: ["Urganch shahar", "Xiva", "Bog‘ot", "Gurlan", "Qo‘shko‘pir", "Shovot", "Urganch tumani", "Xazorasp", "Xonqa", "Yangiariq", "Yangibozor"] },
+      qoraqalpogiston: { name: "Qoraqalpog‘iston", districts: ["Nukus shahar", "Amudaryo", "Beruniy", "Chimboy", "Ellikqal‘a", "Kegeyli", "Mo‘ynoq", "Nukus tumani", "Qonliko‘l", "Qo‘ng‘irot", "Shumanay", "Taxiatosh", "Taxtako‘pir", "To‘rtko‘l", "Xo‘jayli"] }
     };
 
     const DEPTS_BY_FIELD = {
@@ -218,12 +297,25 @@
       ]
     };
 
-    let FACILITIES = [];
+    const DEFAULT_FACILITIES = [
+      { id: "adm-1795280787637", region: "jizzax", district: "Jizzax shahar", type: "shifoxona", status: "open", name: "Ziyo Nur Med Shifo", address: "Baynalminalchilar ko'chasi, Jizzax shahar" },
+      { id: "adm-1795279615427", region: "jizzax", district: "Jizzax shahar", type: "bank", status: "open", name: "Anorbank Jizzax viloyati", address: "Sug'diyona ro'parasida, Jizzax shahar" },
+      { id: "jiz-9", region: "jizzax", district: "Jizzax shahar", type: "shifoxona", status: "open", name: "Jizzax shahar 3-sonli oilaviy poliklinikasi", address: "Ittifoq MFY, FOK yonidagi qizil tom, Jizzax shahar" },
+      { id: "jiz-1", region: "jizzax", district: "Jizzax shahar", type: "shifoxona", status: "open", name: "Jizzax viloyat ko‘p tarmoqli tibbiyot markazi", address: "Sh. Rashidov shoh ko‘chasi, Jizzax shahar" },
+      { id: "jiz-11", region: "jizzax", district: "Jizzax shahar", type: "dxm", status: "open", name: "Jizzax shahar Davlat xizmatlari markazi (DXM)", address: "I. Karimov ko‘chasi 12, Jizzax shahar" },
+      { id: "jiz-13", region: "jizzax", district: "Jizzax shahar", type: "bank", status: "open", name: "Agrobank Jizzax filiali", address: "Sh. Rashidov ko‘chasi 42, Jizzax shahar" },
+      { id: "ayoq-1", region: "jizzax", district: "Sharof Rashidov", type: "ayoqsh", status: "open", name: "Jizzax Metan AYOQSH #1", address: "Toshkent-Samarqand trassasi", fuels: ["metan", "propan"] },
+      { id: "ayoq-3", region: "jizzax", district: "Jizzax shahar", type: "ayoqsh", status: "open", name: "UNG Petro Jizzax AYOQSH", address: "Sh. Rashidov shoh ko‘chasi, Jizzax shahar", fuels: ["benzin", "dizel"] }
+    ];
+
+    let FACILITIES = [...DEFAULT_FACILITIES];
     let GLOBAL_QUEUES = {};
     let STAFF_ACCOUNTS = {};
     let authTab = "login";
+    let rememberState = true;
     let selectedFacilityObj = null;
     let activeStaff = null;
+    let latestResetOtp = "";
 
     function showToast(msg, warn = false) {
       const el = document.getElementById("toast");
@@ -233,10 +325,10 @@
       setTimeout(() => el.classList.add("opacity-0"), 2800);
     }
 
-    function loadLocalAccounts() {
+    function loadAccounts() {
       try { STAFF_ACCOUNTS = JSON.parse(localStorage.getItem(STAFF_ACCOUNTS_KEY) || "{}"); } catch { STAFF_ACCOUNTS = {}; }
     }
-    function saveLocalAccounts() {
+    function saveAccounts() {
       try { localStorage.setItem(STAFF_ACCOUNTS_KEY, JSON.stringify(STAFF_ACCOUNTS)); } catch {}
     }
 
@@ -246,20 +338,23 @@
         if (!res.ok) throw new Error();
         const data = await res.json();
         if (data) {
-          if (Array.isArray(data.facilities)) FACILITIES = data.facilities;
+          if (Array.isArray(data.facilities) && data.facilities.length) {
+            const existingIds = new Set(FACILITIES.map(f => f.id));
+            data.facilities.forEach(f => { if (!existingIds.has(f.id)) FACILITIES.push(f); });
+          }
           GLOBAL_QUEUES = data.queues || {};
           if (data.staffAccounts && typeof data.staffAccounts === "object") {
             STAFF_ACCOUNTS = { ...data.staffAccounts, ...STAFF_ACCOUNTS };
-            saveLocalAccounts();
+            saveAccounts();
           }
         }
         document.getElementById("syncStatus").textContent = "● Jonli";
         if (activeStaff) renderWorkstation();
-        else renderFacilitySearchResults();
-        if (manual) showToast("Ma’lumotlar yangilandi");
+        else if (authTab === "register") renderFacilitySearchResults();
+        if (manual) showToast("Yangilandi");
       } catch {
         document.getElementById("syncStatus").textContent = "● Lokal";
-        if (manual) showToast("Firebase bilan ulanish tekshirilmoqda", true);
+        if (manual) showToast("Aloqa tekshirilmoqda", true);
       }
     }
 
@@ -277,35 +372,44 @@
       } catch {}
     }
 
-    function setAuthTab(tab) {
-      authTab = tab;
-      const isReg = tab === "register";
-      document.getElementById("tabStaffLogin").className = !isReg
-        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
-        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
-      document.getElementById("tabStaffRegister").className = isReg
-        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
-        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
-      document.getElementById("regExtraFields").classList.toggle("hidden", !isReg);
-      document.getElementById("authSubmitBtn").textContent = isReg
-        ? "Akkount yaratish va ishni boshlash"
-        : "Kirish";
-      if (isReg) {
-        onRegFieldChange();
-        renderFacilitySearchResults();
-      }
+    function initSelectors() {
+      const regSel = document.getElementById("regRegion");
+      regSel.innerHTML = Object.entries(REGIONS)
+        .map(([k, v]) => `<option value="${k}" class="bg-[#1C1C1E] text-white">${v.name}</option>`)
+        .join("");
+      regSel.value = "jizzax";
+      onRegRegionChange();
+      onRegFieldChange();
     }
 
-    function onRegFieldChange() {
-      const field = document.getElementById("regField").value;
-      const depts = DEPTS_BY_FIELD[field] || DEPTS_BY_FIELD.shifoxona;
-      document.getElementById("regDept").innerHTML = depts.map(d => `<option value="${d.id}" class="bg-[#1C1C1E]">${d.name}</option>`).join("");
-      document.getElementById("roomLabel").textContent = field === "ayoqsh" ? "Kolonka / Yo‘lak *" : (field === "shifoxona" ? "Ish xonasi *" : "Oyna raqami *");
-      document.getElementById("regRoom").placeholder = field === "ayoqsh" ? "Masalan: 1-kolonka" : (field === "shifoxona" ? "Masalan: 104-xona" : "Masalan: 2-oyna");
+    function onRegRegionChange() {
+      const regKey = document.getElementById("regRegion").value || "jizzax";
+      const regObj = REGIONS[regKey] || REGIONS.jizzax;
+      const distSel = document.getElementById("regDistrict");
+      distSel.innerHTML = regObj.districts
+        .map(d => `<option value="${d}" class="bg-[#1C1C1E] text-white">${d}</option>`)
+        .join("");
+      selectedFacilityObj = null;
       renderFacilitySearchResults();
     }
 
-    function onRegLocationChange() {
+    function onRegDistrictChange() {
+      selectedFacilityObj = null;
+      renderFacilitySearchResults();
+    }
+
+    function onRegFieldChange() {
+      const field = document.getElementById("regField").value || "shifoxona";
+      const depts = DEPTS_BY_FIELD[field] || DEPTS_BY_FIELD.shifoxona;
+      document.getElementById("regDept").innerHTML = depts
+        .map(d => `<option value="${d.id}" class="bg-[#1C1C1E] text-white">${d.name}</option>`)
+        .join("");
+      document.getElementById("roomLabel").textContent = field === "ayoqsh"
+        ? "Kolonka / Yo‘lak *"
+        : (field === "shifoxona" ? "Ish xonasi *" : "Oyna raqami *");
+      document.getElementById("regRoom").placeholder = field === "ayoqsh"
+        ? "Masalan: 1-kolonka"
+        : (field === "shifoxona" ? "Masalan: 104-xona" : "Masalan: 2-oyna");
       selectedFacilityObj = null;
       renderFacilitySearchResults();
     }
@@ -319,59 +423,114 @@
     }
 
     function renderFacilitySearchResults() {
-      const reg = document.getElementById("regRegion").value || "jizzax";
+      const regKey = document.getElementById("regRegion").value || "jizzax";
+      const district = (document.getElementById("regDistrict").value || "").toLowerCase();
       const field = document.getElementById("regField").value || "shifoxona";
       const q = (document.getElementById("facSearchInput").value || "").toLowerCase().trim();
-      const districtAddr = (document.getElementById("regDistrictAddress").value || "").toLowerCase().trim();
 
-      // 1) Xaritadagi muassasalar orasidan izlash
-      const byFieldAndRegion = FACILITIES.filter(f => f.region === reg && f.type === field);
-      const matched = byFieldAndRegion.filter(f => {
-        if (!q && !districtAddr) return true;
-        const hay = `${f.name} ${f.address}`.toLowerCase();
-        const okQ = !q || hay.includes(q);
-        const okD = !districtAddr || hay.includes(districtAddr);
-        return okQ && okD;
+      const regName = (REGIONS[regKey]?.name || regKey).toLowerCase();
+      document.getElementById("facListTitle").textContent = `📍 ${document.getElementById("regDistrict").value} — muassasalar`;
+
+      // Shu viloyat va tuman/shahardagi soha bo'yicha muassasalar
+      let pool = FACILITIES.filter(f => {
+        if (f.region !== regKey || f.type !== field) return false;
+        const fDist = (f.district || "").toLowerCase();
+        const fAddr = (f.address || "").toLowerCase();
+        const fName = (f.name || "").toLowerCase();
+        const matchesDist = !district || fDist.includes(district) || fAddr.includes(district) || fName.includes(district) || district.includes(regName);
+        return matchesDist;
       });
 
-      document.getElementById("facMatchCount").textContent = `${matched.length} ta`;
-      const resBox = document.getElementById("facSearchResults");
-
-      if (matched.length === 0) {
-        resBox.innerHTML = `<div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Xaritadagi mos muassasa topilmadi. Pastdagi tuman/shahar ro‘yxatidan tanlang yoki manzilni aniqlashtiring.</div>`;
-      } else {
-        resBox.innerHTML = matched.slice(0, 12).map(f => {
-          const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
-          return `
-            <button type="button" onclick="pickFacility('${f.id}')"
-              class="w-full text-left p-2.5 rounded-xl border cursor-pointer transition ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10 hover:border-white/25'}">
-              <div class="text-xs font-bold text-white truncate">${active ? '✓ ' : ''}${f.name}</div>
-              <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
-            </button>`;
-        }).join("");
+      if (!pool.length) {
+        pool = FACILITIES.filter(f => f.region === regKey && f.type === field);
       }
 
-      // 2) Shu viloyat / tuman / shahar bo'yicha barcha muassasalar
-      const fallbackBox = document.getElementById("districtFallbackBox");
-      const fallbackList = document.getElementById("districtFacilitiesList");
-      const regionalAll = FACILITIES.filter(f => f.region === reg && (!districtAddr || `${f.name} ${f.address}`.toLowerCase().includes(districtAddr)));
+      const filtered = q
+        ? pool.filter(f => `${f.name} ${f.address} ${f.district || ""}`.toLowerCase().includes(q))
+        : pool;
 
-      if (matched.length === 0 || districtAddr) {
-        fallbackBox.classList.remove("hidden");
-        fallbackList.innerHTML = regionalAll.length === 0
-          ? `<div class="text-[11px] text-[#8E8E93]">Bu manzil bo‘yicha yozuv topilmadi — kiritilgan manzil bilan yangi ish joyi biriktiriladi.</div>`
-          : regionalAll.slice(0, 8).map(f => {
-              const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
-              return `
-                <button type="button" onclick="pickFacility('${f.id}')"
-                  class="w-full text-left p-2 rounded-xl border cursor-pointer ${active ? 'bg-[#22C55E]/15 border-[#22C55E]' : 'bg-black/60 border-white/10'}">
-                  <div class="text-[11px] font-bold text-white truncate">${f.name} <span class="text-[#8E8E93] font-normal">(${f.type})</span></div>
-                  <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
-                </button>`;
-            }).join("");
-      } else {
-        fallbackBox.classList.add("hidden");
+      document.getElementById("facMatchCount").textContent = `${filtered.length} ta`;
+      const box = document.getElementById("facSearchResults");
+
+      if (!filtered.length) {
+        box.innerHTML = `<div class="p-3 rounded-xl bg-black/70 text-[11px] text-[#8E8E93]">Qidiruv bo‘yicha muassasa topilmadi. Qidiruvni tozalang yoki ro‘yxatdan tanlang.</div>`;
+        return;
       }
+
+      box.innerHTML = filtered.map(f => {
+        const active = selectedFacilityObj && selectedFacilityObj.id === f.id;
+        return `
+          <button type="button" onclick="pickFacility('${f.id}')"
+            class="w-full text-left p-2.5 rounded-xl border cursor-pointer transition ${active ? 'bg-[#E2C2FF]/20 border-[#E2C2FF]' : 'bg-black/70 border-white/10 hover:border-white/25'}">
+            <div class="text-xs font-bold text-white truncate">${active ? '✓ ' : ''}${f.name}</div>
+            <div class="text-[10px] text-[#8E8E93] truncate">${f.address}</div>
+          </button>`;
+      }).join("");
+    }
+
+    function setAuthTab(tab) {
+      authTab = tab;
+      const isReg = tab === "register";
+      document.getElementById("tabStaffLogin").className = !isReg
+        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
+      document.getElementById("tabStaffRegister").className = isReg
+        ? "py-2.5 rounded-xl text-xs font-extrabold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
+      document.getElementById("regExtraFields").classList.toggle("hidden", !isReg);
+      document.getElementById("passChecklistWrap").classList.toggle("hidden", !isReg);
+      document.getElementById("forgotRow").classList.toggle("hidden", isReg);
+      document.getElementById("authSubmitBtn").textContent = isReg
+        ? "Akkount yaratish va ishni boshlash"
+        : "Kirish";
+      if (isReg) {
+        initSelectors();
+      }
+    }
+
+    function togglePassVis() {
+      const inp = document.getElementById("authPassword");
+      inp.type = inp.type === "password" ? "text" : "password";
+    }
+
+    function isStrongPassword(pwd) {
+      return pwd.length >= 8 && /[a-zA-Z]/.test(pwd) && /[0-9]/.test(pwd);
+    }
+
+    function validatePasswordLive() {
+      const pwd = document.getElementById("authPassword").value || "";
+      const hasLen = pwd.length >= 8;
+      const hasAlpha = /[a-zA-Z]/.test(pwd);
+      const hasNum = /[0-9]/.test(pwd);
+      const cls = (ok) => ok
+        ? "px-2 py-1 rounded-lg bg-[#22C55E]/15 text-[#22C55E] text-center font-bold border border-[#22C55E]/30"
+        : "px-2 py-1 rounded-lg bg-[#1C1C1E] text-[#8E8E93] text-center";
+      document.getElementById("chkLen").className = cls(hasLen);
+      document.getElementById("chkLen").textContent = (hasLen ? "✓" : "○") + " 8+ belgi";
+      document.getElementById("chkAlpha").className = cls(hasAlpha);
+      document.getElementById("chkAlpha").textContent = (hasAlpha ? "✓" : "○") + " Harf (A-z)";
+      document.getElementById("chkNum").className = cls(hasNum);
+      document.getElementById("chkNum").textContent = (hasNum ? "✓" : "○") + " Raqam (0-9)";
+    }
+
+    function toggleRemember() {
+      rememberState = !rememberState;
+      const el = document.getElementById("rememberToggle");
+      el.classList.toggle("on", rememberState);
+      el.setAttribute("aria-checked", String(rememberState));
+      if (!rememberState) localStorage.removeItem(STAFF_REMEMBER_KEY);
+    }
+
+    function prefillRemembered() {
+      try {
+        const rem = JSON.parse(localStorage.getItem(STAFF_REMEMBER_KEY) || "null");
+        if (rem && rem.phone && rem.password) {
+          document.getElementById("authPhone").value = rem.phone;
+          document.getElementById("authPassword").value = rem.password;
+          rememberState = true;
+          document.getElementById("rememberToggle").classList.add("on");
+        }
+      } catch {}
     }
 
     function makeStaffSlugId(name) {
@@ -379,67 +538,52 @@
     }
 
     async function submitStaffAuth() {
-      const loginKey = document.getElementById("authPhoneOrLogin").value.replace(/\s+/g, "").trim();
+      const phone = document.getElementById("authPhone").value.replace(/\s+/g, "").trim();
       const password = document.getElementById("authPassword").value.trim();
-      if (!loginKey || password.length < 4) {
-        return showToast("Telefon/login va parolni (kamida 4 belgi) kiriting!", true);
-      }
+
+      if (phone.length < 9) return showToast("Telefon raqamini to‘g‘ri kiriting!", true);
+      if (!isStrongPassword(password)) return showToast("Parol kamida 8 belgi, harf va raqamdan iborat bo‘lsin!", true);
 
       if (authTab === "login") {
-        const acc = STAFF_ACCOUNTS[loginKey];
+        const acc = STAFF_ACCOUNTS[phone];
         if (!acc || acc.password !== password) {
-          return showToast("Akkount topilmadi yoki parol noto‘g‘ri!", true);
+          return showToast("Telefon raqam yoki parol noto‘g‘ri!", true);
         }
         activeStaff = acc;
+        if (rememberState) localStorage.setItem(STAFF_REMEMBER_KEY, JSON.stringify({ phone, password }));
         localStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(activeStaff));
         openWorkstationUI();
         showToast(`Xush kelibsiz, ${activeStaff.fullName}!`);
         return;
       }
 
-      // Register new staff account
       const fullName = document.getElementById("regFullName").value.trim();
-      const field = document.getElementById("regField").value;
+      const email = document.getElementById("regEmail").value.trim();
       const region = document.getElementById("regRegion").value;
-      const districtAddress = document.getElementById("regDistrictAddress").value.trim();
+      const district = document.getElementById("regDistrict").value;
+      const field = document.getElementById("regField").value;
       const deptId = document.getElementById("regDept").value;
       const deptObj = (DEPTS_BY_FIELD[field] || []).find(d => d.id === deptId) || { id: deptId, name: deptId };
       const room = document.getElementById("regRoom").value.trim() || "1-xona";
 
       if (!fullName) return showToast("Xodim ism-familiyasini kiriting!", true);
-
-      let facilityObj = selectedFacilityObj;
-      if (!facilityObj) {
-        if (!districtAddress) {
-          return showToast("Xaritadan muassasa tanlang yoki ish joyining manzilini kiriting!", true);
-        }
-        const regCenter = region === "toshkent" ? [41.3111, 69.2797] : [40.1225, 67.8425];
-        facilityObj = {
-          id: "stf-fac-" + Date.now(),
-          region,
-          type: field,
-          status: "open",
-          name: `${fullName} — ${districtAddress}`,
-          address: districtAddress,
-          lat: regCenter[0],
-          lng: regCenter[1],
-          fuels: field === "ayoqsh" ? [deptId] : undefined
-        };
-        FACILITIES.unshift(facilityObj);
-      }
+      if (!selectedFacilityObj) return showToast("Ro‘yxatdan ish joyingizdagi muassasani tanlang!", true);
 
       const specId = makeStaffSlugId(`${fullName}-${room}`);
-      const qKey = `${facilityObj.id}__${deptObj.id}__${specId}`;
+      const qKey = `${selectedFacilityObj.id}__${deptObj.id}__${specId}`;
 
       const newAcc = {
-        loginKey,
+        loginKey: phone,
+        phone,
+        email,
         password,
         fullName,
-        field,
         region,
-        districtAddress: districtAddress || facilityObj.address,
-        facilityId: facilityObj.id,
-        facilityName: facilityObj.name,
+        regionName: REGIONS[region]?.name || region,
+        district,
+        field,
+        facilityId: selectedFacilityObj.id,
+        facilityName: selectedFacilityObj.name,
         deptId: deptObj.id,
         deptName: deptObj.name,
         specId,
@@ -447,13 +591,52 @@
         qKey
       };
 
-      STAFF_ACCOUNTS[loginKey] = newAcc;
+      STAFF_ACCOUNTS[phone] = newAcc;
       activeStaff = newAcc;
-      saveLocalAccounts();
+      saveAccounts();
+      if (rememberState) localStorage.setItem(STAFF_REMEMBER_KEY, JSON.stringify({ phone, password }));
       localStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(activeStaff));
       await pushStateToFirebase();
       openWorkstationUI();
-      showToast("✅ Xodim akkounti yaratildi va xaritaga ulandi!");
+      showToast("✅ Xodim akkounti yaratildi!");
+    }
+
+    function openForgotModal() {
+      document.getElementById("fpPhone").value = document.getElementById("authPhone").value || "+998 ";
+      document.getElementById("fpStep1").classList.remove("hidden");
+      document.getElementById("fpStep2").classList.add("hidden");
+      document.getElementById("forgotModal").classList.remove("hidden");
+    }
+    function closeForgotModal() {
+      document.getElementById("forgotModal").classList.add("hidden");
+      document.getElementById("otpInboxBanner").classList.add("hidden");
+    }
+    function sendForgotOtp() {
+      const phone = document.getElementById("fpPhone").value.replace(/\s+/g, "").trim();
+      if (!STAFF_ACCOUNTS[phone]) return showToast("Bu telefon raqam topilmadi!", true);
+      latestResetOtp = String(Math.floor(100000 + Math.random() * 900000));
+      document.getElementById("fpSentInfo").textContent = `${phone} raqamiga 6 xonali kod yuborildi.`;
+      document.getElementById("otpInboxBody").innerHTML = `Tasdiqlash kodi: <strong class="text-[#22C55E] tracking-widest">${latestResetOtp}</strong>`;
+      document.getElementById("otpInboxBanner").classList.remove("hidden");
+      document.getElementById("fpStep1").classList.add("hidden");
+      document.getElementById("fpStep2").classList.remove("hidden");
+    }
+    function autoFillOtp() {
+      document.getElementById("fpOtpInput").value = latestResetOtp;
+      document.getElementById("otpInboxBanner").classList.add("hidden");
+    }
+    async function confirmForgotReset() {
+      const phone = document.getElementById("fpPhone").value.replace(/\s+/g, "").trim();
+      const code = document.getElementById("fpOtpInput").value.trim();
+      const newPass = document.getElementById("fpNewPass").value.trim();
+      if (code !== latestResetOtp) return showToast("Kod noto‘g‘ri!", true);
+      if (!isStrongPassword(newPass)) return showToast("Yangi parol kamida 8 belgi, harf va raqam bo‘lsin!", true);
+      STAFF_ACCOUNTS[phone].password = newPass;
+      saveAccounts();
+      await pushStateToFirebase();
+      localStorage.setItem(STAFF_REMEMBER_KEY, JSON.stringify({ phone, password: newPass }));
+      closeForgotModal();
+      showToast("✅ Parol yangilandi!");
     }
 
     function openWorkstationUI() {
@@ -463,7 +646,7 @@
       document.getElementById("headerStaffSub").textContent = `${activeStaff.fullName} • ${activeStaff.room}`;
       document.getElementById("workFacilityName").textContent = activeStaff.facilityName;
       document.getElementById("workStaffName").textContent = activeStaff.fullName;
-      document.getElementById("workMeta").textContent = `${(activeStaff.field || "").toUpperCase()} • ${activeStaff.deptName} • ${activeStaff.room}`;
+      document.getElementById("workMeta").textContent = `${activeStaff.regionName || ""} • ${activeStaff.district || ""} • ${activeStaff.deptName} • ${activeStaff.room}`;
       renderWorkstation();
     }
 
@@ -474,6 +657,7 @@
       document.getElementById("logoutBtn").classList.add("hidden");
       document.getElementById("staffAuthSection").classList.remove("hidden");
       document.getElementById("headerStaffSub").textContent = "Xodimlar profili va navbat boshqaruvi";
+      prefillRemembered();
     }
 
     function renderWorkstation() {
@@ -576,13 +760,11 @@
       showToast(`➕ №${maxNum + 1} qo‘shildi`);
     }
 
-    window.onload = async function () {
-      loadLocalAccounts();
-      document.getElementById("regRegion").innerHTML = Object.entries(REGIONS)
-        .map(([k, v]) => `<option value="${k}" class="bg-[#1C1C1E]">${v}</option>`).join("");
-      onRegFieldChange();
+    window.onload = function () {
+      loadAccounts();
+      initSelectors();
+      prefillRemembered();
 
-      await pullFromFirebase(false);
       const saved = localStorage.getItem(STAFF_SESSION_KEY);
       if (saved) {
         try {
@@ -590,6 +772,8 @@
           openWorkstationUI();
         } catch {}
       }
+
+      pullFromFirebase(false);
       setInterval(() => pullFromFirebase(false), 3500);
     };
   </script>
