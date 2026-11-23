@@ -50,11 +50,13 @@
       background-color: #151517;
       border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 22px;
+      transform: translateZ(0);
     }
     .oled-card-2 {
       background-color: #1C1C1E;
       border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 20px;
+      transform: translateZ(0);
     }
 
     .pastel-badge {
@@ -80,7 +82,7 @@
       height: 28px;
       border-radius: 9999px;
       background-color: #2C2C2E;
-      transition: background-color 0.22s ease;
+      transition: background-color 0.18s ease;
       cursor: pointer;
       flex-shrink: 0;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -94,8 +96,7 @@
       height: 22px;
       border-radius: 9999px;
       background-color: #8E8E93;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+      transition: transform 0.18s ease, background-color 0.18s ease;
     }
     .lav-toggle.on .lav-toggle-knob { transform: translateX(20px); background-color: #111114; }
 
@@ -108,12 +109,10 @@
       margin: 0 auto;
       z-index: 700;
       border-radius: 32px;
-      background: rgba(22, 22, 26, 0.74);
-      backdrop-filter: blur(22px) saturate(165%);
-      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      background: rgba(20, 20, 24, 0.92);
       border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       padding: 6px;
+      transform: translateZ(0);
     }
 
     .dock-item {
@@ -125,13 +124,12 @@
       padding: 8px 4px;
       border-radius: 26px;
       color: #8E8E93;
-      transition: all 0.22s ease;
+      transition: color 0.16s ease, background-color 0.16s ease;
       cursor: pointer;
     }
     .dock-item.active {
       color: #FFFFFF;
-      background: linear-gradient(135deg, rgba(167, 139, 250, 0.34), rgba(99, 102, 241, 0.26));
-      box-shadow: 0 0 18px rgba(192, 132, 252, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: rgba(167, 139, 250, 0.28);
     }
 
     .map-fullscreen {
@@ -157,8 +155,8 @@
   <div class="max-w-[480px] mx-auto min-h-screen bg-black flex flex-col relative sm:border-x sm:border-white/[0.06]">
 
     <!-- Toast -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[3200] max-w-[430px] w-[92%] pointer-events-none opacity-0 -translate-y-2 transition-all duration-300">
-      <div class="bg-[#1C1C1E]/95 border border-white/15 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs sm:text-sm font-medium flex items-center gap-2.5 backdrop-blur-xl">
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[3200] max-w-[430px] w-[92%] pointer-events-none opacity-0 -translate-y-2 transition-all duration-200">
+      <div class="bg-[#1C1C1E] border border-white/15 text-white px-4 py-3 rounded-2xl text-xs sm:text-sm font-medium flex items-center gap-2.5">
         <span id="toastDot" class="w-2.5 h-2.5 rounded-full bg-[#22C55E] shrink-0"></span>
         <span id="toastText"></span>
       </div>
@@ -166,7 +164,7 @@
 
     <!-- OTP Banner -->
     <div id="otpInboxBanner" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-[3100] max-w-[430px] w-[92%]">
-      <div class="bg-[#151517]/95 border border-[#E2C2FF]/45 rounded-2xl p-3.5 shadow-2xl backdrop-blur-xl flex items-center justify-between gap-3">
+      <div class="bg-[#151517] border border-[#E2C2FF]/45 rounded-2xl p-3.5 flex items-center justify-between gap-3">
         <div class="min-w-0">
           <div id="otpInboxChannel" class="text-[10px] font-bold uppercase tracking-wider text-[#E2C2FF]">📩 SMS XABAR • NavbatAI</div>
           <div id="otpInboxBody" class="text-xs text-white font-medium mt-0.5">Tasdiqlash kodingiz: <strong class="text-[#22C55E] text-sm tracking-widest">000000</strong></div>
@@ -181,21 +179,21 @@
     <!-- ================= 1. AUTH SCREEN ================= -->
     <section id="authScreen" class="min-h-screen flex flex-col justify-center px-5 py-8 bg-black">
       <div class="text-center mb-6">
-        <div class="w-20 h-20 mx-auto rounded-[24px] overflow-hidden border border-white/15 shadow-xl shadow-purple-500/25 mb-3.5 bg-[#151517]">
+        <div class="w-20 h-20 mx-auto rounded-[24px] overflow-hidden border border-white/15 mb-3.5 bg-[#151517]">
           <img src="./logo.png" alt="NavbatAI 3D Logo" class="w-full h-full object-cover" />
         </div>
         <h1 class="text-2xl font-extrabold tracking-tight text-white">NavbatAI</h1>
         <p class="text-xs text-[#8E8E93] mt-1">Shifoxona, Bank, DXM va AYOQSH uchun aqlli navbat</p>
       </div>
 
-      <div id="authMainCard" class="oled-card p-5 shadow-2xl">
+      <div id="authMainCard" class="oled-card p-5">
         <div class="grid grid-cols-2 gap-1.5 bg-black p-1 rounded-2xl border border-white/[0.07] mb-5">
           <button type="button" id="authTabLogin" onclick="setAuthMode('login')"
-            class="py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition">
+            class="py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer">
             Kirish
           </button>
           <button type="button" id="authTabRegister" onclick="setAuthMode('register')"
-            class="py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition">
+            class="py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer">
             Ro‘yxatdan o‘tish
           </button>
         </div>
@@ -265,7 +263,7 @@
           <div id="authError" class="hidden text-xs text-[#F87171] bg-[#F87171]/10 border border-[#F87171]/30 rounded-2xl px-3.5 py-2.5 leading-relaxed"></div>
 
           <button type="submit" id="authSubmitBtn"
-            class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
+            class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer">
             Shaxsiy kabinetga kirish
           </button>
         </form>
@@ -279,7 +277,7 @@
       </div>
 
       <!-- STEP B: OTP -->
-      <div id="authOtpCard" class="hidden oled-card p-5 shadow-2xl space-y-4">
+      <div id="authOtpCard" class="hidden oled-card p-5 space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-extrabold text-white">🔐 Tasdiqlash kodi</h2>
           <button type="button" onclick="cancelPendingRegistration()" class="text-xs text-[#8E8E93] hover:text-white cursor-pointer">← Orqaga</button>
@@ -289,7 +287,7 @@
           class="w-full bg-[#1C1C1E] border border-white/[0.1] rounded-2xl px-4 py-3.5 text-center text-xl font-extrabold tracking-[0.4em] text-[#E2C2FF] focus:outline-none focus:border-[#E2C2FF]" />
         <div id="regOtpError" class="hidden text-xs text-[#F87171]">Kod noto‘g‘ri! Qayta tekshiring.</div>
         <button type="button" onclick="verifyRegistrationOtp()"
-          class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
+          class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer">
           Tasdiqlash va davom etish
         </button>
         <button type="button" onclick="resendRegistrationOtp()"
@@ -299,13 +297,13 @@
       </div>
 
       <!-- STEP C: PHOTO -->
-      <div id="authPhotoCard" class="hidden oled-card p-5 shadow-2xl space-y-4 text-center">
+      <div id="authPhotoCard" class="hidden oled-card p-5 space-y-4 text-center">
         <h2 class="text-base font-extrabold text-white">📸 Profil rasmini qo‘shish</h2>
         <p class="text-xs text-[#8E8E93]">Xohlasangiz o‘z rasmingizni yuklang yoki hozircha o‘tkazib yuboring.</p>
         <div id="regPhotoPreview" class="w-24 h-24 mx-auto rounded-full bg-[#1C1C1E] border-2 border-dashed border-[#E2C2FF]/50 flex items-center justify-center text-3xl overflow-hidden">
           👤
         </div>
-        <label class="block w-full py-3 rounded-2xl bg-[#1C1C1E] hover:bg-[#262629] border border-white/10 text-xs font-bold text-[#E2C2FF] cursor-pointer transition">
+        <label class="block w-full py-3 rounded-2xl bg-[#1C1C1E] hover:bg-[#262629] border border-white/10 text-xs font-bold text-[#E2C2FF] cursor-pointer">
           🖼 Galereyadan rasm tanlash
           <input type="file" accept="image/*" onchange="handleRegPhotoSelect(event)" class="hidden" />
         </label>
@@ -324,8 +322,8 @@
 
     <!-- FORGOT PASSWORD MODAL -->
     <div id="forgotModal" class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-4">
-      <div onclick="closeForgotPasswordModal()" class="absolute inset-0 bg-black/85 backdrop-blur-sm"></div>
-      <div class="relative w-full max-w-[400px] oled-card p-5 shadow-2xl space-y-4">
+      <div onclick="closeForgotPasswordModal()" class="absolute inset-0 bg-black/85"></div>
+      <div class="relative w-full max-w-[400px] oled-card p-5 space-y-4">
         <div class="flex items-center justify-between">
           <h3 class="text-base font-extrabold text-white">🔑 Parolni tiklash</h3>
           <button type="button" onclick="closeForgotPasswordModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white cursor-pointer">✕</button>
@@ -377,7 +375,7 @@
     <!-- ================= 2. MAIN APP SHELL ================= -->
     <div id="appShell" class="hidden flex-1 flex flex-col bg-black">
 
-      <header class="sticky top-0 z-[500] bg-black/90 backdrop-blur-xl border-b border-white/[0.07] px-4 py-3 flex items-center justify-between gap-2">
+      <header class="sticky top-0 z-[500] bg-black/95 border-b border-white/[0.07] px-4 py-3 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="headerAvatarWrap" class="w-9 h-9 rounded-full bg-[#E9D5FF] text-[#111114] flex items-center justify-center font-extrabold text-sm shrink-0 overflow-hidden">
             N
@@ -393,7 +391,7 @@
         </div>
 
         <button type="button" onclick="detectUserLocation()"
-          class="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#151517] hover:bg-[#1C1C1E] border border-white/[0.09] text-xs font-semibold text-white cursor-pointer shrink-0 transition">
+          class="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#151517] hover:bg-[#1C1C1E] border border-white/[0.09] text-xs font-semibold text-white cursor-pointer shrink-0">
           <span class="w-2 h-2 rounded-full bg-[#E2C2FF]"></span>
           <span>Mening joylashuvim</span>
         </button>
@@ -420,63 +418,63 @@
 
           <div class="px-4 pt-3 pb-2 flex items-center gap-2 overflow-x-auto">
             <button type="button" onclick="setCategory('all')" data-cat="all"
-              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition">
+              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer">
               Barchasi
             </button>
             <button type="button" onclick="setCategory('shifoxona')" data-cat="shifoxona"
-              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🏥 Shifoxona
             </button>
             <button type="button" onclick="setCategory('bank')" data-cat="bank"
-              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🏦 Bank
             </button>
             <button type="button" onclick="setCategory('dxm')" data-cat="dxm"
-              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🏛 DXM
             </button>
             <button type="button" onclick="setCategory('ayoqsh')" data-cat="ayoqsh"
-              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               ⛽ AYOQSH
             </button>
           </div>
 
           <div class="px-4 py-1">
-            <div id="mapWrapper" class="relative rounded-[24px] overflow-hidden border border-white/[0.09] bg-[#151517] shadow-2xl">
+            <div id="mapWrapper" class="relative rounded-[24px] overflow-hidden border border-white/[0.09] bg-[#151517]">
               <div id="ymap" class="w-full h-[280px] sm:h-[310px] z-10"></div>
 
-              <div class="absolute top-2.5 left-2.5 z-[400] flex items-center gap-1 bg-black/80 backdrop-blur-md p-1 rounded-2xl border border-white/15 shadow-lg">
+              <div class="absolute top-2.5 left-2.5 z-[400] flex items-center gap-1 bg-black/85 p-1 rounded-2xl border border-white/15">
                 <button type="button" id="yTypeHybrid" onclick="setYandexMapType('yandex#hybrid')"
-                  class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition">
+                  class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer">
                   🛰 Gibrid
                 </button>
                 <button type="button" id="yTypeMap" onclick="setYandexMapType('yandex#map')"
-                  class="px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer transition">
+                  class="px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer">
                   🗺 Xarita
                 </button>
               </div>
 
               <div class="absolute top-2.5 right-2.5 z-[400]">
                 <button type="button" id="fullscreenBtn" onclick="toggleMapFullscreen()" title="Xaritani kengaytirish"
-                  class="w-9 h-9 rounded-2xl bg-black/80 backdrop-blur-md border border-white/15 text-white text-sm flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#1C1C1E]">
+                  class="w-9 h-9 rounded-2xl bg-black/85 border border-white/15 text-white text-sm flex items-center justify-center cursor-pointer hover:bg-[#1C1C1E]">
                   ⛶
                 </button>
               </div>
 
               <div class="absolute bottom-2.5 left-2.5 z-[400] flex items-center gap-1.5">
                 <button type="button" onclick="openRegionModal()"
-                  class="px-3 py-1.5 rounded-xl bg-black/85 backdrop-blur-md border border-white/15 text-[11px] font-bold text-white shadow-lg cursor-pointer hover:bg-[#1C1C1E]">
+                  class="px-3 py-1.5 rounded-xl bg-black/90 border border-white/15 text-[11px] font-bold text-white cursor-pointer hover:bg-[#1C1C1E]">
                   📍 <span id="mapRegionBtnText">Jizzax</span> ▾
                 </button>
               </div>
 
-              <div id="zoomHintBadge" class="absolute bottom-2.5 right-2.5 z-[400] bg-black/80 backdrop-blur px-2 py-1 rounded-lg border border-white/10 text-[9px] text-[#8E8E93] pointer-events-none">
+              <div id="zoomHintBadge" class="absolute bottom-2.5 right-2.5 z-[400] bg-black/85 px-2 py-1 rounded-lg border border-white/10 text-[9px] text-[#8E8E93] pointer-events-none">
                 Yaqinlashtirsangiz nomlar chiqadi
               </div>
             </div>
 
             <button type="button" id="liveFetchBtn" onclick="fetchRegionPlacesLive()"
-              class="w-full mt-2.5 py-3 px-4 rounded-2xl bg-[#151517] hover:bg-[#1C1C1E] border border-white/[0.08] flex items-center justify-between cursor-pointer transition">
+              class="w-full mt-2.5 py-3 px-4 rounded-2xl bg-[#151517] hover:bg-[#1C1C1E] border border-white/[0.08] flex items-center justify-between cursor-pointer">
               <div class="flex items-center gap-2.5 text-left min-w-0">
                 <div class="w-8 h-8 rounded-full bg-[#BAE6FD] text-[#111114] flex items-center justify-center text-sm shrink-0">🌐</div>
                 <div class="min-w-0">
@@ -487,7 +485,7 @@
               <span id="liveFetchSpinner" class="text-xs font-bold text-[#E2C2FF] shrink-0">Yuklash →</span>
             </button>
             <button type="button" id="liveFetchAllBtn" onclick="fetchAllRegionsLive()"
-              class="w-full mt-2 py-3 px-4 rounded-2xl bg-[#E2C2FF] text-[#111114] text-xs font-extrabold cursor-pointer transition hover:bg-[#D8B4FE]">🇺🇿 Butun O‘zbekiston bo‘yicha yuklash</button>
+              class="w-full mt-2 py-3 px-4 rounded-2xl bg-[#E2C2FF] text-[#111114] text-xs font-extrabold cursor-pointer hover:bg-[#D8B4FE]">🇺🇿 Butun O‘zbekiston bo‘yicha yuklash</button>
           </div>
 
           <div class="px-4 pt-3">
@@ -520,31 +518,31 @@
 
           <div class="flex items-center gap-2 overflow-x-auto pb-1">
             <button type="button" onclick="setFuelFilter('all')" data-fuel="all"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer">
               Barchasi
             </button>
             <button type="button" onclick="setFuelFilter('metan')" data-fuel="metan"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🔥 Metan
             </button>
             <button type="button" onclick="setFuelFilter('propan')" data-fuel="propan"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               💨 Propan
             </button>
             <button type="button" onclick="setFuelFilter('benzin')" data-fuel="benzin"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               ⛽ Benzin
             </button>
             <button type="button" onclick="setFuelFilter('dizel')" data-fuel="dizel"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🛢 Dizel
             </button>
             <button type="button" onclick="setFuelFilter('elektr')" data-fuel="elektr"
-              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               ⚡ Elektr
             </button>
             <button type="button" id="onlyOpenBtn" onclick="toggleOnlyOpenAyoqsh()"
-              class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition">
+              class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer">
               🟢 Faqat ochiqlar
             </button>
           </div>
@@ -568,13 +566,13 @@
               <div id="cabinetAvatar" class="w-20 h-20 rounded-full bg-[#1C1C1E] border border-white/10 text-white flex items-center justify-center text-2xl font-extrabold overflow-hidden">
                 J
               </div>
-              <label title="Rasmni o‘zgartirish" class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#E2C2FF] text-[#111114] flex items-center justify-center text-xs font-bold shadow-lg cursor-pointer">
+              <label title="Rasmni o‘zgartirish" class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#E2C2FF] text-[#111114] flex items-center justify-center text-xs font-bold cursor-pointer">
                 📷
                 <input type="file" accept="image/*" onchange="handleCabinetPhotoChange(event)" class="hidden" />
               </label>
             </div>
             <button type="button" onclick="openProfileEditModal()"
-              class="mt-3 px-4 py-1.5 rounded-full bg-[#1C1C1E] hover:bg-[#262629] border border-white/[0.08] text-xs font-bold text-[#E2C2FF] cursor-pointer transition">
+              class="mt-3 px-4 py-1.5 rounded-full bg-[#1C1C1E] hover:bg-[#262629] border border-white/[0.08] text-xs font-bold text-[#E2C2FF] cursor-pointer">
               Tahrirlash
             </button>
           </div>
@@ -651,7 +649,7 @@
             </div>
 
             <button type="button" onclick="openAdminAuthModal()"
-              class="w-full p-3.5 flex items-center justify-between gap-3 hover:bg-[#1C1C1E] cursor-pointer transition text-left">
+              class="w-full p-3.5 flex items-center justify-between gap-3 hover:bg-[#1C1C1E] cursor-pointer text-left">
               <div class="flex items-center gap-3.5 min-w-0">
                 <div class="pastel-badge pastel-mint">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -682,7 +680,7 @@
           </div>
 
           <button type="button" onclick="logoutUser()"
-            class="w-full oled-card p-3.5 flex items-center gap-3.5 hover:bg-[#1C1C1E] cursor-pointer transition">
+            class="w-full oled-card p-3.5 flex items-center gap-3.5 hover:bg-[#1C1C1E] cursor-pointer">
             <div class="w-10 h-10 rounded-full bg-[#F87171]/15 text-[#F87171] flex items-center justify-center shrink-0">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             </div>
@@ -694,8 +692,8 @@
 
       <!-- PROFILE EDIT MODAL -->
       <div id="profileEditModal" class="fixed inset-0 z-[1700] hidden flex items-center justify-center p-4">
-        <div onclick="closeProfileEditModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        <div class="relative w-full max-w-[380px] oled-card p-5 shadow-2xl space-y-3.5">
+        <div onclick="closeProfileEditModal()" class="absolute inset-0 bg-black/80"></div>
+        <div class="relative w-full max-w-[380px] oled-card p-5 space-y-3.5">
           <div class="flex items-center justify-between">
             <h3 class="text-sm font-extrabold text-white">Profilni tahrirlash</h3>
             <button type="button" onclick="closeProfileEditModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white cursor-pointer">✕</button>
@@ -714,8 +712,8 @@
 
       <!-- REGION MODAL -->
       <div id="regionModal" class="fixed inset-0 z-[1500] hidden">
-        <div onclick="closeRegionModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[82vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden shadow-2xl">
+        <div onclick="closeRegionModal()" class="absolute inset-0 bg-black/80"></div>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[82vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden">
           <div class="px-5 py-4 border-b border-white/[0.07] flex items-center justify-between">
             <h3 class="text-sm font-extrabold text-white">📍 Viloyatni tanlang</h3>
             <button type="button" onclick="closeRegionModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white flex items-center justify-center cursor-pointer">✕</button>
@@ -732,8 +730,8 @@
 
       <!-- 3-STEP BOOKING SHEET -->
       <div id="bookingSheet" class="fixed inset-0 z-[1500] hidden">
-        <div onclick="closeBookingSheet()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[92vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden shadow-2xl">
+        <div onclick="closeBookingSheet()" class="absolute inset-0 bg-black/80"></div>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] max-h-[92vh] bg-[#151517] border-t border-white/10 rounded-t-[28px] flex flex-col overflow-hidden">
           <div class="px-4 py-3.5 border-b border-white/[0.07] flex items-center justify-between gap-2 shrink-0">
             <div class="flex items-center gap-2.5 min-w-0">
               <button id="sheetBackBtn" type="button" onclick="bookingBack()"
@@ -757,8 +755,8 @@
 
       <!-- ADMIN AUTH MODAL -->
       <div id="adminAuthModal" class="fixed inset-0 z-[1800] hidden flex items-center justify-center p-4">
-        <div onclick="closeAdminAuthModal()" class="absolute inset-0 bg-black/85 backdrop-blur-sm"></div>
-        <div class="relative w-full max-w-[380px] oled-card p-5 shadow-2xl space-y-3.5">
+        <div onclick="closeAdminAuthModal()" class="absolute inset-0 bg-black/85"></div>
+        <div class="relative w-full max-w-[380px] oled-card p-5 space-y-3.5">
           <div class="flex items-center justify-between">
             <h3 class="text-sm font-extrabold text-white">🔒 Administrator kirishi</h3>
             <button type="button" onclick="closeAdminAuthModal()" class="w-8 h-8 rounded-full bg-[#1C1C1E] text-[#8E8E93] hover:text-white cursor-pointer">✕</button>
@@ -778,7 +776,7 @@
           </div>
           <div id="adminAuthError" class="hidden text-xs text-[#F87171]">Login yoki parol noto‘g‘ri! Ruxsat rad etildi.</div>
           <button type="button" onclick="verifyAdminLogin()"
-            class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer transition">
+            class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer">
             Kirish
           </button>
         </div>
@@ -799,11 +797,11 @@
         <div class="px-4 pt-3 bg-black shrink-0">
           <div class="grid grid-cols-2 gap-1.5 bg-[#151517] p-1 rounded-2xl border border-white/[0.07]">
             <button type="button" id="admTabPlaces" onclick="switchAdminTab('places')"
-              class="py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition">
+              class="py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer">
               📍 Muassasalar & AYOQSH
             </button>
             <button type="button" id="admTabIntegrations" onclick="switchAdminTab('integrations')"
-              class="py-2 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition">
+              class="py-2 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer">
               ☁️ Firebase & Zaxira
             </button>
           </div>
@@ -873,7 +871,7 @@
                 <div id="adminYMap" class="w-full h-[185px] rounded-2xl overflow-hidden border border-white/10 z-10"></div>
               </div>
               <button type="button" onclick="saveAdminPlace()"
-                class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer transition">
+                class="w-full py-3 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-xs cursor-pointer">
                 💾 Saqlash va Ilovani yangilash
               </button>
             </div>
@@ -1036,7 +1034,6 @@
       });
     }
 
-    // Faqat real staff.html xodimlari ulanadigan toza bo'limlar (sun'iy doktor/xodimlar olib tashlangan)
     const MEDICAL_DEPARTMENTS = [
       { id: "terapevt", name: "Terapevt", icon: "🩺", specialists: [], services: [{ id: "birlamchi", name: "Birlamchi ko‘rik", baseMin: 10 }, { id: "takroriy", name: "Takroriy ko‘rik", baseMin: 6 }, { id: "tahlil", name: "Tahlil / UZI natijasi", baseMin: 12 }] },
       { id: "stomatolog", name: "Stomatolog (Tish)", icon: "🦷", specialists: [], services: [{ id: "korik", name: "Oddiy ko‘rik", baseMin: 6 }, { id: "oldirish", name: "Tish oldirish", baseMin: 4, unitType: "tish", unitMin: 12 }, { id: "plomba", name: "Plomba qo‘yish", baseMin: 5, unitType: "tish", unitMin: 18 }] },
@@ -1083,31 +1080,16 @@
             ? getAyoqshDepartments(fac)
             : MEDICAL_DEPARTMENTS;
 
-      const baseDepts = rawDepts.map(d => ({
-        ...d,
-        specialists: [...d.specialists]
-      }));
-
-      const staffList = Object.values(STAFF_ACCOUNTS || {}).filter(
-        st => st && st.facilityId === fac.id && st.fullName
-      );
-
+      const baseDepts = rawDepts.map(d => ({ ...d, specialists: [...d.specialists] }));
+      const staffList = Object.values(STAFF_ACCOUNTS || {}).filter(st => st && st.facilityId === fac.id && st.fullName);
       if (!staffList.length) return baseDepts;
 
       return baseDepts.map(dept => {
         const matchedStaff = staffList
           .filter(st => st.deptId === dept.id || (!st.deptId && dept.id === baseDepts[0].id))
-          .map(st => ({
-            id: st.specId || ("staff-" + st.loginKey),
-            name: st.fullName,
-            room: st.room || "1-xona",
-            rating: 5.0
-          }));
+          .map(st => ({ id: st.specId || ("staff-" + st.loginKey), name: st.fullName, room: st.room || "1-xona", rating: 5.0 }));
         const existingIds = new Set(dept.specialists.map(s => s.id));
-        return {
-          ...dept,
-          specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists]
-        };
+        return { ...dept, specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists] };
       });
     }
 
@@ -1157,6 +1139,9 @@
     let adminYPlacemark = null;
     let adminPickedLatLng = [40.1225, 67.8425];
 
+    const PIN_SVG_CACHE = {};
+    let markerRenderTimer = null;
+
     let booking = { facility: null, depts: [], step: 1, step2Tab: "ai", dept: null, specialist: null, service: null, qty: 1 };
 
     function safeGet(key, fallback = null) {
@@ -1177,9 +1162,7 @@
 
     function loadAllData() {
       const cfg = safeGet(CONFIG_KEY, null);
-      if (cfg && cfg.firebaseUrl) {
-        APP_CONFIG.firebaseUrl = normalizeFbUrl(cfg.firebaseUrl);
-      }
+      if (cfg && cfg.firebaseUrl) APP_CONFIG.firebaseUrl = normalizeFbUrl(cfg.firebaseUrl);
       safeSet(CONFIG_KEY, APP_CONFIG);
 
       const savedFac = safeGet(FACILITIES_KEY, null);
@@ -1188,15 +1171,8 @@
         : [];
 
       const existingIds = new Set(FACILITIES.map(f => f.id));
-      DEFAULT_FACILITIES.forEach(def => {
-        if (!existingIds.has(def.id)) {
-          FACILITIES.push({ ...def });
-        }
-      });
-
-      FACILITIES.forEach(f => {
-        f.region = (f.region || "jizzax").toLowerCase();
-      });
+      DEFAULT_FACILITIES.forEach(def => { if (!existingIds.has(def.id)) FACILITIES.push({ ...def }); });
+      FACILITIES.forEach(f => { f.region = (f.region || "jizzax").toLowerCase(); });
 
       safeSet(FACILITIES_KEY, FACILITIES);
       GLOBAL_QUEUES = safeGet(QUEUES_KEY, {});
@@ -1212,9 +1188,7 @@
       if (APP_CONFIG.firebaseUrl) syncFirebase("push", true);
     }
 
-    function phoneToFbKey(phone) {
-      return (phone || "").replace(/[^0-9]/g, "");
-    }
+    function phoneToFbKey(phone) { return (phone || "").replace(/[^0-9]/g, ""); }
     function getUsersDB() { return safeGet(USERS_KEY, {}); }
     function saveUsersDB(db) { safeSet(USERS_KEY, db); }
 
@@ -1261,9 +1235,7 @@
       syncUserToCloud(currentUser);
     }
 
-    function getSpecQueueKey(facilityId, deptId, specId) {
-      return `${facilityId}__${deptId}__${specId}`;
-    }
+    function getSpecQueueKey(facilityId, deptId, specId) { return `${facilityId}__${deptId}__${specId}`; }
 
     function getLiveSpecStats(facilityId, deptId, specId) {
       const key = getSpecQueueKey(facilityId, deptId, specId);
@@ -1286,15 +1258,7 @@
       return { totalPeople, minWait: minWait === Infinity ? 0 : minWait };
     }
 
-    function maskPhonePrivacy(phone) {
-      const digits = (phone || "").replace(/\D/g, "");
-      if (digits.length < 9) return "+998 ** *** ** **";
-      return `+998 ${digits.slice(3, 5)} *** ** ${digits.slice(-2)}`;
-    }
-
-    function isValidPassword(pwd) {
-      return pwd.length >= 8 && /[a-zA-Z]/.test(pwd) && /[0-9]/.test(pwd);
-    }
+    function isValidPassword(pwd) { return pwd.length >= 8 && /[a-zA-Z]/.test(pwd) && /[0-9]/.test(pwd); }
 
     function validatePasswordLive() {
       const pwd = document.getElementById("authPassword").value || "";
@@ -1332,11 +1296,11 @@
       document.getElementById("forgotPasswordFooter").classList.toggle("hidden", isReg);
       document.getElementById("authSubmitBtn").textContent = isReg ? "Tasdiqlash kodini olish" : "Shaxsiy kabinetga kirish";
       document.getElementById("authTabLogin").className = !isReg
-        ? "py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
+        ? "py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
       document.getElementById("authTabRegister").className = isReg
-        ? "py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
+        ? "py-2.5 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "py-2.5 rounded-xl text-xs font-bold text-[#8E8E93] hover:text-white cursor-pointer";
       document.getElementById("authError").classList.add("hidden");
     }
 
@@ -1389,30 +1353,19 @@
       const db = getUsersDB();
       try {
         const cloudUser = await fetchUserFromCloud(phone);
-        if (cloudUser) {
-          db[phone] = cloudUser;
-          saveUsersDB(db);
-        }
+        if (cloudUser) { db[phone] = cloudUser; saveUsersDB(db); }
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = origBtnText;
       }
 
       if (authMode === "register") {
-        if (db[phone]) {
-          return showAuthError("Bu telefon raqam oldin ro‘yxatdan o‘tgan! Iltimos, «Kirish» bo‘limidan foydalaning.");
-        }
+        if (db[phone]) return showAuthError("Bu telefon raqam oldin ro‘yxatdan o‘tgan! «Kirish» bo‘limidan foydalaning.");
         const fullName = document.getElementById("authFullName").value.trim();
         const email = document.getElementById("authEmail").value.trim();
-        if (!fullName || fullName.split(" ").length < 2) {
-          return showAuthError("Ism va familiyangizni to‘liq kiriting (masalan: Javohir Quvonboyev).");
-        }
-        if (regOtpChannel === "email" && (!email || !email.includes("@"))) {
-          return showAuthError("Email orqali kod olish uchun to‘g‘ri email manzilini kiriting.");
-        }
-        if (!isValidPassword(pwd)) {
-          return showAuthError("Parol kamida 8 ta belgi bo‘lib, harf va raqam qatnashishi shart!");
-        }
+        if (!fullName || fullName.split(" ").length < 2) return showAuthError("Ism va familiyangizni to‘liq kiriting.");
+        if (regOtpChannel === "email" && (!email || !email.includes("@"))) return showAuthError("To‘g‘ri email manzilini kiriting.");
+        if (!isValidPassword(pwd)) return showAuthError("Parol kamida 8 ta belgi bo‘lib, harf va raqam qatnashishi shart!");
         pendingRegData = {
           phone, name: fullName, email: email || "", password: pwd,
           photoDataUrl: "", region: "jizzax",
@@ -1433,7 +1386,7 @@
 
       const found = db[phone];
       if (!found) return showAuthError("Bu telefon raqam ro‘yxatdan o‘tmagan. Avval «Ro‘yxatdan o‘tish» ni bosing.");
-      if (found.password !== pwd) return showAuthError("Parol noto‘g‘ri! Unutgan bo‘lsangiz «Parolni unutdingizmi?» ni bosing.");
+      if (found.password !== pwd) return showAuthError("Parol noto‘g‘ri!");
 
       currentUser = found;
       if (!currentUser.settings) currentUser.settings = { notifications: true, soundAlerts: true };
@@ -1455,14 +1408,12 @@
 
     function resendRegistrationOtp() {
       if (!pendingRegData) return;
-      const dest = regOtpChannel === "email" ? pendingRegData.email : pendingRegData.phone;
-      dispatchOtpCode(regOtpChannel, dest);
+      dispatchOtpCode(regOtpChannel, regOtpChannel === "email" ? pendingRegData.email : pendingRegData.phone);
       showToast("Yangi 6 xonali kod yuborildi!");
     }
 
     function verifyRegistrationOtp() {
-      const code = document.getElementById("regOtpInput").value.trim();
-      if (code !== latestGeneratedOtp) {
+      if (document.getElementById("regOtpInput").value.trim() !== latestGeneratedOtp) {
         document.getElementById("regOtpError").classList.remove("hidden");
         return;
       }
@@ -1482,8 +1433,7 @@
             const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
             canvas.width = Math.round(img.width * scale);
             canvas.height = Math.round(img.height * scale);
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
             resolve(canvas.toDataURL("image/jpeg", 0.8));
           };
           img.src = ev.target.result;
@@ -1549,17 +1499,14 @@
       const user = db[phone];
       if (!user) { errEl.textContent = "Bu telefon raqam bazada topilmadi!"; errEl.classList.remove("hidden"); return; }
       if (fpChannel === "email" && (!user.email || !user.email.includes("@"))) {
-        errEl.textContent = "Bu raqamga Email biriktirilmagan!";
-        errEl.classList.remove("hidden");
-        return;
+        errEl.textContent = "Bu raqamga Email biriktirilmagan!"; errEl.classList.remove("hidden"); return;
       }
       fpTargetPhone = phone;
       otpTargetInputId = "fpOtpInput";
       document.getElementById("fpOtpInput").value = "";
       document.getElementById("fpNewPass").value = "";
       document.getElementById("fpSentInfo").textContent = fpChannel === "email"
-        ? `✉️ ${user.email} manziliga tiklash kodi yuborildi.`
-        : `📩 ${phone} raqamiga SMS tiklash kodi yuborildi.`;
+        ? `✉️ ${user.email} manziliga tiklash kodi yuborildi.` : `📩 ${phone} raqamiga SMS tiklash kodi yuborildi.`;
       document.getElementById("fpStep1").classList.add("hidden");
       document.getElementById("fpStep2").classList.remove("hidden");
       dispatchOtpCode(fpChannel, fpChannel === "email" ? user.email : phone);
@@ -1628,7 +1575,7 @@
     }
 
     function enterApp() {
-      setTimeout(autoLoadOSM, 1500);
+      setTimeout(autoLoadOSM, 2500);
       document.getElementById("authScreen").classList.add("hidden");
       document.getElementById("appShell").classList.remove("hidden");
       document.getElementById("headerUserBadge").textContent = currentUser.name;
@@ -1672,9 +1619,7 @@
         }, { suppressMapOpenBlock: true });
         ymapCollection = new ymaps.GeoObjectCollection();
         ymap.geoObjects.add(ymapCollection);
-        ymap.events.add("boundschange", () => {
-          renderYandexMarkersOnly();
-        });
+        ymap.events.add("boundschange", () => { renderYandexMarkersOnly(); });
         renderFacilitiesAndMarkers();
       });
     }
@@ -1683,11 +1628,11 @@
       if (!ymap) return;
       ymap.setType(typeKey);
       document.getElementById("yTypeHybrid").className = typeKey === "yandex#hybrid"
-        ? "px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
+        ? "px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer";
       document.getElementById("yTypeMap").className = typeKey === "yandex#map"
-        ? "px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-        : "px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer transition";
+        ? "px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+        : "px-2.5 py-1 rounded-xl text-[10px] font-bold text-[#8E8E93] hover:text-white cursor-pointer";
     }
 
     function toggleMapFullscreen() {
@@ -1696,7 +1641,7 @@
       isMapFullscreen = !isMapFullscreen;
       wrap.classList.toggle("map-fullscreen", isMapFullscreen);
       btn.textContent = isMapFullscreen ? "✕" : "⛶";
-      setTimeout(() => { if (ymap) ymap.container.fitToViewport(); }, 180);
+      setTimeout(() => { if (ymap) ymap.container.fitToViewport(); }, 120);
     }
 
     function getFilteredFacilities() {
@@ -1737,96 +1682,107 @@
       return withMeta;
     }
 
+    function getCachedPinDataUrl(type, fillHex, strokeHex, labelText, withLabel) {
+      const cleanLabel = (withLabel && labelText)
+        ? String(labelText).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+        : "";
+      const key = `${type}|${fillHex}|${withLabel ? cleanLabel : ""}`;
+      if (PIN_SVG_CACHE[key]) return PIN_SVG_CACHE[key];
+
+      const svgWidth = cleanLabel ? 215 : 36;
+      let glyph = `<rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/><path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>`;
+      if (type === "shifoxona") {
+        glyph = `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
+      } else if (type === "bank") {
+        glyph = `<path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>`;
+      } else if (type === "dxm") {
+        glyph = `<circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/><circle cx="16" cy="14" r="1.2" fill="#111114"/>`;
+      }
+
+      const labelSvg = cleanLabel
+        ? `<text x="41" y="21" fill="#000000" stroke="#000000" stroke-width="3.2" stroke-linejoin="round" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>
+           <text x="41" y="21" fill="${fillHex}" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>`
+        : "";
+
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="44" viewBox="0 0 ${svgWidth} 44">
+        <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
+        <g transform="translate(2, 2.5)">${glyph}</g>
+        ${labelSvg}
+      </svg>`;
+
+      const res = { href: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg), size: [svgWidth, 44] };
+      PIN_SVG_CACHE[key] = res;
+      return res;
+    }
+
     function renderYandexMarkersOnly() {
       if (!ymap || !ymapCollection || typeof ymaps === "undefined") return;
-      const rawList = getFilteredFacilities();
-      const z = ymap.getZoom();
-      const showLabels = z >= 14;
-      const hintEl = document.getElementById("zoomHintBadge");
-      if (hintEl) {
-        hintEl.textContent = showLabels
-          ? `Zoom ${Math.round(z)} • Nomlar faol`
-          : `Yaqinlashtirsangiz nomlar chiqadi`;
-      }
+      clearTimeout(markerRenderTimer);
+      markerRenderTimer = setTimeout(() => {
+        const rawList = getFilteredFacilities();
+        const z = ymap.getZoom();
+        const showLabels = z >= 14;
+        const hintEl = document.getElementById("zoomHintBadge");
+        if (hintEl) {
+          hintEl.textContent = showLabels
+            ? `Zoom ${Math.round(z)} • Nomlar faol`
+            : `Yaqinlashtirsangiz nomlar chiqadi`;
+        }
 
-      const list = [];
-      rawList.forEach(fac => {
-        if (typeof fac.lat !== "number" || typeof fac.lng !== "number" || isNaN(fac.lat) || isNaN(fac.lng)) return;
-        const isTooCloseDuplicate = list.some(existing =>
-          existing.type === fac.type &&
-          Math.abs(existing.lat - fac.lat) < 0.00035 &&
-          Math.abs(existing.lng - fac.lng) < 0.00035
-        );
-        if (!isTooCloseDuplicate) list.push(fac);
-      });
+        const bounds = ymap.getBounds();
+        const visibleList = rawList.filter(fac => {
+          if (typeof fac.lat !== "number" || typeof fac.lng !== "number" || isNaN(fac.lat) || isNaN(fac.lng)) return false;
+          if (!bounds) return true;
+          const [[sLat, wLng], [nLat, eLng]] = bounds;
+          const padLat = (nLat - sLat) * 0.25;
+          const padLng = (eLng - wLng) * 0.25;
+          return fac.lat >= sLat - padLat && fac.lat <= nLat + padLat &&
+                 fac.lng >= wLng - padLng && fac.lng <= eLng + padLng;
+        }).slice(0, 120);
 
-      function escapeXml(str) {
-        return String(str || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&apos;");
-      }
-
-      function getTypeGlyphSvg(type) {
-        if (type === "shifoxona") return `<path d="M16 10.5v7M12.5 14h7" stroke="#111114" stroke-width="2.2" stroke-linecap="round"/>`;
-        if (type === "bank") return `<path d="M11 12.2l5-2.6 5 2.6" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 12.6v4.2M16 12.6v4.2M19.7 12.6v4.2M10.8 17.3h10.4" fill="none" stroke="#111114" stroke-width="1.6" stroke-linecap="round"/>`;
-        if (type === "dxm") return `<circle cx="16" cy="14" r="3.4" fill="none" stroke="#111114" stroke-width="1.7"/><circle cx="16" cy="14" r="1.2" fill="#111114"/>`;
-        return `<rect x="12.2" y="10.5" width="5.2" height="7" rx="1" fill="none" stroke="#111114" stroke-width="1.6"/><path d="M17.4 12.2l2 1.2v3.4a1.1 1.1 0 0 1-2.2 0v-1.2" fill="none" stroke="#111114" stroke-width="1.5" stroke-linecap="round"/>`;
-      }
-
-      function makePinWithLabelDataUrl(type, fillHex, strokeHex, labelText, withLabel) {
-        const cleanLabel = escapeXml(labelText);
-        const svgWidth = withLabel && cleanLabel ? 215 : 36;
-        const labelSvg = (withLabel && cleanLabel)
-          ? `<text x="41" y="21" fill="#000000" stroke="#000000" stroke-width="3.2" stroke-linejoin="round" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>
-             <text x="41" y="21" fill="${fillHex}" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="800">${cleanLabel}</text>`
-          : "";
-
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="44" viewBox="0 0 ${svgWidth} 44">
-          <path d="M18 2C9.72 2 3 8.72 3 17c0 10.9 15 25 15 25s15-14.1 15-25c0-8.28-6.72-15-15-15z" fill="${fillHex}" stroke="${strokeHex}" stroke-width="2.2" stroke-linejoin="round"/>
-          <circle cx="18" cy="16.5" r="7.5" fill="#FFFFFF" fill-opacity="0.92"/>
-          <g transform="translate(2, 2.5)">${getTypeGlyphSvg(type)}</g>
-          ${labelSvg}
-        </svg>`;
-        return {
-          href: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
-          size: [svgWidth, 44]
-        };
-      }
-
-      ymapCollection.removeAll();
-      list.forEach(fac => {
-        let color = "#22C55E";
-        if (fac.type === "bank") color = "#38BDF8";
-        else if (fac.type === "dxm") color = "#E2C2FF";
-        else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
-
-        const isClosed = fac.status === "closed";
-        const shortName = (fac.name || "").length > 22 ? fac.name.slice(0, 21) + "…" : (fac.name || "");
-        const live = getFacilityLiveWait(fac);
-        const iconData = makePinWithLabelDataUrl(fac.type, color, "#111114", shortName, showLabels);
-
-        const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
-          balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
-          balloonContentBody: `
-            <div style="font-size:12px; color:#333; margin-top:4px;">
-              <div>${fac.address || ""}</div>
-              <div style="margin-top:4px; font-weight:700; color:${isClosed ? '#dc2626' : '#16a34a'};">
-                ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : `🟢 Ochiq • Navbatda: ${live.totalPeople} kishi (~${live.minWait} daq)`}
-              </div>
-              ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
-            </div>`
-        }, {
-          iconLayout: "default#image",
-          iconImageHref: iconData.href,
-          iconImageSize: iconData.size,
-          iconImageOffset: [-18, -42]
+        const list = [];
+        visibleList.forEach(fac => {
+          const isTooCloseDuplicate = list.some(existing =>
+            existing.type === fac.type &&
+            Math.abs(existing.lat - fac.lat) < 0.00035 &&
+            Math.abs(existing.lng - fac.lng) < 0.00035
+          );
+          if (!isTooCloseDuplicate) list.push(fac);
         });
 
-        ymapCollection.add(placemark);
-      });
+        ymapCollection.removeAll();
+        list.forEach(fac => {
+          let color = "#22C55E";
+          if (fac.type === "bank") color = "#38BDF8";
+          else if (fac.type === "dxm") color = "#E2C2FF";
+          else if (fac.type === "ayoqsh") color = fac.status === "closed" ? "#EF4444" : "#F59E0B";
+
+          const isClosed = fac.status === "closed";
+          const shortName = (fac.name || "").length > 22 ? fac.name.slice(0, 21) + "…" : (fac.name || "");
+          const live = getFacilityLiveWait(fac);
+          const iconData = getCachedPinDataUrl(fac.type, color, "#111114", shortName, showLabels);
+
+          const placemark = new ymaps.Placemark([fac.lat, fac.lng], {
+            balloonContentHeader: `<strong style="color:#111;">${fac.name}</strong>`,
+            balloonContentBody: `
+              <div style="font-size:12px; color:#333; margin-top:4px;">
+                <div>${fac.address || ""}</div>
+                <div style="margin-top:4px; font-weight:700; color:${isClosed ? '#dc2626' : '#16a34a'};">
+                  ${isClosed ? '🔴 Yopiq (Qishki cheklov)' : `🟢 Ochiq • Navbatda: ${live.totalPeople} kishi (~${live.minWait} daq)`}
+                </div>
+                ${!isClosed ? `<button onclick="openBookingSheet('${fac.id}')" style="margin-top:8px; width:100%; background:#111114; color:#E2C2FF; border:none; padding:7px 10px; border-radius:8px; font-weight:700; cursor:pointer;">🎫 Navbat olish</button>` : ''}
+              </div>`
+          }, {
+            iconLayout: "default#image",
+            iconImageHref: iconData.href,
+            iconImageSize: iconData.size,
+            iconImageOffset: [-18, -42]
+          });
+
+          ymapCollection.add(placemark);
+        });
+      }, 90);
     }
 
     const REGION_ISO = {
@@ -1925,17 +1881,22 @@
       try { done = JSON.parse(localStorage.getItem("navbat_osm_loaded_v1") || "{}"); } catch {}
       const first = currentUser.region || "jizzax";
       const order = [first, ...Object.keys(REGIONS).filter(k => k !== first)];
+      let anyAdded = false;
       for (const k of order) {
         if (done[k] && Date.now() - done[k] < 14 * 864e5) continue;
         try {
           const n = await loadRegionFromOSM(k);
-          saveFacilities(true);
+          safeSet(FACILITIES_KEY, FACILITIES);
           done[k] = Date.now();
           try { localStorage.setItem("navbat_osm_loaded_v1", JSON.stringify(done)); } catch {}
-          if (n > 0) refreshAllViews();
+          if (n > 0) {
+            anyAdded = true;
+            if ((currentUser.region || "jizzax") === k) refreshAllViews();
+          }
         } catch {}
-        await new Promise(r => setTimeout(r, 2500));
+        await new Promise(r => setTimeout(r, 3000));
       }
+      if (anyAdded && APP_CONFIG.firebaseUrl) syncFirebase("push", true);
       autoLoadRunning = false;
     }
 
@@ -1946,9 +1907,10 @@
       let total = 0;
       for (let i = 0; i < keys.length; i++) {
         btn.textContent = `⏳ ${REGIONS[keys[i]].name} (${i + 1}/${keys.length})...`;
-        try { total += await loadRegionFromOSM(keys[i]); saveFacilities(true); } catch {}
+        try { total += await loadRegionFromOSM(keys[i]); safeSet(FACILITIES_KEY, FACILITIES); } catch {}
         await new Promise(r => setTimeout(r, 1500));
       }
+      saveFacilities(true);
       refreshAllViews();
       btn.disabled = false;
       btn.textContent = "🇺🇿 Butun O‘zbekiston bo‘yicha yuklash";
@@ -1959,7 +1921,7 @@
       const regKey = currentUser.region || "jizzax";
       document.getElementById("regionModalGrid").innerHTML = Object.entries(REGIONS).map(([key, val]) => `
         <button type="button" onclick="applyRegionChange('${key}'); closeRegionModal();"
-          class="py-3 px-3.5 rounded-2xl text-xs font-bold text-left border cursor-pointer transition ${key === regKey ? 'bg-[#E2C2FF] text-[#111114] border-[#E2C2FF]' : 'bg-[#1C1C1E] text-white border-white/[0.07] hover:border-white/20'}">
+          class="py-3 px-3.5 rounded-2xl text-xs font-bold text-left border cursor-pointer ${key === regKey ? 'bg-[#E2C2FF] text-[#111114] border-[#E2C2FF]' : 'bg-[#1C1C1E] text-white border-white/[0.07] hover:border-white/20'}">
           📍 ${val.name}
         </button>`).join("");
       document.getElementById("regionModal").classList.remove("hidden");
@@ -1978,7 +1940,7 @@
       saveCurrentUser();
       document.getElementById("mapRegionBtnText").textContent = REGIONS[key].name;
       document.getElementById("cabinetRegionSelect").value = key;
-      if (ymap) ymap.setCenter(REGIONS[key].center, REGIONS[key].zoom, { duration: 600 });
+      if (ymap) ymap.setCenter(REGIONS[key].center, REGIONS[key].zoom, { duration: 400 });
       refreshAllViews();
     }
 
@@ -2005,7 +1967,7 @@
             if (ymapUserPlacemark) ymap.geoObjects.remove(ymapUserPlacemark);
             ymapUserPlacemark = new ymaps.Placemark([latitude, longitude], { balloonContent: "<strong>Sizning joylashuvingiz</strong>" }, { preset: "islands#violetCircleDotIcon" });
             ymap.geoObjects.add(ymapUserPlacemark);
-            ymap.setCenter([latitude, longitude], 14, { duration: 700 });
+            ymap.setCenter([latitude, longitude], 14, { duration: 500 });
           }
           showToast(`Joylashuvingiz aniqlandi: ${REGIONS[nearestKey].name}`);
         },
@@ -2019,8 +1981,8 @@
       document.querySelectorAll(".cat-pill").forEach(btn => {
         const active = btn.getAttribute("data-cat") === cat;
         btn.className = active
-          ? "cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-          : "cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition";
+          ? "cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+          : "cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer";
       });
       renderFacilitiesAndMarkers();
     }
@@ -2046,7 +2008,8 @@
         return;
       }
 
-      container.innerHTML = sortedItems.map(({ fac, distKm, live, isOpen }) => {
+      const limitedItems = sortedItems.slice(0, 50);
+      container.innerHTML = limitedItems.map(({ fac, distKm, live, isOpen }) => {
         const isClosed = !isOpen;
         const badgeClass = fac.type === "shifoxona" ? "pastel-mint" : fac.type === "bank" ? "pastel-sky" : fac.type === "dxm" ? "pastel-lavender" : "pastel-yellow";
         const icon = fac.type === "shifoxona" ? "🏥" : fac.type === "bank" ? "🏦" : fac.type === "dxm" ? "🏛" : "⛽";
@@ -2055,7 +2018,7 @@
 
         return `
           <div onclick="${isClosed ? `showToast('Bu AYOQSH hozir yopiq!', true)` : `openBookingSheet('${fac.id}')`}"
-            class="oled-card p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-[#1C1C1E] transition ${isClosed ? 'opacity-70' : ''}">
+            class="oled-card p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-[#1C1C1E] ${isClosed ? 'opacity-70' : ''}">
             <div class="pastel-badge ${badgeClass} text-lg">${icon}</div>
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
@@ -2080,8 +2043,8 @@
       document.querySelectorAll(".fuel-pill").forEach(btn => {
         const active = btn.getAttribute("data-fuel") === fuel;
         btn.className = active
-          ? "fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer transition"
-          : "fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition";
+          ? "fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer"
+          : "fuel-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer";
       });
       renderAyoqshTab();
     }
@@ -2090,8 +2053,8 @@
       onlyOpenAyoqsh = !onlyOpenAyoqsh;
       const btn = document.getElementById("onlyOpenBtn");
       btn.className = onlyOpenAyoqsh
-        ? "shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#22C55E]/20 border border-[#22C55E] text-[#22C55E] cursor-pointer transition"
-        : "shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer transition";
+        ? "shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#22C55E]/20 border border-[#22C55E] text-[#22C55E] cursor-pointer"
+        : "shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#151517] border border-white/[0.08] text-white cursor-pointer";
       renderAyoqshTab();
     }
 
@@ -2099,7 +2062,7 @@
       const fac = FACILITIES.find(f => f.id === facId);
       if (!fac) return;
       switchTab("map");
-      setTimeout(() => { if (ymap) ymap.setCenter([fac.lat, fac.lng], 16, { duration: 600 }); }, 150);
+      setTimeout(() => { if (ymap) ymap.setCenter([fac.lat, fac.lng], 16, { duration: 400 }); }, 120);
     }
 
     function renderAyoqshTab() {
@@ -2113,7 +2076,7 @@
         if (onlyOpenAyoqsh && z.status === "closed") return false;
         if (selectedFuelFilter !== "all" && !(z.fuels || []).includes(selectedFuelFilter)) return false;
         return true;
-      });
+      }).slice(0, 50);
 
       const container = document.getElementById("ayoqshList");
       if (filtered.length === 0) {
@@ -2153,11 +2116,11 @@
             <div class="flex flex-wrap gap-1.5">${fuelsHtml}</div>
             <div class="grid grid-cols-2 gap-2 pt-1">
               <button type="button" onclick="locateOnMap('${z.id}')"
-                class="py-2.5 rounded-2xl bg-[#1C1C1E] hover:bg-[#2C2C2E] border border-white/[0.08] text-white text-xs font-bold cursor-pointer transition">
+                class="py-2.5 rounded-2xl bg-[#1C1C1E] hover:bg-[#2C2C2E] border border-white/[0.08] text-white text-xs font-bold cursor-pointer">
                 📍 Xaritada
               </button>
               <button type="button" ${isClosed ? 'disabled' : `onclick="openBookingSheet('${z.id}')"`}
-                class="py-2.5 rounded-2xl text-xs font-extrabold transition ${isClosed ? 'bg-[#1C1C1E] text-[#8E8E93] cursor-not-allowed' : 'bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] cursor-pointer'}">
+                class="py-2.5 rounded-2xl text-xs font-extrabold ${isClosed ? 'bg-[#1C1C1E] text-[#8E8E93] cursor-not-allowed' : 'bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] cursor-pointer'}">
                 ${isClosed ? 'Navbat yopiq' : '🎫 Navbat olish'}
               </button>
             </div>
@@ -2219,7 +2182,7 @@
           const st = best ? getLiveSpecStats(facility.id, d.id, best.id) : { count: 0, waitMin: 0 };
           return `
             <button type="button" onclick="selectDepartment('${d.id}')"
-              class="w-full text-left oled-card-2 hover:bg-[#262629] p-3.5 flex items-center justify-between gap-3 cursor-pointer transition">
+              class="w-full text-left oled-card-2 hover:bg-[#262629] p-3.5 flex items-center justify-between gap-3 cursor-pointer">
               <div class="flex items-center gap-3 min-w-0">
                 <div class="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center text-lg shrink-0">${d.icon}</div>
                 <div class="min-w-0">
@@ -2261,25 +2224,25 @@
         body.innerHTML = `
           <div class="grid grid-cols-2 gap-1.5 bg-black p-1 rounded-2xl border border-white/[0.08]">
             <button type="button" onclick="setStep2Tab('ai')"
-              class="py-2.5 px-2 rounded-xl text-xs font-bold cursor-pointer transition ${step2Tab === 'ai' ? 'bg-[#E2C2FF] text-[#111114]' : 'text-[#8E8E93] hover:text-white'}">
+              class="py-2.5 px-2 rounded-xl text-xs font-bold cursor-pointer ${step2Tab === 'ai' ? 'bg-[#E2C2FF] text-[#111114]' : 'text-[#8E8E93] hover:text-white'}">
               ✨ AI & Shaxsiy
             </button>
             <button type="button" onclick="setStep2Tab('all')"
-              class="py-2.5 px-2 rounded-xl text-xs font-bold cursor-pointer transition ${step2Tab === 'all' ? 'bg-[#E2C2FF] text-[#111114]' : 'text-[#8E8E93] hover:text-white'}">
+              class="py-2.5 px-2 rounded-xl text-xs font-bold cursor-pointer ${step2Tab === 'all' ? 'bg-[#E2C2FF] text-[#111114]' : 'text-[#8E8E93] hover:text-white'}">
               📋 ${terms.tabAllLabel}
             </button>
           </div>
           ${step2Tab === 'ai' ? `
             <div class="space-y-3">
               <div onclick="chooseSpecialistAndNext('${bestSpec.id}')"
-                class="oled-card-2 p-4 border border-[#22C55E]/40 hover:border-[#22C55E] cursor-pointer transition">
+                class="oled-card-2 p-4 border border-[#22C55E]/40 hover:border-[#22C55E] cursor-pointer">
                 <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#22C55E]/15 text-[#22C55E] text-[10px] font-bold mb-2">✨ AI Eng Bo‘sh Tavsiyasi</span>
                 <div class="text-base font-extrabold text-white">${bestSpec.name}</div>
                 <div class="text-xs text-[#8E8E93] mt-1">${bestSpec.room} • Navbatda: ${bestSt.count} kishi • ${bestSt.count === 0 ? 'Darhol kirish' : `~${bestSt.waitMin} daqiqa`}</div>
               </div>
               ${savedSpec ? `
                 <div onclick="chooseSpecialistAndNext('${savedSpec.id}')"
-                  class="oled-card-2 p-4 border border-[#E2C2FF]/45 hover:border-[#E2C2FF] cursor-pointer transition">
+                  class="oled-card-2 p-4 border border-[#E2C2FF]/45 hover:border-[#E2C2FF] cursor-pointer">
                   <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#E2C2FF]/20 text-[#E2C2FF] text-[10px] font-bold mb-2">⭐ ${terms.favoriteLabel}</span>
                   <div class="text-base font-extrabold text-white">${savedSpec.name}</div>
                   <div class="text-xs text-[#8E8E93] mt-1">${savedSpec.room} • Navbatda: ${savedSt.count} kishi • ${savedSt.count === 0 ? 'Darhol kirish' : `~${savedSt.waitMin} daqiqa`}</div>
@@ -2292,7 +2255,7 @@
                 const st = getLiveSpecStats(facility.id, dept.id, sp.id);
                 const saved = isSpecialistSaved(facility.id, dept.id, sp.id);
                 return `
-                  <div class="oled-card-2 p-3.5 flex items-center justify-between gap-2.5 hover:bg-[#262629] transition">
+                  <div class="oled-card-2 p-3.5 flex items-center justify-between gap-2.5 hover:bg-[#262629]">
                     <div onclick="chooseSpecialistAndNext('${sp.id}')" class="flex-1 min-w-0 cursor-pointer">
                       <div class="text-sm font-bold text-white">${sp.name}</div>
                       <div class="text-xs text-[#8E8E93] mt-0.5">${sp.room} • Navbat: ${st.count} • ⭐ ${sp.rating}</div>
@@ -2330,7 +2293,7 @@
               const active = s.id === srv.id;
               return `
                 <button type="button" onclick="selectBookingService('${s.id}')"
-                  class="w-full text-left p-3.5 rounded-2xl border cursor-pointer transition ${active ? 'border-[#E2C2FF] bg-[#E2C2FF]/12' : 'border-white/[0.07] bg-[#1C1C1E]'}">
+                  class="w-full text-left p-3.5 rounded-2xl border cursor-pointer ${active ? 'border-[#E2C2FF] bg-[#E2C2FF]/12' : 'border-white/[0.07] bg-[#1C1C1E]'}">
                   <div class="text-sm font-bold ${active ? 'text-[#E2C2FF]' : 'text-white'}">${s.name}</div>
                   <div class="text-xs text-[#8E8E93] mt-0.5">Taxminiy jarayon: ~${s.baseMin} daq</div>
                 </button>`;
@@ -2351,7 +2314,7 @@
             🤖 <strong class="text-white">AI bashorati:</strong> Oldinda <strong class="text-white">${st.count} ta real navbat</strong>. Taxminiy kirish: <strong class="text-[#22C55E]">${st.count === 0 ? 'Hozir (0 daq)' : `${eta} (~${st.waitMin} daq)`}</strong>.
           </div>
           <button type="button" onclick="confirmBooking()"
-            class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer transition">
+            class="w-full py-3.5 rounded-2xl bg-[#E2C2FF] hover:bg-[#D8B4FE] text-[#111114] font-extrabold text-sm cursor-pointer">
             Navbat olishni tasdiqlash
           </button>`;
       }
@@ -2396,20 +2359,7 @@
       el.classList.remove("opacity-0", "-translate-y-2");
       el.classList.add("opacity-100", "translate-y-0");
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { el.classList.add("opacity-0", "-translate-y-2"); el.classList.remove("opacity-100", "translate-y-0"); }, 3200);
-    }
-
-    function playBeep() {
-      if (currentUser && currentUser.settings && currentUser.settings.soundAlerts === false) return;
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx(), osc = ctx.createOscillator(), gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.type = "sine"; osc.frequency.value = 840; gain.gain.value = 0.08;
-        osc.start();
-        setTimeout(() => { osc.stop(); ctx.close(); }, 220);
-      } catch {}
+      toastTimer = setTimeout(() => { el.classList.add("opacity-0", "-translate-y-2"); el.classList.remove("opacity-100", "translate-y-0"); }, 3000);
     }
 
     function formatEta(minutes) {
@@ -2423,9 +2373,7 @@
         arr.forEach((item, idx) => {
           if (item.userPhone === currentUser.phone) {
             const waitMin = arr.slice(0, idx).reduce((s, prev) => s + (prev.durationMin || 8), 0);
-            const prevPerson = idx > 0 ? arr[idx - 1] : null;
-            const nextPerson = idx < arr.length - 1 ? arr[idx + 1] : null;
-            result.push({ qKey, idx, item, peopleAhead: idx, waitMin, prevPerson, nextPerson });
+            result.push({ qKey, idx, item, peopleAhead: idx, waitMin });
           }
         });
       });
@@ -2444,7 +2392,7 @@
       container.innerHTML = myTickets.map(({ qKey, item: t, peopleAhead, waitMin }) => {
         const eta = formatEta(waitMin);
         return `
-          <div class="oled-card p-4 shadow-xl">
+          <div class="oled-card p-4">
             <div class="flex items-center justify-between pb-3 border-b border-dashed border-white/10">
               <div><span class="text-[10px] uppercase text-[#8E8E93] font-semibold">Navbat raqami</span><div class="text-3xl font-extrabold text-[#E2C2FF]">№ ${t.ticketNumber}</div></div>
               <div class="text-right"><span class="inline-block px-3 py-1 rounded-full bg-[#1C1C1E] border border-white/10 text-white text-xs font-bold">Oldinda: ${peopleAhead} kishi</span></div>
@@ -2552,7 +2500,7 @@
       document.getElementById("navAyoqsh").classList.toggle("active", tab === "ayoqsh");
       document.getElementById("navTickets").classList.toggle("active", tab === "tickets");
       document.getElementById("navCabinet").classList.toggle("active", tab === "cabinet");
-      if (tab === "map" && ymap) setTimeout(() => ymap.container.fitToViewport(), 120);
+      if (tab === "map" && ymap) setTimeout(() => ymap.container.fitToViewport(), 80);
       if (tab === "ayoqsh") renderAyoqshTab();
       if (tab === "tickets") renderTickets();
       if (tab === "cabinet") renderCabinet();
@@ -2587,7 +2535,7 @@
       document.getElementById("adminSectionIntegrations").classList.toggle("hidden", isPlaces);
       document.getElementById("admTabPlaces").className = isPlaces ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer" : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] cursor-pointer";
       document.getElementById("admTabIntegrations").className = !isPlaces ? "py-2 rounded-xl text-xs font-bold bg-[#E2C2FF] text-[#111114] cursor-pointer" : "py-2 rounded-xl text-xs font-bold text-[#8E8E93] cursor-pointer";
-      if (isPlaces && adminYMap) setTimeout(() => adminYMap.container.fitToViewport(), 120);
+      if (isPlaces && adminYMap) setTimeout(() => adminYMap.container.fitToViewport(), 80);
     }
 
     function openAdminPanel() {
@@ -2606,7 +2554,7 @@
             adminYMap.events.add("click", (e) => { const c = e.get("coords"); setAdminCoords(c[0], c[1]); });
           } else { adminYMap.container.fitToViewport(); }
         });
-      }, 150);
+      }, 120);
     }
     function closeAdminPanel() { document.getElementById("adminPanelModal").classList.add("hidden"); refreshAllViews(); }
     function setAdminCoords(lat, lng) {
@@ -2647,8 +2595,8 @@
     }
     function renderAdminList() {
       const filter = document.getElementById("adminListFilter").value;
-      const list = FACILITIES.filter(f => filter === "all" || f.type === filter);
-      document.getElementById("adminTotalCount").textContent = list.length;
+      const list = FACILITIES.filter(f => filter === "all" || f.type === filter).slice(0, 80);
+      document.getElementById("adminTotalCount").textContent = FACILITIES.filter(f => filter === "all" || f.type === filter).length;
       document.getElementById("adminPlacesList").innerHTML = list.map(f => `<div class="oled-card-2 p-2.5 text-xs font-bold text-white truncate">${f.name}</div>`).join("");
     }
 
@@ -2737,7 +2685,7 @@
         if (APP_CONFIG.firebaseUrl && currentUser) {
           syncFirebase("pull", true);
         }
-      }, 4000);
+      }, 15000);
     };
   </script>
 </body>
