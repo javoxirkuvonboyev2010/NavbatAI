@@ -228,13 +228,20 @@
 
       <div id="currentServingBox" class="oled-card p-5 space-y-3 border border-[#E2C2FF]/35"></div>
 
-      <div class="oled-card p-3.5 flex items-center gap-2">
-        <input id="walkInName" type="text" placeholder="Joyida kelgan mijoz ismi (ixtiyoriy)..."
-          class="flex-1 bg-[#1C1C1E] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white" />
-        <button onclick="addWalkInPatient()" class="px-3.5 py-2.5 rounded-xl bg-[#22C55E] text-[#111114] font-extrabold text-xs shrink-0 cursor-pointer">
-          + Qo‘shish
-        </button>
-      </div>
+      <!-- staff.html ichidagi joyida kelgan mijoz blokini quyidagiga almashtiring -->
+<div class="oled-card p-3.5 space-y-2.5">
+  <div class="text-xs font-bold text-white">➕ Jonli navbatga mijoz qo‘shish (majburiy)</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <input id="walkInName" type="text" placeholder="Ism va familiya *"
+      class="bg-[#1C1C1E] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-[#8E8E93] focus:outline-none focus:border-[#E2C2FF]" />
+    <input id="walkInPhone" type="tel" value="+998 " placeholder="+998 90 123 45 67 *"
+      class="bg-[#1C1C1E] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-[#8E8E93] focus:outline-none focus:border-[#E2C2FF]" />
+  </div>
+  <button type="button" onclick="addWalkInPatient()"
+    class="w-full py-2.5 rounded-xl bg-[#22C55E] hover:bg-[#16A34A] text-[#111114] font-extrabold text-xs cursor-pointer">
+    + Navbatga qo‘shish
+  </button>
+</div>
 
       <div class="space-y-2">
         <div class="flex items-center justify-between">
@@ -243,6 +250,14 @@
         </div>
         <div id="waitingQueueList" class="space-y-2"></div>
       </div>
+      <div class="space-y-2 pt-2">
+  <div class="flex items-center justify-between">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8E8E93]">
+      📜 Kelgan mijozlar tarixi (<span id="staffHistoryCount">0</span>)
+    </h3>
+  </div>
+  <div id="staffHistoryList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+</div>
     </section>
 
   </div>
