@@ -1087,9 +1087,28 @@
       return baseDepts.map(dept => {
         const matchedStaff = staffList
           .filter(st => st.deptId === dept.id || (!st.deptId && dept.id === baseDepts[0].id))
-          .map(st => ({ id: st.specId || ("staff-" + st.loginKey), name: st.fullName, room: st.room || "1-xona", rating: 5.0 }));
-        const existingIds = new Set(dept.specialists.map(s => s.id));
-        return { ...dept, specialists: [...matchedStaff.filter(m => !existingIds.has(m.id)), ...dept.specialists] };
+          .map(st => ({
+            id: st.specId || ("staff-" + st.loginKey),
+            name: st.fullName,
+            room: st.room || "1-xona",
+            rating: 5.0
+          }));
+
+        const seenIds = new Set(dept.specialists.map(s => s.id));
+        const seenNameRoom = new Set(
+          dept.specialists.map(s => `${normalizeUzText(s.name)}|${normalizeUzText(s.room)}`)
+        );
+
+        const uniqueStaff = [];
+        for (const m of matchedStaff) {
+          const key = `${normalizeUzText(m.name)}|${normalizeUzText(m.room)}`;
+          if (seenIds.has(m.id) || seenNameRoom.has(key)) continue;
+          seenIds.add(m.id);
+          seenNameRoom.add(key);
+          uniqueStaff.push(m);
+        }
+
+        return { ...dept, specialists: [...uniqueStaff, ...dept.specialists] };
       });
     }
 
@@ -2568,36 +2587,139 @@
       if (REGIONS[rk]) { setAdminCoords(REGIONS[rk].center[0], REGIONS[rk].center[1]); if (adminYMap) adminYMap.setCenter(REGIONS[rk].center, REGIONS[rk].zoom); }
     }
     function toggleAdminFuelBox() { document.getElementById("admFuelBox").classList.toggle("hidden", document.getElementById("admType").value !== "ayoqsh"); }
+
+    function editAdminPlace(facId) {
+      const fac = FACILITIES.find(f => f.id === facId);
+      if (!fac) return;
+      switchAdminTab("places");
+      document.getElementById("admEditId").value = fac.id;
+      document.getElementById("adminFormTitle").textContent = "✏️ Muassasa / AYOQSH ni tahrirlash";
+      document.getElementById("adminCancelEditBtn").classList.remove("hidden");
+      document.getElementById("admName").value = fac.name || "";
+      document.getElementById("admRegion").value = fac.region || "jizzax";
+      document.getElementById("admType").value = fac.type || "shifoxona";
+      document.getElementById("admAddress").value = fac.address || "";
+      document.getElementById("admStatus").value = fac.status || "open";
+      toggleAdminFuelBox();
+
+      const fuels = fac.fuels || [];
+      document.querySelectorAll(".adm-fuel-cb").forEach(cb => {
+        cb.checked = fuels.includes(cb.value);
+      });
+
+      setAdminCoords(fac.lat, fac.lng);
+      if (adminYMap) adminYMap.setCenter([fac.lat, fac.lng], 15);
+      showToast(`Tahrirlash: ${fac.name}`);
+    }
+
+    function toggleAdminPlaceStatus(facId) {
+      const idx = FACILITIES.findIndex(f => f.id === facId);
+      if (idx === -1) return;
+      FACILITIES[idx].status = FACILITIES[idx].status === "closed" ? "open" : "closed";
+      saveFacilities(true);
+      renderAdminList();
+      refreshAllViews();
+      showToast(`Holat o‘zgardi: ${FACILITIES[idx].status === "closed" ? "Yopiq" : "Ochiq"}`);
+    }
+
+    function deleteAdminPlace(facId) {
+      const idx = FACILITIES.findIndex(f => f.id === facId);
+      if (idx === -1) return;
+      const removedName = FACILITIES[idx].name;
+      FACILITIES.splice(idx, 1);
+      saveFacilities(true);
+      if (document.getElementById("admEditId").value === facId) resetAdminForm();
+      renderAdminList();
+      refreshAllViews();
+      showToast(`🗑 "${removedName}" o‘chirildi`);
+    }
+
     function resetAdminForm() {
       document.getElementById("admEditId").value = "";
+      document.getElementById("adminFormTitle").textContent = "➕ Yangi muassasa / AYOQSH qo‘shish";
+      document.getElementById("adminCancelEditBtn").classList.add("hidden");
       document.getElementById("admName").value = "";
       document.getElementById("admAddress").value = "";
-      document.getElementById("admRegion").value = currentUser.region || "jizzax";
+      document.getElementById("admRegion").value = currentUser?.region || "jizzax";
       document.getElementById("admType").value = "ayoqsh";
       document.getElementById("admStatus").value = "open";
+      document.querySelectorAll(".adm-fuel-cb").forEach(cb => { cb.checked = false; });
       toggleAdminFuelBox();
-      setAdminCoords(REGIONS[currentUser.region || "jizzax"].center[0], REGIONS[currentUser.region || "jizzax"].center[1]);
+      const rk = currentUser?.region || "jizzax";
+      setAdminCoords(REGIONS[rk].center[0], REGIONS[rk].center[1]);
     }
+
     function saveAdminPlace() {
       const name = document.getElementById("admName").value.trim();
       if (!name) return showToast("Obyekt nomini kiriting!", true);
+      const editId = document.getElementById("admEditId").value.trim();
       const region = document.getElementById("admRegion").value;
       const address = document.getElementById("admAddress").value.trim() || REGIONS[region].name;
       const type = document.getElementById("admType").value;
       const status = document.getElementById("admStatus").value;
       const fuels = Array.from(document.querySelectorAll(".adm-fuel-cb:checked")).map(cb => cb.value);
-      FACILITIES.unshift({ id: "adm-" + Date.now(), region, type, status, name, address, lat: adminPickedLatLng[0], lng: adminPickedLatLng[1], fuels: type === "ayoqsh" ? (fuels.length ? fuels : ["benzin"]) : undefined });
+
+      if (editId) {
+        const idx = FACILITIES.findIndex(f => f.id === editId);
+        if (idx !== -1) {
+          FACILITIES[idx] = {
+            ...FACILITIES[idx],
+            region,
+            type,
+            status,
+            name,
+            address,
+            lat: adminPickedLatLng[0],
+            lng: adminPickedLatLng[1],
+            fuels: type === "ayoqsh" ? (fuels.length ? fuels : ["benzin"]) : undefined
+          };
+          saveFacilities(true);
+          resetAdminForm();
+          renderAdminList();
+          refreshAllViews();
+          showToast("✅ Muassasa yangilandi!");
+          return;
+        }
+      }
+
+      FACILITIES.unshift({
+        id: "adm-" + Date.now(),
+        region,
+        type,
+        status,
+        name,
+        address,
+        lat: adminPickedLatLng[0],
+        lng: adminPickedLatLng[1],
+        fuels: type === "ayoqsh" ? (fuels.length ? fuels : ["benzin"]) : undefined
+      });
       saveFacilities(true);
       resetAdminForm();
       renderAdminList();
       refreshAllViews();
       showToast("✅ Obyekt qo‘shildi!");
     }
+
     function renderAdminList() {
       const filter = document.getElementById("adminListFilter").value;
-      const list = FACILITIES.filter(f => filter === "all" || f.type === filter).slice(0, 80);
-      document.getElementById("adminTotalCount").textContent = FACILITIES.filter(f => filter === "all" || f.type === filter).length;
-      document.getElementById("adminPlacesList").innerHTML = list.map(f => `<div class="oled-card-2 p-2.5 text-xs font-bold text-white truncate">${f.name}</div>`).join("");
+      const matched = FACILITIES.filter(f => filter === "all" || f.type === filter);
+      const list = matched.slice(0, 80);
+      document.getElementById("adminTotalCount").textContent = matched.length;
+      document.getElementById("adminPlacesList").innerHTML = list.map(f => {
+        const isClosed = f.status === "closed";
+        return `
+          <div class="oled-card-2 p-2.5 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-bold text-white truncate">${f.name}</div>
+              <div class="text-[10px] text-[#8E8E93] truncate">${REGIONS[f.region]?.name || f.region} • ${f.type} • <span class="${isClosed ? 'text-[#F87171]' : 'text-[#22C55E]'}">${isClosed ? 'Yopiq' : 'Ochiq'}</span></div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="editAdminPlace('${f.id}')" class="px-2 py-1 rounded-lg bg-[#E2C2FF]/20 text-[#E2C2FF] text-[10px] font-bold cursor-pointer">✏️</button>
+              <button type="button" onclick="toggleAdminPlaceStatus('${f.id}')" class="px-2 py-1 rounded-lg bg-black border border-white/10 text-white text-[10px] font-bold cursor-pointer">${isClosed ? '🟢' : '🔴'}</button>
+              <button type="button" onclick="deleteAdminPlace('${f.id}')" class="px-2 py-1 rounded-lg bg-[#F87171]/15 text-[#F87171] text-[10px] font-bold cursor-pointer">🗑</button>
+            </div>
+          </div>`;
+      }).join("");
     }
 
     async function syncFirebase(mode, silent = false) {
